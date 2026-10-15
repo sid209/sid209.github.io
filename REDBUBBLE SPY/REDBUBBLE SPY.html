@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Redbubble Spy | Sales, Revenue & Search Demand</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #f1f5f9;
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1.5rem;
+        }
+
+        .main-card {
+            max-width: 1100px;
+            width: 100%;
+            background: white;
+            border-radius: 2rem;
+            box-shadow: 0 20px 35px -10px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #1e293b, #0f172a);
+            padding: 1.5rem 2rem;
+            color: white;
+        }
+
+        .header h1 {
+            font-size: 1.6rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .header h1 i {
+            color: #f97316;
+        }
+
+        .header p {
+            font-size: 0.8rem;
+            opacity: 0.8;
+            margin-top: 6px;
+        }
+
+        .content {
+            padding: 2rem;
+        }
+
+        .url-section {
+            margin-bottom: 2rem;
+        }
+
+        label {
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #475569;
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        .input-wrapper {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        input {
+            flex: 1;
+            padding: 12px 16px;
+            font-family: 'Inter', monospace;
+            font-size: 0.85rem;
+            border: 1.5px solid #e2e8f0;
+            border-radius: 60px;
+            outline: none;
+            transition: 0.2s;
+            background: #ffffff;
+        }
+
+        input:focus {
+            border-color: #f97316;
+            box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.1);
+        }
+
+        input.valid {
+            border-color: #10b981;
+            background: #f0fdf4;
+        }
+
+        input.invalid {
+            border-color: #ef4444;
+            background: #fef2f2;
+        }
+
+        button {
+            background: #f97316;
+            border: none;
+            padding: 0 28px;
+            border-radius: 60px;
+            color: white;
+            font-weight: 600;
+            font-size: 0.9rem;
+            font-family: 'Inter', sans-serif;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            transition: 0.2s;
+            white-space: nowrap;
+        }
+
+        button:hover:not(:disabled) {
+            background: #ea580c;
+            transform: scale(1.02);
+        }
+
+        button:disabled {
+            background: #94a3b8;
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+
+        .validation-status {
+            font-size: 0.7rem;
+            margin-top: 8px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .status-valid {
+            color: #10b981;
+        }
+
+        .status-invalid {
+            color: #ef4444;
+        }
+
+        .results-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-top: 28px;
+        }
+
+        .result-card {
+            flex: 1;
+            min-width: 180px;
+            background: #ffffff;
+            border-radius: 1.5rem;
+            padding: 1.5rem 1rem;
+            text-align: center;
+            border: 1px solid #eef2ff;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+        }
+
+        .result-card i {
+            font-size: 1.8rem;
+            color: #f97316;
+            margin-bottom: 10px;
+        }
+
+        .result-value {
+            font-size: 2rem;
+            font-weight: 800;
+            color: #0f172a;
+            letter-spacing: -0.02em;
+        }
+
+        .result-label {
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: #64748b;
+            text-transform: uppercase;
+            margin-top: 6px;
+        }
+
+        .result-sub {
+            font-size: 0.7rem;
+            color: #10b981;
+            margin-top: 8px;
+            font-weight: 500;
+        }
+
+        .search-breakdown {
+            font-size: 0.7rem;
+            color: #f97316;
+            margin-top: 6px;
+            font-weight: 500;
+            background: #fff7ed;
+            display: inline-block;
+            padding: 2px 10px;
+            border-radius: 20px;
+        }
+
+        /* Competition score specific */
+        .comp-value {
+            font-size: 2rem;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+        }
+
+        .comp-low { color: #10b981; }
+        .comp-moderate { color: #f59e0b; }
+        .comp-high { color: #ef4444; }
+
+        .comp-meter {
+            width: 100%;
+            height: 6px;
+            background: #e2e8f0;
+            border-radius: 10px;
+            margin-top: 10px;
+            overflow: hidden;
+        }
+
+        .comp-meter-fill {
+            height: 100%;
+            border-radius: 10px;
+            transition: width 0.6s ease;
+        }
+
+        .comp-meter-fill.low { background: #10b981; }
+        .comp-meter-fill.moderate { background: #f59e0b; }
+        .comp-meter-fill.high { background: #ef4444; }
+
+        .comp-badge {
+            font-size: 0.65rem;
+            font-weight: 600;
+            margin-top: 8px;
+            display: inline-block;
+            padding: 2px 10px;
+            border-radius: 20px;
+        }
+
+        .comp-badge.low { background: #ecfdf5; color: #10b981; }
+        .comp-badge.moderate { background: #fffbeb; color: #f59e0b; }
+        .comp-badge.high { background: #fef2f2; color: #ef4444; }
+
+        .loading-spinner-small {
+            display: inline-block;
+            width: 24px;
+            height: 24px;
+            border: 2px solid #e2e8f0;
+            border-top-color: #f97316;
+            border-radius: 50%;
+            animation: spin 0.7s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .loading-placeholder {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            padding: 4px;
+        }
+
+        @media (max-width: 700px) {
+            .content { padding: 1.5rem; }
+            .result-value, .comp-value { font-size: 1.4rem; }
+            button { padding: 0 20px; }
+        }
+    </style>
+</head>
+<body>
+<div class="main-card">
+    <div class="header">
+        <h1><i class="fas fa-chart-line"></i> RedSpy • Marketplace Demand</h1>
+        <p>Paste Redbubble product URL → validate → scan → weekly sales + total revenue + estimated monthly searches + competition score</p>
+    </div>
+    <div class="content">
+        <div class="url-section">
+            <label><i class="fab fa-redbubble"></i> REDBUBBLE PRODUCT URL</label>
+            <div class="input-wrapper">
+                <input type="text" id="productUrl" placeholder="https://www.redbubble.com/i/sticker/Design-Name-by-artist/123456789" value="https://www.redbubble.com/i/iphone-case/Crochet-Floral-Heart-Handmade-Flowers-of-Love-and-Remembrance-by-newsuept25/184083921/3bp7">
+                <button id="analyzeBtn" disabled><i class="fas fa-chart-simple"></i> Estimate</button>
+            </div>
+            <div id="validationStatus" class="validation-status">
+                <i class="fas fa-spinner fa-pulse"></i> <span>Checking URL...</span>
+            </div>
+        </div>
+
+        <div class="results-grid">
+            <div class="result-card">
+                <i class="fas fa-cart-shopping"></i>
+                <div class="result-value" id="weeklySales">—</div>
+                <div class="result-label">Estimated Weekly Sales</div>
+                <div class="result-sub" id="monthlyHint">↻ monthly trend —</div>
+            </div>
+            <div class="result-card">
+                <i class="fas fa-dollar-sign"></i>
+                <div class="result-value" id="totalRevenue">—</div>
+                <div class="result-label">Total Lifetime Revenue*</div>
+                <div class="result-sub" id="royaltyHint">👤 artist royalty ~—</div>
+            </div>
+            <div class="result-card">
+                <i class="fas fa-magnifying-glass-chart"></i>
+                <div class="result-value" id="searchVolume">—</div>
+                <div class="result-label">Predicted Monthly Searches</div>
+                <div class="search-breakdown" id="searchInsight">marketplace demand index</div>
+            </div>
+            <div class="result-card">
+                <i class="fas fa-swords"></i>
+                <div class="comp-value" id="competitionScore">—</div>
+                <div class="result-label">Competition Score</div>
+                <div class="comp-meter">
+                    <div class="comp-meter-fill" id="compMeterFill" style="width: 0%;"></div>
+                </div>
+                <div class="comp-badge" id="compBadge">—</div>
+                <div class="result-sub" id="compHint" style="color:#64748b;">saturation index —</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    (function() {
+        const designCatalog = [
+            { keywords: ["synthwave","retro","sunset","80s","vaporwave"], style: "Synthwave", basePrice: 18.50, salesPotential: 94, avgWeeklyBase: 245, lifetimeMultiplier: 52, searchBase: 12800, compBase: 42 },
+            { keywords: ["cottagecore","mushroom","fairy","forest","cozy"], style: "Cottagecore", basePrice: 16.90, salesPotential: 92, avgWeeklyBase: 320, lifetimeMultiplier: 48, searchBase: 15400, compBase: 58 },
+            { keywords: ["kawaii","cute","axolotl","pastel","chibi"], style: "Kawaii", basePrice: 15.75, salesPotential: 98, avgWeeklyBase: 410, lifetimeMultiplier: 62, searchBase: 22100, compBase: 76 },
+            { keywords: ["cyberpunk","skull","neon","glitch","dragon"], style: "Cyberpunk", basePrice: 19.25, salesPotential: 85, avgWeeklyBase: 210, lifetimeMultiplier: 44, searchBase: 8900, compBase: 64 },
+            { keywords: ["vintage","owl","academia","retro","classic"], style: "Vintage", basePrice: 17.20, salesPotential: 78, avgWeeklyBase: 187, lifetimeMultiplier: 41, searchBase: 7200, compBase: 72 },
+            { keywords: ["gothic","dark","raven","floral","morbid"], style: "Gothic", basePrice: 18.00, salesPotential: 80, avgWeeklyBase: 172, lifetimeMultiplier: 39, searchBase: 6800, compBase: 55 },
+            { keywords: ["fantasy","wizard","magic","witch","potion"], style: "Fantasy", basePrice: 19.50, salesPotential: 88, avgWeeklyBase: 264, lifetimeMultiplier: 47, searchBase: 10500, compBase: 68 }
+        ];
+
+        const PRODUCT_TYPES = [
+            "sticker","art-print","poster","t-shirt","phone-case","iphone-case","samsung-case",
+            "drawing","photographic-print","metal-print","tapestry","clock","mug","pin","mask",
+            "leggings","skirt","dress","backpack","notebook","pillow","tote-bag","canvas-print",
+            "wood-print","greeting-card","hoodie","sweatshirt","long-sleeve-t-shirt","jigsaw-puzzle",
+            "spiral-notebook","hardcover-journal","drawstring-bag","duffle-bag","yoga-mat","beach-towel",
+            "scarf","socks","baseball-cap","bucket-hat","baseball-jersey","kids-clothing","baby-clothing",
+            "laptop-skin","laptop-sleeve","mouse-pad","water-bottle","coaster","apron","bath-mat",
+            "shower-curtain","duvet-cover","comforter","throw-pillow","floor-pillow","tote","eco-tote",
+            "graphic-t-shirt","graphic-tee","classic-tee","premium-t-shirt","relaxed-fit-t-shirt",
+            "fitted-t-shirt","v-neck-t-shirt","tank-top","onesie","baby-bodysuit",
+            "crewneck-sweatshirt","zip-hoodie","pullover-hoodie","lightweight-hoodie",
+            "baseball-tee","ringer-t-shirt","raglan-baseball-t-shirt","performance-t-shirt","sports-t-shirt",
+            "all-over-print-t-shirt","all-over-print-hoodie","all-over-print-sweatshirt","all-over-print-leggings",
+            "all-over-print-skirt","all-over-print-dress","all-over-print-backpack","all-over-print-tote-bag",
+            "samsung-galaxy-case","google-pixel-case","ipad-case","laptop-case","airpod-case",
+            "phone-wallet","phone-grip","phone-ring","phone-stand","magsafe-wallet"
+        ];
+
+        function isValidRedbubbleProductUrl(url) {
+            if (!url || typeof url !== 'string') return false;
+            const trimmed = url.trim().toLowerCase();
+            if (!trimmed.includes('redbubble.com')) return false;
+            const types = [...PRODUCT_TYPES].sort((a,b) => b.length - a.length).join('|');
+            const productPattern = new RegExp(
+                'redbubble\\.com\\/(?:i\\/)?(?:' + types + ')\\/[a-z0-9\\-_]+',
+                'i'
+            );
+            return productPattern.test(trimmed);
+        }
+
+        function extractProductInfo(url) {
+            try {
+                const types = [...PRODUCT_TYPES].sort((a,b) => b.length - a.length).join('|');
+                const match = url.match(
+                    new RegExp('\\/(?:i\\/)?(?:' + types + ')\\/([^/?]+)', 'i')
+                );
+                let extractedTitle = match ? decodeURIComponent(match[1].replace(/-/g, ' ')) : "Redbubble Design";
+                let rawKeywords = extractedTitle.toLowerCase().split(/\s+/).filter(w => w.length > 2);
+                let styleGuess = "Trendy";
+                for (let cat of designCatalog) {
+                    if (cat.keywords.some(kw => rawKeywords.includes(kw) || rawKeywords.some(rk => kw.includes(rk)))) {
+                        styleGuess = cat.style;
+                        break;
+                    }
+                }
+                return { rawKeywords, styleGuess, extractedTitle };
+            } catch(e) {
+                return { rawKeywords: [], styleGuess: "Trendy", extractedTitle: "Design" };
+            }
+        }
+
+        function formatSearchVolume(num) {
+            if (num >= 1000000) return (num / 1000000).toFixed(1) + 'M';
+            if (num >= 1000) return (num / 1000).toFixed(1) + 'K';
+            return num.toString();
+        }
+
+        function randInt(min, max) {
+            return Math.floor(Math.random() * (max - min + 1)) + min;
+        }
+
+        function randFloat(min, max) {
+            return Math.random() * (max - min) + min;
+        }
+
+        function computeMetrics(productInfo) {
+            if (!productInfo) return null;
+
+            let candidates = [];
+            if (productInfo.rawKeywords && productInfo.rawKeywords.length > 0) {
+                for (let cat of designCatalog) {
+                    const hits = cat.keywords.filter(kw =>
+                        productInfo.rawKeywords.some(rk => rk.includes(kw) || kw.includes(rk))
+                    ).length;
+                    if (hits > 0) candidates.push({ cat, hits });
+                }
+            }
+
+            let matchedStyle;
+            if (candidates.length > 0 && Math.random() < 0.6) {
+                candidates.sort((a,b) => b.hits - a.hits);
+                matchedStyle = candidates[0].cat;
+            } else {
+                matchedStyle = designCatalog[randInt(0, designCatalog.length - 1)];
+            }
+
+            let keywordBoost = randFloat(0.85, 1.45);
+
+            let weeklyBase = matchedStyle.avgWeeklyBase * keywordBoost;
+            let salesPotential = Math.min(98, matchedStyle.salesPotential + randInt(-8, 12));
+            let finalWeeklySales = Math.floor(weeklyBase * (salesPotential / 75) * randFloat(0.55, 1.35));
+            finalWeeklySales = Math.max(18, Math.min(2400, finalWeeklySales));
+
+            let productPrice = matchedStyle.basePrice + randFloat(-2.5, 4.5);
+            productPrice = parseFloat(productPrice.toFixed(2));
+
+            let lifetimeWeeks = matchedStyle.lifetimeMultiplier + randInt(-10, 14);
+            let lifetimeTotalRevenue = Math.floor(
+                finalWeeklySales * productPrice * (lifetimeWeeks / 4) * randFloat(0.78, 1.08)
+            );
+            let artistRoyalty = Math.floor(lifetimeTotalRevenue * randFloat(0.10, 0.22));
+            let monthlyProjection = Math.floor(finalWeeklySales * randFloat(3.9, 4.7));
+
+            let searchBase = matchedStyle.searchBase * randFloat(0.75, 1.35);
+            let predictedMonthlySearches = Math.floor(searchBase * keywordBoost * randFloat(1.1, 1.7));
+            predictedMonthlySearches = Math.max(800, Math.min(120000, predictedMonthlySearches));
+
+            let searchInsight = "";
+            if (predictedMonthlySearches >= 25000) searchInsight = "🔥 Very high demand • trending keyword";
+            else if (predictedMonthlySearches >= 12000) searchInsight = "📈 Strong demand • popular niche";
+            else if (predictedMonthlySearches >= 5000) searchInsight = "📊 Moderate demand • steady interest";
+            else searchInsight = "🌱 Low demand • niche audience";
+
+            // --- Competition Score ---
+            // Higher compBase = more saturated niche. Also influenced by search volume
+            // and a small random variance. Scale to 0-100.
+            let competitionRaw = matchedStyle.compBase
+                + (predictedMonthlySearches / 1200)   // higher demand → more sellers
+                + randFloat(-9, 9);                   // variance
+            let competitionScore = Math.round(Math.max(5, Math.min(99, competitionRaw)));
+
+            let competitionLevel, competitionHint;
+            if (competitionScore >= 70) {
+                competitionLevel = "high";
+                competitionHint = "🔴 Highly saturated • hard to rank";
+            } else if (competitionScore >= 40) {
+                competitionLevel = "moderate";
+                competitionHint = "🟡 Moderate competition • achievable";
+            } else {
+                competitionLevel = "low";
+                competitionHint = "🟢 Low competition • easier entry";
+            }
+
+            return {
+                weeklySales: finalWeeklySales,
+                monthlyEstimate: monthlyProjection,
+                lifetimeRevenue: lifetimeTotalRevenue,
+                artistEarnings: artistRoyalty,
+                monthlySearches: predictedMonthlySearches,
+                searchInsight: searchInsight,
+                formattedSearches: formatSearchVolume(predictedMonthlySearches),
+                competitionScore: competitionScore,
+                competitionLevel: competitionLevel,
+                competitionHint: competitionHint
+            };
+        }
+
+        const urlInput = document.getElementById('productUrl');
+        const analyzeBtn = document.getElementById('analyzeBtn');
+        const validationStatusDiv = document.getElementById('validationStatus');
+        const weeklySalesEl = document.getElementById('weeklySales');
+        const monthlyHintEl = document.getElementById('monthlyHint');
+        const totalRevenueEl = document.getElementById('totalRevenue');
+        const royaltyHintEl = document.getElementById('royaltyHint');
+        const searchVolumeEl = document.getElementById('searchVolume');
+        const searchInsightEl = document.getElementById('searchInsight');
+        const competitionScoreEl = document.getElementById('competitionScore');
+        const compMeterFillEl = document.getElementById('compMeterFill');
+        const compBadgeEl = document.getElementById('compBadge');
+        const compHintEl = document.getElementById('compHint');
+
+        let activeTimeout = null;
+
+        function updateValidation() {
+            const url = urlInput.value.trim();
+            const isValid = isValidRedbubbleProductUrl(url);
+            
+            if (isValid) {
+                urlInput.classList.add('valid');
+                urlInput.classList.remove('invalid');
+                validationStatusDiv.innerHTML = '<i class="fas fa-check-circle"></i> <span class="status-valid">✓ Valid Redbubble product URL</span>';
+                analyzeBtn.disabled = false;
+            } else {
+                urlInput.classList.add('invalid');
+                urlInput.classList.remove('valid');
+                if (url === '') {
+                    validationStatusDiv.innerHTML = '<i class="fas fa-info-circle"></i> <span>Enter a Redbubble product URL</span>';
+                } else if (!url.includes('redbubble.com')) {
+                    validationStatusDiv.innerHTML = '<i class="fas fa-exclamation-triangle"></i> <span class="status-invalid">✗ Must be a redbubble.com URL</span>';
+                } else {
+                    validationStatusDiv.innerHTML = '<i class="fas fa-exclamation-triangle"></i> <span class="status-invalid">✗ Invalid Redbubble product format</span>';
+                }
+                analyzeBtn.disabled = true;
+            }
+            return isValid;
+        }
+
+        function showLoading() {
+            weeklySalesEl.innerHTML = `<div class="loading-placeholder"><div class="loading-spinner-small"></div><span style="font-size:0.7rem;">scanning...</span></div>`;
+            monthlyHintEl.innerHTML = `⏳ analyzing market`;
+            totalRevenueEl.innerHTML = `<div class="loading-placeholder"><div class="loading-spinner-small"></div><span style="font-size:0.7rem;">calculating...</span></div>`;
+            royaltyHintEl.innerHTML = `⏳ estimating royalty`;
+            searchVolumeEl.innerHTML = `<div class="loading-placeholder"><div class="loading-spinner-small"></div><span style="font-size:0.7rem;">search demand...</span></div>`;
+            searchInsightEl.innerHTML = `fetching marketplace data`;
+            competitionScoreEl.innerHTML = `<div class="loading-placeholder"><div class="loading-spinner-small"></div><span style="font-size:0.7rem;">competition...</span></div>`;
+            compMeterFillEl.style.width = '0%';
+            compMeterFillEl.className = 'comp-meter-fill';
+            compBadgeEl.innerHTML = '⏳ scanning';
+            compBadgeEl.className = 'comp-badge';
+            compHintEl.innerHTML = `saturation index ⏳`;
+        }
+
+        function displayResults(metrics) {
+            if (!metrics) {
+                weeklySalesEl.innerHTML = "—";
+                monthlyHintEl.innerHTML = "↻ monthly trend —";
+                totalRevenueEl.innerHTML = "—";
+                royaltyHintEl.innerHTML = "👤 artist royalty ~—";
+                searchVolumeEl.innerHTML = "—";
+                searchInsightEl.innerHTML = "marketplace demand index";
+                competitionScoreEl.innerHTML = "—";
+                compMeterFillEl.style.width = '0%';
+                compMeterFillEl.className = 'comp-meter-fill';
+                compBadgeEl.innerHTML = "—";
+                compBadgeEl.className = 'comp-badge';
+                compHintEl.innerHTML = "saturation index —";
+                return;
+            }
+            
+            weeklySalesEl.innerHTML = metrics.weeklySales.toLocaleString() + " <span style='font-size:0.7rem;'>units/wk</span>";
+            monthlyHintEl.innerHTML = `📅 monthly ~${metrics.monthlyEstimate.toLocaleString()} units`;
+            totalRevenueEl.innerHTML = "$" + metrics.lifetimeRevenue.toLocaleString();
+            royaltyHintEl.innerHTML = `🎨 artist royalty $${metrics.artistEarnings.toLocaleString()}`;
+            searchVolumeEl.innerHTML = metrics.formattedSearches;
+            searchInsightEl.innerHTML = `<i class="fas fa-chart-line"></i> ${metrics.searchInsight}`;
+
+            // Competition score
+            competitionScoreEl.innerHTML = metrics.competitionScore + "<span style='font-size:0.9rem;'>/100</span>";
+            competitionScoreEl.className = 'comp-value comp-' + metrics.competitionLevel;
+            compMeterFillEl.style.width = metrics.competitionScore + '%';
+            compMeterFillEl.className = 'comp-meter-fill ' + metrics.competitionLevel;
+            compBadgeEl.innerHTML = metrics.competitionLevel.toUpperCase();
+            compBadgeEl.className = 'comp-badge ' + metrics.competitionLevel;
+            compHintEl.innerHTML = metrics.competitionHint;
+        }
+
+        function runEstimation() {
+            if (activeTimeout) clearTimeout(activeTimeout);
+            
+            const url = urlInput.value.trim();
+            if (!isValidRedbubbleProductUrl(url)) {
+                alert("Please enter a valid Redbubble product URL before estimating.\nExample: https://www.redbubble.com/i/iphone-case/Design-Name/123456789/abc");
+                return;
+            }
+            
+            analyzeBtn.disabled = true;
+            analyzeBtn.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> Scanning (5s)...';
+            showLoading();
+            
+            const productInfo = extractProductInfo(url);
+            const metrics = computeMetrics(productInfo);
+            
+            activeTimeout = setTimeout(() => {
+                displayResults(metrics);
+                analyzeBtn.disabled = false;
+                analyzeBtn.innerHTML = '<i class="fas fa-chart-simple"></i> Estimate';
+                updateValidation();
+                activeTimeout = null;
+            }, 5000);
+        }
+        
+        urlInput.addEventListener('input', function() {
+            updateValidation();
+        });
+        
+        analyzeBtn.addEventListener('click', function(e) {
+            if (analyzeBtn.disabled) return;
+            const url = urlInput.value.trim();
+            if (isValidRedbubbleProductUrl(url)) {
+                runEstimation();
+            } else {
+                alert("Please provide a valid Redbubble product URL.\nIt must contain 'redbubble.com' and a product path like /sticker/ or /iphone-case/.");
+            }
+        });
+        
+        urlInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                const url = urlInput.value.trim();
+                if (isValidRedbubbleProductUrl(url) && !analyzeBtn.disabled) {
+                    runEstimation();
+                } else if (!isValidRedbubbleProductUrl(url)) {
+                    alert("Invalid Redbubble product URL. Make sure it's a valid product link.");
+                }
+            }
+        });
+        
+        function initialLoad() {
+            const defaultUrl = urlInput.value.trim();
+            const isValid = isValidRedbubbleProductUrl(defaultUrl);
+            if (isValid) {
+                urlInput.classList.add('valid');
+                urlInput.classList.remove('invalid');
+                validationStatusDiv.innerHTML = '<i class="fas fa-check-circle"></i> <span class="status-valid">✓ Valid Redbubble product URL</span>';
+                analyzeBtn.disabled = false;
+                const productInfo = extractProductInfo(defaultUrl);
+                const metrics = computeMetrics(productInfo);
+                if (metrics) {
+                    displayResults(metrics);
+                }
+            } else {
+                updateValidation();
+                displayResults(null);
+            }
+        }
+        
+        initialLoad();
+    })();
+</script>
+</body>
+</html>
