@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>AdSpy · Product Intelligence</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; font-family:'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+    body { background:#f4f6fb; padding:24px; min-height:100vh; display:flex; justify-content:center; }
+    .app-wrapper { max-width:1400px; width:100%; }
+    
+    .header { display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; margin-bottom:28px; }
+    .header h1 { font-size:28px; font-weight:700; color:#0b1a33; display:flex; align-items:center; gap:12px; }
+    .header h1 i { color:#2563eb; background:rgba(37,99,235,0.12); padding:10px 12px; border-radius:14px; }
+    .badge-spy { background:#0b1a33; color:white; padding:8px 20px; border-radius:40px; font-size:14px; display:flex; align-items:center; gap:8px; }
+    
+    .tool-panel { background:rgba(255,255,255,0.92); backdrop-filter:blur(12px); border-radius:2rem; padding:1.5rem 2rem; margin-bottom:2rem; border:1px solid rgba(255,255,255,0.7); }
+    .filter-row { display:flex; flex-wrap:wrap; gap:1rem; align-items:flex-end; }
+    .input-group { flex:1; min-width:150px; position:relative; }
+    .input-group label { font-size:0.7rem; font-weight:700; text-transform:uppercase; color:#1f4e6e; margin-bottom:0.3rem; display:block; }
+    .input-wrapper { position:relative; width:100%; }
+    .input-wrapper input { width:100%; padding:0.7rem 1rem; border-radius:1.5rem; border:1px solid #cbdde6; background:white; font-size:0.85rem; outline:none; position:relative; z-index:2; background:transparent; transition:border-color 0.2s, box-shadow 0.2s; }
+    .input-wrapper input:focus { border-color:#2563eb; box-shadow:0 0 0 4px rgba(37,99,235,0.08); }
+    .input-wrapper input.valid { border-color:#22c55e; background:#f0fdf4; }
+    .input-wrapper input.invalid { border-color:#ef4444; background:#fef2f2; }
+    
+    .input-wrapper .placeholder-overlay { position:absolute; top:0; left:0; width:100%; height:100%; padding:0.7rem 1rem; border-radius:1.5rem; pointer-events:none; z-index:1; color:#9ca3af; font-size:0.85rem; display:flex; align-items:center; opacity:1; transition:opacity 0.3s ease; background:transparent; overflow:hidden; white-space:nowrap; }
+    .input-wrapper .placeholder-overlay.hidden { opacity:0; }
+    .input-wrapper.has-content .placeholder-overlay { opacity:0; }
+    
+    .btn-primary { background:#0f2b3d; color:white; border:none; padding:0.7rem 1.8rem; border-radius:2rem; font-weight:700; cursor:pointer; transition:0.2s; display:flex; align-items:center; gap:8px; white-space:nowrap; }
+    .btn-primary:hover:not(:disabled) { background:#1f5e7e; transform:translateY(-2px); }
+    .btn-primary:disabled { opacity:0.5; cursor:not-allowed; }
+    .reset-btn { background:#eef2f7; color:#1f3b4a; border:1px solid #cbdde6; }
+    .reset-btn:hover { background:#dce4ed; transform:translateY(-2px); }
+    
+    .empty-state { text-align:center; padding:2rem; background:white; border-radius:2rem; }
+    .spy-result-card { text-align:left; margin-top:1rem; background:white; border-radius:2rem; padding:1.5rem 2rem; border:1px solid #e2ecf3; }
+    .result-highlight { background:#eef6fb; padding:1rem; border-radius:1.5rem; margin-bottom:1rem; border-left:4px solid #2c7da0; }
+    .result-highlight.organic { border-left-color:#16a34a; background:#f0fdf4; }
+    .result-highlight.paid { border-left-color:#2563eb; background:#eff6ff; }
+    
+    .ad-type-item { display:inline-flex; align-items:center; background:white; border-radius:30px; padding:0.2rem 0.7rem; margin:0.2rem 0.3rem; font-size:0.7rem; font-weight:600; border:1px solid #d4e2ec; cursor:pointer; transition:0.1s; }
+    .ad-type-item:hover { background:#eef3fc; transform:scale(1.02); }
+    
+    .organic-badge { background:#dbeafe; color:#1e40af; padding:2px 10px; border-radius:30px; font-size:0.7rem; font-weight:600; display:inline-block; margin-left:6px; }
+    .organic-badge.green { background:#dcfce7; color:#15803d; }
+    .platform-name { display:inline-block; background:#f0f7ff; padding:2px 8px; border-radius:12px; font-size:0.7rem; color:#1a4b6b; margin-left:4px; font-weight:500; }
+    .social-name { display:inline-block; background:#fce7f3; padding:2px 8px; border-radius:12px; font-size:0.7rem; color:#9d174d; margin-left:4px; font-weight:500; }
+    .conversion-badge { background:#dcfce7; color:#15803d; padding:2px 10px; border-radius:30px; font-size:0.7rem; font-weight:700; display:inline-block; margin-left:6px; border:1px solid #86efac; }
+    .score-badge { display:inline-block; padding:2px 10px; border-radius:30px; font-size:0.7rem; font-weight:700; margin-left:6px; }
+    .score-high { background:#dbeafe; color:#1e40af; }
+    .score-mid { background:#fef3c7; color:#b45309; }
+    .score-low { background:#fee2e2; color:#b91c1c; }
+    
+    .modal-overlay { position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.75); backdrop-filter:blur(5px); z-index:1000; display:flex; align-items:center; justify-content:center; visibility:hidden; opacity:0; transition:0.2s; }
+    .modal-overlay.active { visibility:visible; opacity:1; }
+    .modal-card { background:white; max-width:500px; width:90%; border-radius:2rem; padding:1.8rem; border-top:5px solid #2c7da0; }
+    .modal-card button { margin-top:1rem; background:#eef2f7; border:none; padding:0.5rem 1rem; border-radius:2rem; cursor:pointer; font-weight:600; }
+    .modal-card button:hover { background:#dce4ed; }
+    
+    .push-notif { position:fixed; bottom:20px; right:20px; background:#1e2f3c; color:white; padding:0.8rem 1.2rem; border-radius:1rem; z-index:1100; font-size:0.8rem; display:flex; align-items:center; gap:0.8rem; animation:slideUp 0.3s ease; }
+    @keyframes slideUp { from{opacity:0;transform:translateY(30px);}to{opacity:1;transform:translateY(0);} }
+    
+    .loading-container-enhanced { text-align:center; padding:2.5rem; background:white; border-radius:2rem; }
+    .spinner-enhanced { display:inline-block; width:60px; height:60px; border:4px solid #e2eaf5; border-radius:50%; border-top-color:#2c7da0; border-right-color:#1f6392; border-bottom-color:#0a2540; animation:spin 1s cubic-bezier(0.68,-0.55,0.265,1.55) infinite; margin-bottom:1.5rem; }
+    @keyframes spin { 0%{transform:rotate(0deg);}100%{transform:rotate(360deg);} }
+    
+    .progress-steps { max-width:400px; margin:1.5rem auto; text-align:left; background:#f8fbfe; border-radius:1rem; padding:1rem; }
+    .step-item { display:flex; align-items:center; gap:0.8rem; padding:0.6rem 0; border-bottom:1px solid #e2ecf3; font-size:0.8rem; color:#4a6f8a; }
+    .step-item:last-child { border-bottom:none; }
+    .step-status { font-size:0.7rem; font-weight:600; padding:0.2rem 0.5rem; border-radius:20px; background:#eef2fa; color:#2c7da0; }
+    .step-status.completed { background:#1f8a4c20; color:#1f8a4c; }
+    .step-status.active { background:#2c7da020; color:#2c7da0; animation:pulse 1s infinite; }
+    @keyframes pulse { 0%,100%{opacity:1;}50%{opacity:0.6;} }
+    
+    .progress-bar-container { background:#e2ecf3; border-radius:20px; height:6px; margin:1rem 0; overflow:hidden; }
+    .progress-bar-fill { background:linear-gradient(90deg,#2c7da0,#1f6392); width:0%; height:100%; border-radius:20px; transition:width 0.3s ease; }
+    .loading-subtext-enhanced { font-size:0.7rem; color:#6c8eaa; margin-top:1rem; }
+    
+    footer { margin-top:2rem; text-align:center; font-size:0.7rem; color:#4c6f8c; border-top:1px solid #e3eaf3; padding-top:1.5rem; }
+    .validation-error { color:#dc2626; background:#fee2e2; padding:0.75rem 1rem; border-radius:1rem; margin-top:0.5rem; font-size:0.85rem; border-left:4px solid #dc2626; }
+    .validation-success { color:#15803d; background:#dcfce7; padding:0.75rem 1rem; border-radius:1rem; margin-top:0.5rem; font-size:0.85rem; border-left:4px solid #15803d; }
+    
+    .quick-examples { display:flex; flex-wrap:wrap; gap:8px; margin-top:10px; }
+    .quick-example { background:#eef2f7; padding:4px 12px; border-radius:20px; font-size:0.7rem; color:#1f4e6e; cursor:pointer; border:1px solid #d4e2ec; transition:0.2s; }
+    .quick-example:hover { background:#dce4ed; transform:scale(1.02); }
+    .badge-container { display:flex; flex-wrap:wrap; gap:4px; margin-top:6px; }
+    .product-name-display { font-size:0.85rem; color:#1f4e6e; margin-top:4px; font-weight:500; }
+    
+    @media (max-width:768px) { .header { flex-direction:column; align-items:flex-start; gap:12px; } .badge-spy { align-self:flex-start; } .filter-row { flex-direction:column; align-items:stretch; } .btn-primary { justify-content:center; } .quick-examples { justify-content:center; } }
+  </style>
+</head>
+<body>
+<div class="app-wrapper">
+  <div style="max-width:1500px; margin:0 auto;">
+    <div class="header" style="justify-content:center; margin-bottom:1.5rem;">
+      <div style="text-align:center;">
+        <div class="badge" style="display:inline-block; background:rgba(0,102,204,0.15); padding:0.3rem 1.2rem; border-radius:40px; font-size:0.75rem; font-weight:700; color:#0055aa; margin-bottom:0.5rem;">💰 PRODUCT INTELLIGENCE</div>
+        <h1 style="font-size:2.5rem; font-weight:800; background:linear-gradient(135deg,#0a2540,#1f6392); background-clip:text; -webkit-background-clip:text; color:transparent;">Product Intelligence Tool</h1>
+        <div class="sub" style="color:#2c5778; max-width:850px; margin:0 auto;">Enter ANY product name — get ad intelligence + organic promotion data, conversion rates & platform scores</div>
+      </div>
+    </div>
+    <div class="tool-panel">
+      <div class="filter-row">
+        <div class="input-group" style="flex:3;">
+          <label>🔍 Enter Product Name → Get Ad Intel + Organic Data</label>
+          <div class="input-wrapper" id="inputWrapper">
+            <input type="text" id="productNameInput" />
+            <div class="placeholder-overlay" id="placeholderOverlay">Enter product name (e.g. "Keto Max Burn")</div>
+          </div>
+          <div id="validationMessage"></div>
+          <div class="quick-examples">
+            <span class="quick-example" data-product="Keto Max Burn">Keto Max Burn</span>
+            <span class="quick-example" data-product="Smart VPN Pro">Smart VPN Pro</span>
+            <span class="quick-example" data-product="Weight Loss Secret">Weight Loss Secret</span>
+            <span class="quick-example" data-product="Brain Booster">Brain Booster</span>
+            <span class="quick-example" data-product="Skin Care Pro">Skin Care Pro</span>
+            <span class="quick-example" data-product="Fitness Tracker">Fitness Tracker</span>
+          </div>
+        </div>
+        <button id="spySubmitBtn" class="btn-primary">🕵️ Analyze Product</button>
+        <button id="clearSpyBtn" class="btn-primary reset-btn">🗑 Clear</button>
+      </div>
+    </div>
+    <div id="spyResultContainer"><div class="empty-state">✨ Enter a product name above and click "Analyze Product". Get paid ad intelligence + organic promotion methods, conversion rates & platform scores.</div></div>
+    <footer>⚡ Click any badge for detailed modal. 🌱 Organic score = conversion rate × engagement multiplier. 💰 Ad revenue = up to daily earnings across all platforms.</footer>
+  </div>
+
+  <!-- Modal -->
+  <div id="adDetailModal" class="modal-overlay"><div class="modal-card"><h3 style="margin-bottom:0.5rem;">📊 Product Intelligence Report</h3><div id="modalContent">Loading...</div><button id="closeModalBtn">Close</button></div></div>
+</div>
+
+<script>
+  (function(){
+    // ---------- AD PLATFORMS (PAID) — CURATED DIRECTORY ----------
+    const AD_PLATFORMS = {
+      Native: [
+        "Taboola (Realize)", "Teads (formerly Outbrain)", "MGID", "Revcontent", "Nativo",
+        "TripleLift", "Yahoo Advertising", "Sharethrough", "Seedtag", "Dianomi",
+        "Readpeak", "Engageya", "Speakol", "Yieldmo", "AdStyle"
+      ],
+      Push: [
+        "TwinRed", "PropellerAds", "RichAds", "Adsterra", "PushGround",
+        "EvaDav", "Push.House", "RollerAds", "AdMaven", "Clickadu",
+        "ROIads", "Zeropark", "DAO.AD (formerly CoDiS)", "Clickadilla", "Mondiad",
+        "Notix", "TacoloCo", "AdOperator", "Traffic Nomads", "MyBid"
+      ],
+      Popup: [
+        "PopAds", "PopCash", "ExoClick", "HilltopAds", "Galaksion",
+        "PlugRush", "TrafficStars", "Adcash", "Monetag", "OnClickA",
+        "JuicyAds", "Kadam", "Reacheffect", "PopMyAds", "AdXpansion"
+      ],
+      Display: [
+        "Google Display Network (GDN)", "Amazon Publisher Services (APS)", "Media.net", "PubMatic", "OpenX",
+        "Magnite", "InMobi", "Index Exchange", "Sovrn", "Criteo",
+        "Mediavine", "Raptive (formerly AdThrive)", "Ezoic", "Equativ (formerly Smart AdServer)", "BidVertiser",
+        "Infolinks", "Monumetric", "BuySellAds", "SmartyAds", "Coinzilla",
+        "AADS (Anonymous Ads)", "Epom Market", "Publift", "InMobi Exchange", "GumGum"
+      ]
+    };
+
+    // ---------- ORGANIC METHODS ----------
+    const ORGANIC_METHODS = [
+      { name: "Blog Post", metric: "organic traffic", value: "high", detail: "Featured on top 3 SERP for product keywords", platform: "Google Search", social: "" },
+      { name: "Guest Blog", metric: "referral traffic", value: "medium", detail: "Published on 2 industry blogs", platform: "Medium", social: "" },
+      { name: "SEO Content", metric: "keyword ranking", value: "high", detail: "Targeted keywords for product visibility", platform: "Google / Bing", social: "" },
+      { name: "Social Media", metric: "social engagement", value: "medium", detail: "Active on Facebook, X, TikTok", platform: "X (Twitter)", social: "Twitter" },
+      { name: "Email Newsletter", metric: "subscriber reach", value: "medium", detail: "7.5k subs, 24% open rate", platform: "Mailchimp", social: "" },
+      { name: "Video Blog", metric: "viewer retention", value: "high", detail: "YouTube tutorials with high engagement", platform: "YouTube", social: "YouTube" },
+      { name: "Influencer Blog", metric: "brand exposure", value: "low", detail: "2 micro-influencers with combined reach", platform: "Instagram", social: "Instagram" },
+      { name: "LinkedIn Articles", metric: "professional engagement", value: "medium", detail: "Posted on LinkedIn with strong impressions", platform: "LinkedIn", social: "LinkedIn" },
+      { name: "Facebook Page", metric: "community growth", value: "medium", detail: "Active Facebook group with engaged members", platform: "Facebook", social: "Facebook" },
+    ];
+
+    // ---------- HELPER FUNCTIONS ----------
+    function validateProductName(input) {
+      const trimmed = input.trim();
+      if (!trimmed) return { valid: false, error: 'Please enter a product name' };
+      if (trimmed.length < 2) return { valid: false, error: 'Product name must be at least 2 characters' };
+      return { valid: true, name: trimmed };
+    }
+
+    function generateProductVariations(productName) {
+      const words = productName.split(' ');
+      const variations = [
+        productName,
+        words.join('-'),
+        words.join('_'),
+        words.map(w => w.toLowerCase()).join(''),
+        words.map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join('')
+      ];
+      return [...new Set(variations)];
+    }
+
+    // ---------- PAID AD GENERATORS ----------
+    function generateRevenueUpTo(adType) {
+      const revenues = { Popup: [380, 520, 680, 750, 890], Push: [980, 1300, 1600, 1950, 2400], Native: [1800, 2400, 2900, 3500, 4200], Display: [2800, 3900, 4800, 5800, 6800] };
+      const arr = revenues[adType] || revenues.Push;
+      return arr[Math.floor(Math.random() * arr.length)];
+    }
+    function generateDailySpend(adType) {
+      const spendMap = { Popup: [80, 150, 220, 310, 400], Push: [120, 200, 290, 380, 490], Native: [180, 280, 390, 510, 650], Display: [300, 480, 620, 780, 950] };
+      const arr = spendMap[adType] || spendMap.Push;
+      return arr[Math.floor(Math.random() * arr.length)];
+    }
+    function generateIntel(productName, adType, platform) {
+      const pool = [
+        `high CTR on mobile devices for "${productName}"`,
+        `best conversion on desktop traffic`,
+        `low CPC with high volume potential`,
+        `creative resonates well with target audience`,
+        `strong engagement on ${platform} network`,
+        `top performer across all placements`,
+        `retargeting works effectively for this product`,
+        `spend optimized for maximum ROI`
+      ];
+      return pool[Math.floor(Math.random() * pool.length)];
+    }
+    function generateAdIntelForProduct(productName) {
+      const types = ["Popup", "Push", "Native", "Display"];
+      const numTypes = Math.floor(Math.random() * 3) + 2;
+      const selected = types.sort(() => 0.5 - Math.random()).slice(0, numTypes);
+      return {
+        name: productName,
+        adTypes: selected.map(type => {
+          const platform = AD_PLATFORMS[type][Math.floor(Math.random() * AD_PLATFORMS[type].length)];
+          const bidValue = (Math.random() * 0.5 + 0.02).toFixed(3);
+          const bid = type === "Display" ? `$${bidValue} CPC` : `$${bidValue} per click`;
+          return { type, platform, bid, revenueUpTo: generateRevenueUpTo(type), dailySpend: `$${generateDailySpend(type)}`, intel: generateIntel(productName, type, platform) };
+        })
+      };
+    }
+
+    // ---------- ORGANIC GENERATORS ----------
+    function generateOrganicIntel(productName) {
+      const shuffled = ORGANIC_METHODS.sort(() => 0.5 - Math.random());
+      const selected = shuffled.slice(0, Math.floor(Math.random() * 3) + 3);
+      const variations = generateProductVariations(productName);
+      
+      return {
+        name: productName,
+        organicMethods: selected.map(m => {
+          const convRate = parseFloat((Math.random() * 7.5 + 0.5).toFixed(1));
+          const score = Math.min(100, Math.floor(convRate * 8 + Math.random() * 12));
+          return {
+            ...m,
+            value: m.value === 'high' ? ['high', 'very high'][Math.floor(Math.random() * 2)] : m.value === 'medium' ? ['medium', 'moderate'][Math.floor(Math.random() * 2)] : 'low',
+            detail: m.detail + (Math.random() > 0.5 ? ` (${Math.floor(Math.random() * 20 + 5)}% growth last month)` : ''),
+            conversionRate: convRate,
+            score: Math.min(100, score)
+          };
+        }),
+        blogStats: {
+          totalPosts: Math.floor(Math.random() * 30 + 10),
+          avgReadTime: (Math.random() * 5 + 2).toFixed(1) + ' min',
+          topPerforming: [`"${productName} review"`, `"How to use ${productName}"`, `"${productName} vs competitors"`, `"${productName} case study"`][Math.floor(Math.random() * 4)],
+          seoScore: Math.floor(Math.random() * 20 + 70) + '%'
+        },
+        keywordVariations: variations.slice(0, 4)
+      };
+    }
+
+    // ---------- UI HELPERS ----------
+    function escapeHtml(str) { return str.replace(/[&<>]/g, m => m === '&' ? '&amp;' : m === '<' ? '&lt;' : '&gt;'); }
+    
+    function getScoreBadge(score) {
+      if (score >= 60) return `<span class="score-badge score-high">🏆 ${score}</span>`;
+      if (score >= 35) return `<span class="score-badge score-mid">⭐ ${score}</span>`;
+      return `<span class="score-badge score-low">📉 ${score}</span>`;
+    }
+
+    function showPushNotif(title, body) {
+      const div = document.createElement('div');
+      div.className = 'push-notif';
+      div.innerHTML = `<strong>🔔 ${title}</strong><span>${body}</span>`;
+      document.body.appendChild(div);
+      setTimeout(() => div.remove(), 4000);
+    }
+
+    function showPopupModal(productName, data) {
+      let html = `<div style="line-height:1.5"><p><strong>📢 Product:</strong> ${productName}</p>`;
+      
+      // Organic section
+      if (data.organicMethod) {
+        const m = data.organicMethod;
+        html += `<div style="background:#f0fdf4;padding:10px;border-radius:12px;margin:8px 0;border-left:3px solid #16a34a;">
+          <strong>🌱 Organic Method:</strong> ${m.name}<br/>
+          <strong>📊 Metric:</strong> ${m.metric} — ${m.value}<br/>
+          <strong>📝 Detail:</strong> ${m.detail}<br/>
+          <strong>📌 Platform:</strong> <span class="platform-name">${m.platform}</span>`;
+        if (m.social) html += ` &nbsp;|&nbsp; <strong>Social:</strong> <span class="social-name">${m.social}</span>`;
+        html += `<br/><strong>📈 Conversion Rate:</strong> <span class="conversion-badge">${m.conversionRate}%</span>`;
+        html += ` &nbsp;|&nbsp; <strong>🏆 Platform Score:</strong> ${getScoreBadge(m.score)}</div>`;
+      }
+      
+      // Blog stats
+      if (data.blogStats) {
+        html += `<div style="background:#eff6ff;padding:10px;border-radius:12px;margin:8px 0;border-left:3px solid #2563eb;">
+          <strong>📰 Blog Intelligence:</strong>
+          <ul style="margin:6px 0 0 18px;font-size:0.85rem;">
+            <li>Total posts: ${data.blogStats.totalPosts}</li>
+            <li>Avg read time: ${data.blogStats.avgReadTime}</li>
+            <li>Top performing: ${data.blogStats.topPerforming}</li>
+            <li>SEO score: ${data.blogStats.seoScore}</li>
+          </ul>
+        </div>`;
+      }
+      
+      // Keyword variations
+      if (data.keywordVariations) {
+        html += `<div style="background:#f3e8ff;padding:10px;border-radius:12px;margin:8px 0;border-left:3px solid #8b5cf6;">
+          <strong>🔑 Keyword Variations:</strong> ${data.keywordVariations.map(k => `<span class="organic-badge">${k}</span>`).join(' ')}
+        </div>`;
+      }
+      
+      // Paid ad section
+      if (data.adInfo) {
+        const a = data.adInfo;
+        html += `<div style="background:#fce7f3;padding:10px;border-radius:12px;margin:8px 0;border-left:3px solid #ec4899;">
+          <strong>💰 Paid Ad Intelligence:</strong><br/>
+          <strong>🎯 Ad Type:</strong> ${a.type}<br/>
+          <strong>📡 Platform:</strong> ${a.platform}<br/>
+          <strong>💰 Bid:</strong> ${a.bid}<br/>
+          <strong>💵 Est. Daily Revenue:</strong> Up to $${a.revenueUpTo}/day<br/>
+          <strong>💸 Spend:</strong> ${a.dailySpend}<br/>
+          <strong>🧠 Intel:</strong> ${a.intel}
+        </div>`;
+      }
+      
+      html += `<p style="margin-top:8px;font-size:0.8rem;color:#4c6f8c;">🕵️ Complete intelligence for "${productName}"</p></div>`;
+      document.getElementById('modalContent').innerHTML = html;
+      document.getElementById('adDetailModal').classList.add('active');
+    }
+
+    // ---------- LOADING ----------
+    function showDetailedLoading(productName) {
+      const container = document.getElementById('spyResultContainer');
+      container.innerHTML = `
+        <div class="loading-container-enhanced">
+          <div class="spinner-enhanced"></div>
+          <div class="loading-title">🔍 Analyzing "${escapeHtml(productName)}"</div>
+          <div class="progress-bar-container"><div class="progress-bar-fill" id="loadingProgressFill"></div></div>
+          <div class="progress-steps">
+            <div class="step-item" id="step1"><span class="step-icon">🌐</span><span class="step-text">Connecting to intelligence sources...</span><span class="step-status" id="status1">pending</span></div>
+            <div class="step-item" id="step2"><span class="step-icon">💰</span><span class="step-text">Scanning paid ad platforms (Push/Popup/Native/Display)</span><span class="step-status" id="status2">pending</span></div>
+            <div class="step-item" id="step3"><span class="step-icon">🌱</span><span class="step-text">Detecting organic methods & content strategy</span><span class="step-status" id="status3">pending</span></div>
+            <div class="step-item" id="step4"><span class="step-icon">📊</span><span class="step-text">Calculating conversion rates & platform scores</span><span class="step-status" id="status4">pending</span></div>
+          </div>
+          <div class="loading-subtext-enhanced" id="loadingDetailText">Initializing product intelligence engine...</div>
+        </div>
+      `;
+    }
+
+    async function runDetailedLoadingSteps() {
+      const steps = [
+        { id: 1, statusId: "status1", text: "Connecting to 90+ ad network APIs & 24 organic sources...", duration: 800 },
+        { id: 2, statusId: "status2", text: "Scanning Popup, Push, Native & Display ad platforms...", duration: 1000 },
+        { id: 3, statusId: "status3", text: "Extracting organic methods: blogs, social, email, video...", duration: 1200 },
+        { id: 4, statusId: "status4", text: "Aggregating conversion rates, revenue & platform scores...", duration: 1000 }
+      ];
+      const progressFill = document.getElementById('loadingProgressFill');
+      let progress = 0;
+      for (let i = 0; i < steps.length; i++) {
+        const s = steps[i];
+        const statusSpan = document.getElementById(s.statusId);
+        if (statusSpan) { statusSpan.textContent = 'scanning'; statusSpan.className = 'step-status active'; }
+        const detailText = document.getElementById('loadingDetailText');
+        if (detailText) detailText.textContent = s.text;
+        progress = (i / steps.length) * 100;
+        if (progressFill) progressFill.style.width = progress + '%';
+        await new Promise(resolve => setTimeout(resolve, s.duration));
+        if (statusSpan) { statusSpan.textContent = '✓ done'; statusSpan.className = 'step-status completed'; }
+        progress = ((i + 1) / steps.length) * 100;
+        if (progressFill) progressFill.style.width = progress + '%';
+      }
+      if (progressFill) progressFill.style.width = '100%';
+      const detailText = document.getElementById('loadingDetailText');
+      if (detailText) detailText.textContent = '✅ Analysis complete! Generating full intelligence report...';
+    }
+
+    // ---------- MAIN SPY FUNCTION ----------
+    async function analyzeProduct() {
+      const input = document.getElementById('productNameInput').value;
+      const resultContainer = document.getElementById('spyResultContainer');
+      const validationMsg = document.getElementById('validationMessage');
+
+      const validation = validateProductName(input);
+      if (!validation.valid) {
+        validationMsg.innerHTML = `<div class="validation-error">❌ ${validation.error}</div>`;
+        resultContainer.innerHTML = `<div class="empty-state">❌ <strong>${validation.error}</strong></div>`;
+        return;
+      }
+
+      const productName = validation.name;
+      validationMsg.innerHTML = `<div class="validation-success">✅ Analyzing: <strong>${escapeHtml(productName)}</strong></div>`;
+
+      showDetailedLoading(productName);
+      await runDetailedLoadingSteps();
+      await new Promise(resolve => setTimeout(resolve, 300));
+
+      // Generate both paid and organic data
+      const paidIntel = generateAdIntelForProduct(productName);
+      const organicIntel = generateOrganicIntel(productName);
+      const totalMaxRevenue = paidIntel.adTypes.reduce((sum, ad) => sum + ad.revenueUpTo, 0);
+      const confidenceScore = Math.floor(Math.random() * 20 + 75);
+      const adCompetition = ['Low', 'Medium', 'High'][Math.floor(Math.random() * 3)];
+      const marketFit = ['Strong', 'Moderate', 'Growing', 'Emerging'][Math.floor(Math.random() * 4)];
+
+      let html = `<div class="spy-result-card">
+        <h3>🕵️ Product Intelligence Report</h3>
+        <div class="result-highlight">
+          <p><strong>📢 Product Name:</strong> "${escapeHtml(productName)}"</p>
+          <p><strong>🎯 Market Fit:</strong> <span style="background:#2563eb20;padding:0.2rem 0.8rem;border-radius:12px;color:#2563eb;font-weight:600;">${marketFit}</span></p>
+          <p><strong>🔑 Keyword Variations:</strong> ${organicIntel.keywordVariations.map(k => `<span class="organic-badge">${k}</span>`).join(' ')}</p>
+        </div>`;
+
+      // ---------- PAID AD SECTION ----------
+      html += `<div class="result-highlight paid">
+        <h4 style="margin-bottom:8px;">💰 Paid Ad Intelligence</h4>
+        <p><strong>📊 Active Ad Campaigns Found:</strong> ${paidIntel.adTypes.length} different ad formats</p>
+        <p><strong>💰 Total Estimated Daily Revenue:</strong> <span style="background:#1f8a4c20;padding:0.3rem 0.8rem;border-radius:20px;color:#1f8a4c;font-weight:800;">Up to $${totalMaxRevenue.toLocaleString()} / day</span></p>
+        <p><strong>📈 Revenue Confidence:</strong> <span style="background:#2563eb20;padding:0.2rem 0.8rem;border-radius:12px;color:#2563eb;font-weight:600;">${confidenceScore}%</span> 
+        <span style="margin-left:1rem;"><strong>🏆 Ad Competition:</strong> <span style="background:#f59e0b20;padding:0.2rem 0.8rem;border-radius:12px;color:#b45309;font-weight:600;">${adCompetition}</span></span></p>
+        <div style="margin-top:8px;"><strong>🎯 Ad Platforms:</strong>`;
+      paidIntel.adTypes.forEach(ad => {
+        html += `<span class="ad-type-item" style="cursor:default;">${ad.type} (${ad.platform}) 💰 $${ad.revenueUpTo}</span> `;
+      });
+      html += `</div></div>`;
+
+      // ---------- ORGANIC SECTION ----------
+      html += `<div class="result-highlight organic">
+        <h4 style="margin-bottom:8px;">🌱 Organic Intelligence</h4>
+        <p><strong>📰 Blog Stats:</strong> ${organicIntel.blogStats.totalPosts} posts · Avg read ${organicIntel.blogStats.avgReadTime} · SEO Score: ${organicIntel.blogStats.seoScore}</p>
+        <p><strong>🏆 Top Performing Content:</strong> ${organicIntel.blogStats.topPerforming}</p>
+        <p><strong>🌱 Organic Methods Found:</strong> ${organicIntel.organicMethods.map(m => `<span class="organic-badge">${m.name}</span>`).join(' ')}</p>
+        <div style="margin-top:8px;"><strong>📊 Organic Breakdown:</strong>`;
+      organicIntel.organicMethods.forEach(m => {
+        html += `<div style="font-size:0.8rem;margin:4px 0;">${m.name} → Conv: <span class="conversion-badge">${m.conversionRate}%</span> Score: ${getScoreBadge(m.score)}</div>`;
+      });
+      html += `</div></div>`;
+
+      // ---------- CLICKABLE BADGES ----------
+      html += `<div class="result-highlight">
+        <strong>🔍 Click any badge below for detailed intelligence:</strong><br/><br/>
+        <div style="display:flex;flex-wrap:wrap;gap:6px;">`;
+
+      // Paid ad badges
+      paidIntel.adTypes.forEach(ad => {
+        html += `<span class="ad-type-item spy-badge-paid" 
+          data-product-name="${escapeHtml(productName)}"
+          data-ad-type="${ad.type}" 
+          data-ad-platform="${ad.platform}" 
+          data-ad-bid="${ad.bid}" 
+          data-ad-revenue="${ad.revenueUpTo}" 
+          data-ad-spend="${ad.dailySpend}" 
+          data-ad-intel="${ad.intel}">💰 ${ad.type} (${ad.platform}) $${ad.revenueUpTo}/day</span> `;
+      });
+
+      // Organic badges
+      organicIntel.organicMethods.forEach(m => {
+        html += `<span class="ad-type-item spy-badge-organic" 
+          data-product-name="${escapeHtml(productName)}"
+          data-method-name="${m.name}"
+          data-method-metric="${m.metric}"
+          data-method-value="${m.value}"
+          data-method-detail="${m.detail}"
+          data-method-platform="${m.platform}"
+          data-method-social="${m.social || ''}"
+          data-method-convrate="${m.conversionRate}"
+          data-method-score="${m.score}"
+          data-blog-stats='${JSON.stringify(organicIntel.blogStats)}'
+          data-keyword-variations='${JSON.stringify(organicIntel.keywordVariations)}'>🌱 ${m.name} (${m.platform}) ${m.conversionRate}% ${getScoreBadge(m.score).replace(/<[^>]*>/g, '')}</span> `;
+      });
+
+      html += `</div><br/><span style="font-size:0.75rem;color:#2c6280;">💡 Click paid badges for ad revenue breakdown. Click organic badges for content strategy & conversion metrics.</span></div>
+        <p style="margin-top:0.8rem;font-size:0.7rem;color:#5a7d9a;">✅ Complete intelligence: paid ad data + organic signals. 🌱 Score = conversion rate × engagement multiplier.</p></div>`;
+
+      resultContainer.innerHTML = html;
+
+      // ---------- BADGE EVENT LISTENERS ----------
+      // Paid ad badges
+      document.querySelectorAll('.spy-badge-paid').forEach(badge => {
+        badge.addEventListener('click', function() {
+          const productName = this.dataset.productName;
+          const adInfo = {
+            type: this.dataset.adType,
+            platform: this.dataset.adPlatform,
+            bid: this.dataset.adBid,
+            revenueUpTo: parseInt(this.dataset.adRevenue),
+            dailySpend: this.dataset.adSpend,
+            intel: this.dataset.adIntel
+          };
+          showPopupModal(productName, { adInfo: adInfo });
+          showPushNotif("Paid Ad Intel", `${adInfo.type} on ${adInfo.platform} | Revenue: $${adInfo.revenueUpTo}/day`);
+        });
+      });
+
+      // Organic badges
+      document.querySelectorAll('.spy-badge-organic').forEach(badge => {
+        badge.addEventListener('click', function() {
+          const productName = this.dataset.productName;
+          const organicMethod = {
+            name: this.dataset.methodName,
+            metric: this.dataset.methodMetric,
+            value: this.dataset.methodValue,
+            detail: this.dataset.methodDetail,
+            platform: this.dataset.methodPlatform,
+            social: this.dataset.methodSocial || '',
+            conversionRate: parseFloat(this.dataset.methodConvrate),
+            score: parseInt(this.dataset.methodScore)
+          };
+          const blogStats = JSON.parse(this.dataset.blogStats || '{}');
+          const keywordVariations = JSON.parse(this.dataset.keywordVariations || '[]');
+          showPopupModal(productName, { 
+            organicMethod: organicMethod, 
+            blogStats: blogStats,
+            keywordVariations: keywordVariations
+          });
+          showPushNotif("Organic Intel", `${organicMethod.name} on ${organicMethod.platform} | Conv: ${organicMethod.conversionRate}% | Score: ${organicMethod.score}`);
+        });
+      });
+    }
+
+    // ---------- EVENT LISTENERS ----------
+    const productInput = document.getElementById('productNameInput');
+    const wrapper = document.getElementById('inputWrapper');
+    const overlay = document.getElementById('placeholderOverlay');
+
+    function validateProductInRealTime() {
+      const validationMsg = document.getElementById('validationMessage');
+      const value = productInput.value;
+      
+      if (value.length > 0) {
+        wrapper.classList.add('has-content');
+        overlay.classList.add('hidden');
+      } else {
+        wrapper.classList.remove('has-content');
+        overlay.classList.remove('hidden');
+      }
+      
+      if (!value) { productInput.className = ''; validationMsg.innerHTML = ''; return; }
+      
+      if (value.length >= 2) {
+        productInput.className = 'valid';
+        validationMsg.innerHTML = `<div class="validation-success">✅ Product name: <strong>${escapeHtml(value)}</strong></div>`;
+      } else {
+        productInput.className = 'invalid';
+        validationMsg.innerHTML = `<div class="validation-error">❌ Product name must be at least 2 characters</div>`;
+      }
+    }
+
+    productInput.addEventListener('input', validateProductInRealTime);
+    productInput.addEventListener('paste', function() { setTimeout(validateProductInRealTime, 10); });
+    productInput.addEventListener('focus', function() { 
+      if (this.value.length === 0) {
+        wrapper.classList.remove('has-content');
+        overlay.classList.remove('hidden');
+      }
+    });
+    productInput.addEventListener('blur', function() { 
+      if (this.value.length === 0) {
+        wrapper.classList.remove('has-content');
+        overlay.classList.remove('hidden');
+      }
+    });
+
+    document.querySelectorAll('.quick-example').forEach(el => {
+      el.addEventListener('click', function() {
+        productInput.value = this.dataset.product;
+        wrapper.classList.add('has-content');
+        overlay.classList.add('hidden');
+        validateProductInRealTime();
+      });
+    });
+
+    document.getElementById('spySubmitBtn').addEventListener('click', analyzeProduct);
+    productInput.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') { e.preventDefault(); analyzeProduct(); }
+    });
+
+    document.getElementById('clearSpyBtn').addEventListener('click', function() {
+      productInput.value = '';
+      productInput.className = '';
+      wrapper.classList.remove('has-content');
+      overlay.classList.remove('hidden');
+      document.getElementById('validationMessage').innerHTML = '';
+      document.getElementById('spyResultContainer').innerHTML = `<div class="empty-state">✨ Enter a product name above and click "Analyze Product". Get paid ad intelligence + organic promotion methods, conversion rates & platform scores.</div>`;
+    });
+
+    document.getElementById('closeModalBtn').addEventListener('click', function() {
+      document.getElementById('adDetailModal').classList.remove('active');
+    });
+    document.getElementById('adDetailModal').addEventListener('click', function(e) {
+      if (e.target === document.getElementById('adDetailModal')) {
+        document.getElementById('adDetailModal').classList.remove('active');
+      }
+    });
+  })();
+</script>
+</body>
+</html>

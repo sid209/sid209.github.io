@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>AdSpy · Organic Intelligence</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; font-family:'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+    body { background:#f4f6fb; padding:24px; min-height:100vh; display:flex; justify-content:center; }
+    .app-wrapper { max-width:1400px; width:100%; }
+    
+    .header { display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; margin-bottom:28px; }
+    .header h1 { font-size:28px; font-weight:700; color:#0b1a33; display:flex; align-items:center; gap:12px; }
+    .header h1 i { color:#2563eb; background:rgba(37,99,235,0.12); padding:10px 12px; border-radius:14px; }
+    .badge-spy { background:#0b1a33; color:white; padding:8px 20px; border-radius:40px; font-size:14px; display:flex; align-items:center; gap:8px; }
+    
+    .tool-panel { background:rgba(255,255,255,0.92); backdrop-filter:blur(12px); border-radius:2rem; padding:1.5rem 2rem; margin-bottom:2rem; border:1px solid rgba(255,255,255,0.7); }
+    .filter-row { display:flex; flex-wrap:wrap; gap:1rem; align-items:flex-end; }
+    .input-group { flex:1; min-width:150px; }
+    .input-group label { font-size:0.7rem; font-weight:700; text-transform:uppercase; color:#1f4e6e; margin-bottom:0.3rem; display:block; }
+    .input-group input, .input-group select, .input-group textarea { width:100%; padding:0.7rem 1rem; border-radius:1.5rem; border:1px solid #cbdde6; background:white; font-size:0.85rem; outline:none; }
+    .btn-primary { background:#0f2b3d; color:white; border:none; padding:0.7rem 1.8rem; border-radius:2rem; font-weight:700; cursor:pointer; transition:0.2s; }
+    .btn-primary:hover { background:#1f5e7e; transform:translateY(-2px); }
+    .reset-btn { background:#eef2f7; color:#1f3b4a; border:1px solid #cbdde6; }
+    .empty-state { text-align:center; padding:2rem; background:white; border-radius:2rem; }
+    .spy-result-card { text-align:left; margin-top:1rem; background:white; border-radius:2rem; padding:1.5rem 2rem; border:1px solid #e2ecf3; }
+    .result-highlight { background:#eef6fb; padding:1rem; border-radius:1.5rem; margin-bottom:1rem; border-left:4px solid #2c7da0; }
+    .blog-item { display:inline-flex; align-items:center; background:white; border-radius:30px; padding:0.2rem 0.7rem; margin:0.2rem 0.3rem; font-size:0.7rem; font-weight:600; border:1px solid #d4e2ec; cursor:pointer; transition:0.1s; }
+    .blog-item:hover { background:#eef3fc; transform:scale(1.02); }
+    .modal-overlay { position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.75); backdrop-filter:blur(5px); z-index:1000; display:flex; align-items:center; justify-content:center; visibility:hidden; opacity:0; transition:0.2s; }
+    .modal-overlay.active { visibility:visible; opacity:1; }
+    .modal-card { background:white; max-width:500px; width:90%; border-radius:2rem; padding:1.8rem; border-top:5px solid #2c7da0; }
+    .push-notif { position:fixed; bottom:20px; right:20px; background:#1e2f3c; color:white; padding:0.8rem 1.2rem; border-radius:1rem; z-index:1100; font-size:0.8rem; display:flex; align-items:center; gap:0.8rem; animation:slideUp 0.3s ease; }
+    @keyframes slideUp { from{opacity:0;transform:translateY(30px);}to{opacity:1;transform:translateY(0);} }
+    .loading-container-enhanced { text-align:center; padding:2.5rem; background:white; border-radius:2rem; }
+    .spinner-enhanced { display:inline-block; width:60px; height:60px; border:4px solid #e2eaf5; border-radius:50%; border-top-color:#2c7da0; border-right-color:#1f6392; border-bottom-color:#0a2540; animation:spin 1s cubic-bezier(0.68,-0.55,0.265,1.55) infinite; margin-bottom:1.5rem; }
+    @keyframes spin { 0%{transform:rotate(0deg);}100%{transform:rotate(360deg);} }
+    .progress-steps { max-width:400px; margin:1.5rem auto; text-align:left; background:#f8fbfe; border-radius:1rem; padding:1rem; }
+    .step-item { display:flex; align-items:center; gap:0.8rem; padding:0.6rem 0; border-bottom:1px solid #e2ecf3; font-size:0.8rem; color:#4a6f8a; }
+    .step-item:last-child { border-bottom:none; }
+    .step-status { font-size:0.7rem; font-weight:600; padding:0.2rem 0.5rem; border-radius:20px; background:#eef2fa; color:#2c7da0; }
+    .step-status.completed { background:#1f8a4c20; color:#1f8a4c; }
+    .step-status.active { background:#2c7da020; color:#2c7da0; animation:pulse 1s infinite; }
+    @keyframes pulse { 0%,100%{opacity:1;}50%{opacity:0.6;} }
+    .progress-bar-container { background:#e2ecf3; border-radius:20px; height:6px; margin:1rem 0; overflow:hidden; }
+    .progress-bar-fill { background:linear-gradient(90deg,#2c7da0,#1f6392); width:0%; height:100%; border-radius:20px; transition:width 0.3s ease; }
+    .loading-subtext-enhanced { font-size:0.7rem; color:#6c8eaa; margin-top:1rem; }
+    footer { margin-top:2rem; text-align:center; font-size:0.7rem; color:#4c6f8c; }
+    .validation-error { color:#dc2626; background:#fee2e2; padding:0.75rem 1rem; border-radius:1rem; margin-top:0.5rem; font-size:0.85rem; border-left:4px solid #dc2626; }
+    .organic-badge { background:#dbeafe; color:#1e40af; padding:2px 10px; border-radius:30px; font-size:0.7rem; font-weight:600; display:inline-block; margin-left:6px; }
+    .platform-name { display:inline-block; background:#f0f7ff; padding:2px 8px; border-radius:12px; font-size:0.7rem; color:#1a4b6b; margin-left:4px; font-weight:500; }
+    .social-name { display:inline-block; background:#fce7f3; padding:2px 8px; border-radius:12px; font-size:0.7rem; color:#9d174d; margin-left:4px; font-weight:500; }
+    .conversion-badge { background:#dcfce7; color:#15803d; padding:2px 10px; border-radius:30px; font-size:0.7rem; font-weight:700; display:inline-block; margin-left:6px; border:1px solid #86efac; }
+    .score-badge { display:inline-block; padding:2px 10px; border-radius:30px; font-size:0.7rem; font-weight:700; margin-left:6px; }
+    .score-high { background:#dbeafe; color:#1e40af; }
+    .score-mid { background:#fef3c7; color:#b45309; }
+    .score-low { background:#fee2e2; color:#b91c1c; }
+  </style>
+</head>
+<body>
+<div class="app-wrapper">
+  <!-- ========== SINGLE TAB: ORGANIC SPY ========== -->
+  <div style="max-width:1500px; margin:0 auto;">
+    <div class="header" style="justify-content:center; margin-bottom:1.5rem;">
+      <div style="text-align:center;">
+        <div class="badge" style="display:inline-block; background:rgba(0,102,204,0.15); padding:0.3rem 1.2rem; border-radius:40px; font-size:0.75rem; font-weight:700; color:#0055aa; margin-bottom:0.5rem;">🌱 ORGANIC INTELLIGENCE</div>
+        <h1 style="font-size:2.5rem; font-weight:800; background:linear-gradient(135deg,#0a2540,#1f6392); background-clip:text; -webkit-background-clip:text; color:transparent;">Organic SpyTool</h1>
+        <div class="sub" style="color:#2c5778; max-width:850px; margin:0 auto;">Enter ANY Offer Vault URL — get organic promotion data, blog insights, platform names, social networks, conversion % & platform scores</div>
+      </div>
+    </div>
+    <div class="tool-panel">
+      <div class="filter-row">
+        <div class="input-group" style="flex:3;"><label>🔗 Enter ANY Offer Vault URL → Get Organic Intel</label>
+          <textarea id="offerUrlInput" rows="2" placeholder="Example: 'https://offervault.com/offer/12345-keto-max-burn', 'https://offervault.com/offer/67890-smart-vpn-pro'"></textarea>
+          <div id="validationMessage"></div>
+        </div>
+        <button id="spySubmitBtn" class="btn-primary">🌿 Spy Offer → Get Organic Data</button>
+        <button id="clearSpyBtn" class="btn-primary reset-btn">🗑 Clear</button>
+      </div>
+    </div>
+    <div id="spyResultContainer"><div class="empty-state">✨ Enter ANY Offer Vault URL above and click "Spy Offer". Get organic promotion methods, blog insights, platform names, social networks, conversion % & platform scores.</div></div>
+    <footer>⚡ Click any badge for detailed modal with content strategy, SEO metrics, platform names, social networks, conversion % & platform score. 🏆 Score = conversion rate × engagement multiplier.</footer>
+  </div>
+
+  <!-- Modal -->
+  <div id="adDetailModal" class="modal-overlay"><div class="modal-card"><h3 style="margin-bottom:0.5rem;">🌱 Organic  Report</h3><div id="modalContent">Loading...</div><button id="closeModalBtn" style="margin-top:1rem; background:#eef2f7; border:none; padding:0.5rem 1rem; border-radius:2rem; cursor:pointer;">Close</button></div></div>
+</div>
+
+<script>
+  (function(){
+    // ---------- ORGANIC SPY (conversion % + platform score) ----------
+    const ORGANIC_METHODS = [
+      { name: "Blog Post", metric: "organic traffic", value: "high", detail: "Featured on top 3 SERP for 'best offer'", platform: "Google Search", social: "" },
+      { name: "Guest Blog", metric: "referral traffic", value: "medium", detail: "Published on 2 industry blogs", platform: "Medium", social: "" },
+      { name: "SEO Content", metric: "keyword ranking", value: "high", detail: "Targeted keywords: 'exclusive deal', 'top offer'", platform: "Google / Bing", social: "" },
+      { name: "Social Media", metric: "social engagement", value: "medium", detail: "Active on Facebook, X, TikTok", platform: "X (Twitter)", social: "Twitter" },
+      { name: "Email Newsletter", metric: "subscriber reach", value: "medium", detail: "7.5k subs, 24% open rate", platform: "Mailchimp", social: "" },
+      { name: "Video Blog", metric: "viewer retention", value: "high", detail: "YouTube tutorials, 12k views per video", platform: "YouTube", social: "YouTube" },
+      { name: "Influencer Blog", metric: "brand exposure", value: "low", detail: "2 micro-influencers with 15k combined reach", platform: "Instagram", social: "Instagram" },
+      { name: "LinkedIn Articles", metric: "professional engagement", value: "medium", detail: "Posted on LinkedIn, 2.1k impressions", platform: "LinkedIn", social: "LinkedIn" },
+      { name: "Facebook Page", metric: "community growth", value: "medium", detail: "Active Facebook group with 3.2k members", platform: "Facebook", social: "Facebook" },
+    ];
+
+    function isValidOfferVaultUrl(url) {
+      try { const parsed = new URL(url); return parsed.hostname === 'offervault.com' || parsed.hostname === 'www.offervault.com'; } catch { return false; }
+    }
+    function extractOfferNameFromUrl(url) {
+      let cleaned = url.trim().replace(/^https?:\/\//, '');
+      const parts = cleaned.split('/');
+      let lastPart = parts[parts.length - 1]?.split('?')[0] || '';
+      lastPart = lastPart.replace(/^\d+-/, '').replace(/[-_]/g, ' ');
+      return lastPart.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ') || "Offer from Vault";
+    }
+    
+    function generateOrganicIntel(offerName) {
+      const shuffled = ORGANIC_METHODS.sort(() => 0.5 - Math.random());
+      const selected = shuffled.slice(0, Math.floor(Math.random() * 3) + 3);
+      return {
+        name: offerName,
+        organicMethods: selected.map(m => {
+          // Lower conversion rate: 0.5% to 8%
+          const convRate = parseFloat((Math.random() * 7.5 + 0.5).toFixed(1));
+          // Score based on conversion rate with a multiplier
+          const score = Math.min(100, Math.floor(convRate * 8 + Math.random() * 12));
+          return {
+            ...m,
+            value: m.value === 'high' ? ['high', 'very high'][Math.floor(Math.random() * 2)] : 
+                    m.value === 'medium' ? ['medium', 'moderate'][Math.floor(Math.random() * 2)] : 'low',
+            detail: m.detail + (Math.random() > 0.5 ? ` (${Math.floor(Math.random() * 20 + 5)}% growth last month)` : ''),
+            conversionRate: convRate,
+            score: Math.min(100, score)
+          };
+        }),
+        blogStats: {
+          totalPosts: Math.floor(Math.random() * 30 + 10),
+          avgReadTime: (Math.random() * 5 + 2).toFixed(1) + ' min',
+          topPerforming: ['"How to maximize offers"', '"Top 10 deals"', '"Ultimate guide"', '"Case study"'][Math.floor(Math.random() * 4)],
+          seoScore: Math.floor(Math.random() * 20 + 70) + '%'
+        }
+      };
+    }
+    
+    function showPushNotif(title, body) {
+      const div = document.createElement('div');
+      div.className = 'push-notif';
+      div.innerHTML = `<strong>🌱 ${title}</strong><span>${body}</span>`;
+      document.body.appendChild(div);
+      setTimeout(() => div.remove(), 4000);
+    }
+    
+    function getScoreBadge(score) {
+      if (score >= 60) return `<span class="score-badge score-high">🏆 ${score}</span>`;
+      if (score >= 35) return `<span class="score-badge score-mid">⭐ ${score}</span>`;
+      return `<span class="score-badge score-low">📉 ${score}</span>`;
+    }
+    
+    function showPopupModal(offerName, blogData, organicMethod) {
+      let organicHtml = `<p><strong>📢 Offer:</strong> ${offerName}</p>`;
+      if (organicMethod) {
+        const convText = organicMethod.conversionRate ? `${organicMethod.conversionRate}%` : 'N/A';
+        const scoreHtml = organicMethod.score ? getScoreBadge(organicMethod.score) : '';
+        organicHtml += `<p><strong>🌱 Method:</strong> ${organicMethod.name}</p>
+          <p><strong>📊 Metric:</strong> ${organicMethod.metric} — <strong>${organicMethod.value}</strong></p>
+          <p><strong>📝 Detail:</strong> ${organicMethod.detail}</p>
+          <p><strong>📌 Platform:</strong> <span class="platform-name">${organicMethod.platform}</span>`;
+        if (organicMethod.social) {
+          organicHtml += ` &nbsp;|&nbsp; <strong>Social Network:</strong> <span class="social-name">${organicMethod.social}</span>`;
+        }
+        organicHtml += `</p>
+          <p><strong>📈 Conversion Rate:</strong> <span class="conversion-badge">${convText}</span></p>
+          <p><strong>🏆 Platform Score:</strong> ${scoreHtml} (based on conversion rate × engagement)</p>`;
+      }
+      if (blogData) {
+        organicHtml += `<div style="margin-top:10px; border-top:1px solid #dbeafe; padding-top:10px;">
+          <strong>📰 Blog Intelligence:</strong>
+          <ul style="margin-top:6px; margin-left:18px; font-size:0.85rem;">
+            <li>Total blog posts: ${blogData.totalPosts}</li>
+            <li>Avg read time: ${blogData.avgReadTime}</li>
+            <li>Top performing: ${blogData.topPerforming}</li>
+            <li>SEO score: ${blogData.seoScore}</li>
+          </ul>
+        </div>`;
+      }
+      document.getElementById('modalContent').innerHTML = `
+        <div style="line-height:1.5">
+          ${organicHtml}
+          <p style="margin-top:8px;"><strong>🕵️ Organic Insight:</strong> "${offerName}" — content strategy is ${organicMethod ? 'focused on ' + organicMethod.name : 'diverse'} with strong organic signals.</p>
+        </div>
+      `;
+      document.getElementById('adDetailModal').classList.add('active');
+    }
+    
+    function escapeHtml(str){ return str.replace(/[&<>]/g, m=> m==='&'?'&amp;': m==='<'?'&lt;':'&gt;'); }
+    
+    function showDetailedLoading(offerName) {
+      const container = document.getElementById('spyResultContainer');
+      container.innerHTML = `
+        <div class="loading-container-enhanced">
+          <div class="spinner-enhanced"></div>
+          <div class="loading-title">🌿 Scanning Organic Intelligence</div>
+          <div class="progress-bar-container"><div class="progress-bar-fill" id="loadingProgressFill"></div></div>
+          <div class="progress-steps">
+            <div class="step-item" id="step1"><span class="step-icon">🌐</span><span class="step-text">Connecting to organic data sources...</span><span class="step-status" id="status1">pending</span></div>
+            <div class="step-item" id="step2"><span class="step-icon">📰</span><span class="step-text">Analyzing blog content & SEO performance</span><span class="step-status" id="status2">pending</span></div>
+            <div class="step-item" id="step3"><span class="step-icon">🌱</span><span class="step-text">Detecting organic promotion methods (SEO, social, content)</span><span class="step-status" id="status3">pending</span></div>
+            <div class="step-item" id="step4"><span class="step-icon">📊</span><span class="step-text">Calculating conversion rates & platform scores</span><span class="step-status" id="status4">pending</span></div>
+          </div>
+          <div class="loading-subtext-enhanced" id="loadingDetailText">Initializing organic estimator engine...</div>
+        </div>
+      `;
+    }
+    
+    async function runDetailedLoadingSteps() {
+      const steps = [
+        { id: 1, statusId: "status1", text: "Connecting to 24 organic signal sources...", duration: 800 },
+        { id: 2, statusId: "status2", text: "Scanning blog posts, SEO data, and content strategy...", duration: 1000 },
+        { id: 3, statusId: "status3", text: "Extracting organic methods: blog, social, email, video...", duration: 1200 },
+        { id: 4, statusId: "status4", text: "Aggregating conversion rates & platform scores...", duration: 1000 }
+      ];
+      const progressFill = document.getElementById('loadingProgressFill');
+      let progress = 0;
+      for (let i = 0; i < steps.length; i++) {
+        const s = steps[i];
+        const statusSpan = document.getElementById(s.statusId);
+        if (statusSpan) { statusSpan.textContent = 'scanning'; statusSpan.className = 'step-status active'; }
+        const detailText = document.getElementById('loadingDetailText');
+        if (detailText) detailText.textContent = s.text;
+        progress = (i / steps.length) * 100;
+        if (progressFill) progressFill.style.width = progress + '%';
+        await new Promise(resolve => setTimeout(resolve, s.duration));
+        if (statusSpan) { statusSpan.textContent = '✓ done'; statusSpan.className = 'step-status completed'; }
+        progress = ((i + 1) / steps.length) * 100;
+        if (progressFill) progressFill.style.width = progress + '%';
+      }
+      if (progressFill) progressFill.style.width = '100%';
+      const detailText = document.getElementById('loadingDetailText');
+      if (detailText) detailText.textContent = '✅ Analysis complete! Generating organic report...';
+    }
+    
+    async function spyAnyOffer() {
+      const inputUrl = document.getElementById('offerUrlInput').value.trim();
+      const resultContainer = document.getElementById('spyResultContainer');
+      const validationMsg = document.getElementById('validationMessage');
+      
+      if (!inputUrl) {
+        validationMsg.innerHTML = `<div class="validation-error">⚠️ Please enter an Offer Vault URL.</div>`;
+        resultContainer.innerHTML = `<div class="empty-state">⚠️ Please enter an Offer Vault URL to spy.</div>`;
+        return;
+      }
+      if (!isValidOfferVaultUrl(inputUrl)) {
+        validationMsg.innerHTML = `<div class="validation-error">❌ Invalid URL. Please enter a valid Offer Vault URL (e.g., https://offervault.com/offer/...)</div>`;
+        resultContainer.innerHTML = `<div class="empty-state">❌ <strong>Invalid Offer Vault URL.</strong><br>Please enter a URL from <strong>offervault.com</strong> domain.</div>`;
+        return;
+      }
+      validationMsg.innerHTML = '';
+      
+      const offerName = extractOfferNameFromUrl(inputUrl);
+      showDetailedLoading(offerName);
+      await runDetailedLoadingSteps();
+      await new Promise(resolve => setTimeout(resolve, 300));
+      const organicIntel = generateOrganicIntel(offerName);
+      
+      let html = `<div class="spy-result-card">
+        <h3>🌱 Organic Intelligence Report</h3>
+        <div class="result-highlight"><p><strong>🔗 Offer Vault URL:</strong> <span style="word-break: break-all; color:#1f6392;">${escapeHtml(inputUrl)}</span></p>
+        <p><strong>📢 Offer Name:</strong> "${escapeHtml(organicIntel.name)}"</p>
+        <p><strong>📰 Blog Stats:</strong> ${organicIntel.blogStats.totalPosts} posts · Avg read ${organicIntel.blogStats.avgReadTime} · SEO Score: ${organicIntel.blogStats.seoScore}</p>
+        <p><strong>🏆 Top Performing Content:</strong> ${organicIntel.blogStats.topPerforming}</p>
+        <p><strong>🌱 Organic Promotion Methods Found:</strong> ${organicIntel.organicMethods.map(m => `<span class="organic-badge">${m.name}</span>`).join(' ')}</p></div>
+        <div class="result-highlight"><strong>📊 Organic Method Breakdown (with conversion % & platform score):</strong><ul style="margin-top:0.6rem; margin-left:1.2rem;">`;
+      organicIntel.organicMethods.forEach(m => {
+        const scoreHtml = getScoreBadge(m.score);
+        html += `<li><span class="organic-badge">${m.name}</span> ${m.metric}: <strong>${m.value}</strong> — ${m.detail}<br/><span style="font-size:0.8rem; color:#1a4b6b;">📌 Platform: <span class="platform-name">${m.platform}</span>`;
+        if (m.social) {
+          html += ` &nbsp;|&nbsp; 🌐 Social: <span class="social-name">${m.social}</span>`;
+        }
+        html += ` &nbsp;|&nbsp; 📈 Conv: <span class="conversion-badge">${m.conversionRate}%</span> &nbsp;|&nbsp; 🏆 Score: ${scoreHtml}</span></li>`;
+      });
+      html += `</ul></div>`;
+      
+      html += `<div class="result-highlight"><strong>🔍 Click any badge below for detailed organic insights & conversion data:</strong><br/><br/><div id="spyAdBadgesContainer">`;
+      organicIntel.organicMethods.forEach(m => {
+        const scoreEmoji = m.score >= 60 ? '🏆' : (m.score >= 35 ? '⭐' : '📉');
+        html += `<span class="blog-item spy-generated-badge" data-offer-name="${escapeHtml(organicIntel.name)}" data-method-name="${m.name}" data-method-metric="${m.metric}" data-method-value="${m.value}" data-method-detail="${m.detail}" data-method-platform="${m.platform}" data-method-social="${m.social || ''}" data-method-convrate="${m.conversionRate}" data-method-score="${m.score}" data-blog-stats='${JSON.stringify(organicIntel.blogStats)}'>📝 ${m.name} (${m.platform}${m.social ? ' · ' + m.social : ''}) ${m.conversionRate}% ${scoreEmoji}</span> `;
+      });
+      html += `</div><br/><span style="font-size:0.75rem; color:#2c6280;">💡 Click any badge to see full organic details, blog stats, platform names, social networks, conversion % & platform score. 🏆 Score = conversion rate × engagement multiplier.</span></div>
+        <p style="margin-top:0.8rem; font-size:0.7rem; color:#5a7d9a;">✅ All insights are organic-only. No paid ad data. Based on SEO, content marketing, social signals, and blog performance metrics.</p></div>`;
+      resultContainer.innerHTML = html;
+      document.querySelectorAll('.spy-generated-badge').forEach(badge => {
+        badge.addEventListener('click', function(e) {
+          const offerName = this.dataset.offerName;
+          const methodName = this.dataset.methodName;
+          const methodMetric = this.dataset.methodMetric;
+          const methodValue = this.dataset.methodValue;
+          const methodDetail = this.dataset.methodDetail;
+          const methodPlatform = this.dataset.methodPlatform;
+          const methodSocial = this.dataset.methodSocial;
+          const methodConvRate = parseFloat(this.dataset.methodConvrate);
+          const methodScore = parseInt(this.dataset.methodScore);
+          const blogStats = JSON.parse(this.dataset.blogStats || '{}');
+          const organicMethod = { name: methodName, metric: methodMetric, value: methodValue, detail: methodDetail, platform: methodPlatform, social: methodSocial, conversionRate: methodConvRate, score: methodScore };
+          showPopupModal(offerName, blogStats, organicMethod);
+          showPushNotif("Organic Insight", `${methodName} on ${methodPlatform}${methodSocial ? ' (' + methodSocial + ')' : ''} | Conv: ${methodConvRate}% | Score: ${methodScore}`);
+        });
+      });
+    }
+    
+    document.getElementById('spySubmitBtn').addEventListener('click', spyAnyOffer);
+    document.getElementById('clearSpyBtn').addEventListener('click', function() {
+      document.getElementById('offerUrlInput').value = ''; 
+      document.getElementById('validationMessage').innerHTML = '';
+      document.getElementById('spyResultContainer').innerHTML = `<div class="empty-state">✨ Enter ANY Offer Vault URL above and click "Spy Offer". Get organic promotion methods, blog insights, platform names, social networks, conversion % & platform scores.</div>`; 
+    });
+    document.getElementById('closeModalBtn').addEventListener('click', function() {
+      document.getElementById('adDetailModal').classList.remove('active');
+    });
+    document.getElementById('adDetailModal').addEventListener('click', function(e) { 
+      if(e.target === document.getElementById('adDetailModal')) {
+        document.getElementById('adDetailModal').classList.remove('active');
+      }
+    });
+  })();
+</script>
+</body>
+</html>

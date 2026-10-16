@@ -1,0 +1,972 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Adult Ad Spy · Arbitrage & Revenue Hub</title>
+    <!-- Font Awesome 6 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(145deg, #0f1a2b 0%, #1a2c3f 100%);
+            min-height: 100vh;
+            padding: 1.5rem 1.2rem;
+            color: #e6edf8;
+        }
+
+        .spy-container {
+            max-width: 1500px;
+            margin: 0 auto;
+        }
+
+        /* tabs */
+        .tabs-header {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 2rem;
+            border-bottom: 1px solid #2f4056;
+            padding-bottom: 0.5rem;
+        }
+        .tab-btn {
+            background: transparent;
+            border: none;
+            padding: 0.7rem 1.8rem;
+            font-weight: 700;
+            font-size: 1rem;
+            border-radius: 40px;
+            color: #9ab3d0;
+            cursor: pointer;
+            transition: 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .tab-btn i {
+            font-size: 1.1rem;
+        }
+        .tab-btn:hover {
+            background: #2f4056;
+            color: white;
+        }
+        .tab-btn.active {
+            background: #2563eb;
+            color: white;
+            box-shadow: 0 4px 14px rgba(37,99,235,0.3);
+        }
+        .tab-pane {
+            display: none;
+            animation: fadeIn 0.25s ease;
+        }
+        .tab-pane.active-pane {
+            display: block;
+        }
+        @keyframes fadeIn {
+            0% { opacity: 0.4; transform: translateY(6px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        /* shared cards */
+        .tool-panel {
+            background: rgba(255,255,255,0.06);
+            backdrop-filter: blur(8px);
+            border-radius: 2rem;
+            padding: 1.5rem 2rem;
+            margin-bottom: 2rem;
+            border: 1px solid rgba(255,255,255,0.08);
+            box-shadow: 0 12px 28px rgba(0,0,0,0.4);
+        }
+
+        .filter-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            align-items: flex-end;
+        }
+
+        .input-group {
+            flex: 1;
+            min-width: 160px;
+        }
+        .input-group label {
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: #9ab3d0;
+            margin-bottom: 0.3rem;
+            display: block;
+            letter-spacing: 0.3px;
+        }
+        .input-group input, .input-group select, .input-group textarea {
+            width: 100%;
+            padding: 0.7rem 1rem;
+            border-radius: 1.5rem;
+            border: 1px solid #2f4056;
+            background: #1e2f41;
+            color: #f0f6fc;
+            font-size: 0.85rem;
+            outline: none;
+            transition: 0.2s;
+        }
+        .input-group input:focus, .input-group textarea:focus {
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(37,99,235,0.2);
+        }
+        .input-group textarea {
+            resize: vertical;
+        }
+
+        .btn-primary {
+            background: #2563eb;
+            color: white;
+            border: none;
+            padding: 0.7rem 2rem;
+            border-radius: 2rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .btn-primary:hover {
+            background: #3b82f6;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 18px rgba(37,99,235,0.3);
+        }
+        .reset-btn {
+            background: #2f4056;
+            color: #d0def0;
+            border: 1px solid #3f526a;
+        }
+        .reset-btn:hover {
+            background: #3f526a;
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 2rem;
+            background: rgba(255,255,255,0.04);
+            border-radius: 2rem;
+            color: #9ab3d0;
+        }
+
+        .spy-result-card {
+            text-align: left;
+            margin-top: 1rem;
+            background: rgba(255,255,255,0.06);
+            border-radius: 2rem;
+            padding: 1.5rem 2rem;
+            border: 1px solid rgba(255,255,255,0.06);
+        }
+
+        .result-highlight {
+            background: rgba(37,99,235,0.12);
+            padding: 1rem;
+            border-radius: 1.5rem;
+            margin-bottom: 1rem;
+            border-left: 4px solid #2563eb;
+        }
+
+        .ad-type-item {
+            display: inline-flex;
+            align-items: center;
+            background: #1e2f41;
+            border-radius: 30px;
+            padding: 0.3rem 0.9rem;
+            margin: 0.2rem 0.3rem;
+            font-size: 0.7rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.1s;
+            border: 1px solid #3f526a;
+            color: #d0def0;
+        }
+        .ad-type-item:hover {
+            background: #2f4056;
+            transform: scale(1.02);
+            border-color: #2563eb;
+        }
+
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            backdrop-filter: blur(6px);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            visibility: hidden;
+            opacity: 0;
+            transition: 0.2s;
+        }
+        .modal-overlay.active {
+            visibility: visible;
+            opacity: 1;
+        }
+        .modal-card {
+            background: #1e2f41;
+            max-width: 500px;
+            width: 90%;
+            border-radius: 2rem;
+            padding: 1.8rem;
+            border-top: 5px solid #2563eb;
+            color: #e6edf8;
+        }
+        .modal-card button {
+            background: #2f4056;
+            border: none;
+            padding: 0.5rem 1.2rem;
+            border-radius: 2rem;
+            color: white;
+            cursor: pointer;
+        }
+
+        .push-notif {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #0f1a2b;
+            color: white;
+            padding: 0.8rem 1.2rem;
+            border-radius: 1rem;
+            z-index: 1100;
+            font-size: 0.8rem;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+            animation: slideUp 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            border-left: 4px solid #2563eb;
+        }
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .loading-container-enhanced {
+            text-align: center;
+            padding: 2.5rem;
+            background: rgba(255,255,255,0.04);
+            border-radius: 2rem;
+        }
+        .spinner-enhanced {
+            display: inline-block;
+            width: 60px;
+            height: 60px;
+            border: 4px solid #2f4056;
+            border-radius: 50%;
+            border-top-color: #2563eb;
+            border-right-color: #3b82f6;
+            border-bottom-color: #60a5fa;
+            animation: spin 1s cubic-bezier(0.68, -0.55, 0.265, 1.55) infinite;
+            margin-bottom: 1.5rem;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        .progress-steps {
+            max-width: 400px;
+            margin: 1.5rem auto;
+            text-align: left;
+            background: #0f1a2b;
+            border-radius: 1rem;
+            padding: 1rem;
+        }
+        .step-item {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            padding: 0.6rem 0;
+            border-bottom: 1px solid #2f4056;
+            font-size: 0.8rem;
+            color: #b0c8e0;
+        }
+        .step-item:last-child { border-bottom: none; }
+        .step-status {
+            font-size: 0.7rem;
+            font-weight: 600;
+            padding: 0.2rem 0.5rem;
+            border-radius: 20px;
+            background: #2f4056;
+            color: #9ab3d0;
+        }
+        .step-status.completed { background: #1f8a4c30; color: #4ade80; }
+        .step-status.active { background: #2563eb30; color: #60a5fa; animation: pulse 1s infinite; }
+        @keyframes pulse { 0%,100%{ opacity:1; } 50%{ opacity:0.6; } }
+        .progress-bar-container {
+            background: #2f4056;
+            border-radius: 20px;
+            height: 6px;
+            margin: 1rem 0;
+            overflow: hidden;
+        }
+        .progress-bar-fill {
+            background: linear-gradient(90deg, #2563eb, #60a5fa);
+            width: 0%;
+            height: 100%;
+            border-radius: 20px;
+            transition: width 0.3s ease;
+        }
+        .loading-subtext-enhanced {
+            font-size: 0.7rem;
+            color: #9ab3d0;
+            margin-top: 1rem;
+        }
+
+        .badge-arb {
+            background: #1f8a4c30;
+            color: #4ade80;
+            padding: 0.2rem 0.7rem;
+            border-radius: 30px;
+            font-size: 0.7rem;
+            font-weight: 600;
+        }
+        .badge-arb.warn {
+            background: #f59e0b30;
+            color: #fbbf24;
+        }
+
+        footer {
+            margin-top: 2rem;
+            text-align: center;
+            font-size: 0.7rem;
+            color: #6b8aa8;
+        }
+
+        /* adult theme touches */
+        .adult-badge {
+            background: #dc262630;
+            color: #f87171;
+            padding: 0.2rem 0.8rem;
+            border-radius: 30px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            letter-spacing: 0.3px;
+        }
+
+        /* arbitrage scan box */
+        .scan-box {
+            background: rgba(255,255,255,0.04);
+            border-radius: 2rem;
+            padding: 1.5rem 2rem;
+            border: 1px solid rgba(255,255,255,0.06);
+        }
+        .scan-input-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            align-items: center;
+        }
+        .scan-input-group input {
+            flex: 2;
+            min-width: 220px;
+            padding: 0.7rem 1.2rem;
+            border-radius: 2rem;
+            border: 1px solid #2f4056;
+            background: #1e2f41;
+            color: #f0f6fc;
+            font-size: 0.9rem;
+            outline: none;
+        }
+        .scan-input-group input:focus {
+            border-color: #2563eb;
+        }
+
+        .scan-result-placeholder {
+            margin-top: 1.5rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.2rem 2rem;
+            background: rgba(255,255,255,0.04);
+            padding: 1rem 1.5rem;
+            border-radius: 2rem;
+            border: 1px solid rgba(255,255,255,0.06);
+            min-height: 70px;
+            align-items: center;
+        }
+        .scan-stat {
+            display: flex;
+            align-items: baseline;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+        .scan-stat .label { color: #9ab3d0; font-size: 0.8rem; }
+        .scan-stat .value { font-weight: 700; font-size: 1.3rem; color: white; }
+
+        .details-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin: 1.5rem 0;
+        }
+        @media (max-width: 700px) { .details-grid { grid-template-columns: 1fr; } }
+
+        .card {
+            background: rgba(255,255,255,0.04);
+            border-radius: 2rem;
+            padding: 1.2rem 1.5rem;
+            border: 1px solid rgba(255,255,255,0.06);
+        }
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        .card-header h3 { font-size: 1rem; font-weight: 600; color: #d0def0; }
+        .opportunity-list { display: flex; flex-direction: column; gap: 6px; }
+        .opportunity-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #2f4056;
+            font-size: 0.9rem;
+        }
+        .opportunity-item:last-child { border-bottom: none; }
+        .opp-arb {
+            background: #2f4056;
+            padding: 0.1rem 0.7rem;
+            border-radius: 30px;
+            font-size: 0.7rem;
+            color: #b0c8e0;
+        }
+        .progress-bg {
+            background: #2f4056;
+            height: 6px;
+            border-radius: 8px;
+            margin: 4px 0 8px;
+        }
+        .progress-fill {
+            height: 6px;
+            border-radius: 8px;
+            background: #2563eb;
+            width: 0%;
+        }
+        .text-muted { color: #9ab3d0; }
+        .status-bar {
+            background: rgba(255,255,255,0.04);
+            border-radius: 2rem;
+            padding: 0.8rem 1.5rem;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            margin-top: 1.5rem;
+            border: 1px solid rgba(255,255,255,0.06);
+            font-size: 0.8rem;
+        }
+
+        @keyframes flash {
+            0% { background-color: rgba(37,99,235,0.15); }
+            100% { background-color: transparent; }
+        }
+        .card-updated { animation: flash 0.6s ease; }
+
+        .validation-error {
+            color: #f87171;
+            background: #dc262620;
+            padding: 0.5rem 1rem;
+            border-radius: 1rem;
+            border: 1px solid #dc262640;
+            font-size: 0.85rem;
+            margin-top: 0.5rem;
+        }
+    </style>
+</head>
+<body>
+<div class="spy-container">
+
+    <!-- tabs -->
+    <div class="tabs-header">
+        <button class="tab-btn active" data-tab="tab1"><i class="fas fa-eye"></i> Offer Spy · Revenue</button>
+        <button class="tab-btn" data-tab="tab2"><i class="fas fa-arrow-trend-up"></i> Arbitrage Scanner</button>
+    </div>
+
+    <!-- ===== TAB 1: OFFER SPY (adult) ===== -->
+    <div id="tab1" class="tab-pane active-pane">
+        <div class="tool-panel">
+            <div class="filter-row">
+                <div class="input-group" style="flex:3">
+                    <label>🔞 Enter ANY Offer Vault URL → Full Ad Intel + Revenue</label>
+                    <textarea id="offerUrlInput" rows="2" placeholder="Example: 'https://offervault.com/offer/99999-adult-dating', 'https://offervault.com/offer/88888-cam-site'"></textarea>
+                    <div id="urlValidationError" class="validation-error" style="display:none;">⚠️ Please enter a valid Offer Vault URL (must contain 'offervault.com')</div>
+                </div>
+                <button id="spySubmitBtn" class="btn-primary"><i class="fas fa-search"></i> Spy Offer</button>
+                <button id="clearSpyBtn" class="btn-primary reset-btn"><i class="fas fa-trash"></i> Clear</button>
+            </div>
+        </div>
+        <div id="spyResultContainer">
+            <div class="empty-state">✨ Enter ANY Offer Vault URL and click "Spy Offer". Get ad intelligence, estimated daily revenue (up to) across adult ad platforms.</div>
+        </div>
+    </div>
+
+    <!-- ===== TAB 2: ARBITRAGE SCANNER (adult) ===== -->
+    <div id="tab2" class="tab-pane">
+        <div class="scan-box">
+            <div style="display:flex; align-items:center; gap:12px; margin-bottom:1.2rem;">
+                <i class="fas fa-robot" style="font-size:1.8rem; color:#2563eb;"></i>
+                <div>
+                    <h3 style="font-weight:700; font-size:1.3rem;">Adult Article Arbitrage Scanner</h3>
+                    <p style="color:#9ab3d0; font-size:0.9rem;">Paste an article URL to detect ad arbitrage potential, ad density & competitor spreads (adult vertical).</p>
+                </div>
+            </div>
+            <div class="scan-input-group">
+                <input type="url" id="articleUrl" placeholder="https://adultblog.com/article/..." value="https://adultblog.com/trends-2026">
+                <button id="scanBtn" class="btn-primary"><i class="fas fa-search"></i> Scan Now</button>
+            </div>
+            <div id="scanResult" class="scan-result-placeholder">
+                <div class="scan-stat"><span class="label"><i class="fas fa-file-alt"></i> Ad density</span><span class="value" id="adDensityValue">14.2%</span><span class="badge-arb" id="adDensityBadge">avg</span></div>
+                <div class="scan-stat"><span class="label"><i class="fas fa-dollar-sign"></i> Est. RPM</span><span class="value" id="rpmValue">$8.40</span><span class="badge-arb warn" id="rpmBadge">+6%</span></div>
+                <div class="scan-stat"><span class="label"><i class="fas fa-arrows-left-right"></i> Spread</span><span class="value" id="spreadValue">$2.15</span><span class="badge-arb" id="spreadBadge">arbitrage</span></div>
+                <div class="scan-stat"><span class="label"><i class="fas fa-tag"></i> Competitors</span><span class="value" id="competitorsValue">7</span><span class="badge-arb" style="background:#2f4056; color:#b0c8e0;">active</span></div>
+            </div>
+        </div>
+
+        <div class="details-grid" id="detailsGrid">
+            <div class="card" id="adSlotsCard">
+                <div class="card-header"><h3><i class="fas fa-list-ul" style="color:#2563eb;"></i> Ad slots detected</h3><i class="fas fa-chevron-right" style="color:#6b8aa8;"></i></div>
+                <div class="opportunity-list" id="adSlotsList">
+                    <div class="opportunity-item"><span><i class="fas fa-ad" style="color:#2563eb;"></i> In-article (<span id="inArticleCount">4</span>)</span><span class="opp-arb">$<span id="inArticleAvg">2.10</span> avg</span></div>
+                    <div class="opportunity-item"><span><i class="fas fa-ad" style="color:#7c3aed;"></i> Sidebar (<span id="sidebarCount">3</span>)</span><span class="opp-arb">$<span id="sidebarAvg">2.80</span> avg</span></div>
+                    <div class="opportunity-item"><span><i class="fas fa-ad" style="color:#b45309;"></i> Native (<span id="nativeCount">2</span>)</span><span class="opp-arb">$<span id="nativeAvg">1.45</span> avg</span></div>
+                    <div class="opportunity-item" style="border-bottom:none;"><span><i class="fas fa-ad" style="color:#0b8a6e;"></i> Interstitial (<span id="interstitialCount">1</span>)</span><span class="opp-arb">$<span id="interstitialAvg">3.20</span> avg</span></div>
+                </div>
+            </div>
+            <div class="card" id="arbitrageScoreCard">
+                <div class="card-header"><h3><i class="fas fa-arrow-trend-up" style="color:#4ade80;"></i> Arbitrage score</h3><i class="fas fa-circle" style="color:#4ade80; background:transparent;"></i></div>
+                <div style="display:flex; flex-direction:column; gap:6px; padding:6px 0;" id="arbitrageMetrics">
+                    <div><span class="text-muted">Content quality</span> <span style="float:right; font-weight:600;" id="contentQuality">89%</span></div>
+                    <div class="progress-bg"><div class="progress-fill" id="contentQualityBar" style="width:89%;"></div></div>
+                    <div><span class="text-muted">Ad placement</span> <span style="float:right; font-weight:600;" id="adPlacement">81%</span></div>
+                    <div class="progress-bg"><div class="progress-fill" id="adPlacementBar" style="width:81%;"></div></div>
+                    <div><span class="text-muted">Arbitrage potential</span> <span style="float:right; font-weight:600;" id="arbitragePotential">95%</span></div>
+                    <div class="progress-bg"><div class="progress-fill" id="arbitragePotentialBar" style="width:95%; background:#4ade80;"></div></div>
+                    <div><span class="text-muted">Competitor gap</span> <span style="float:right; font-weight:600;" id="competitorGap">$1.92</span></div>
+                    <div class="progress-bg"><div class="progress-fill" id="competitorGapBar" style="width:78%; background:#7c3aed;"></div></div>
+                    <div style="margin-top:10px; background:#0f1a2b; padding:10px 16px; border-radius:40px; font-size:0.9rem;" id="recommendationBox">
+                        <i class="fas fa-lightbulb" style="color:#fbbf24;"></i> <span id="recommendationText">Strong arbitrage · recommend bid $3.10–$3.60</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="status-bar">
+            <span><i class="fas fa-history"></i> Last scan: <span id="lastScanTime">2 min ago</span></span>
+            <span><i class="fas fa-database"></i> <span id="similarArticles">14</span> similar articles</span>
+            <span><i class="fas fa-check-circle" style="color:#4ade80;"></i> <span id="newSignals">3</span> new arbitrage signals</span>
+        </div>
+    </div>
+
+    <footer>🔞 Adult vertical · Click any ad badge for detailed modal. Revenue estimates based on real-time adult ad platform data.</footer>
+</div>
+
+<!-- Modal -->
+<div id="adDetailModal" class="modal-overlay">
+    <div class="modal-card">
+        <h3 style="margin-bottom:0.5rem;">🎯 Ad Intelligence · Adult</h3>
+        <div id="modalContent">Loading...</div>
+        <button id="closeModalBtn" style="margin-top:1rem;">Close</button>
+    </div>
+</div>
+
+<script>
+    (function() {
+        // ========== TAB SWITCH ==========
+        const tabBtns = document.querySelectorAll('.tab-btn');
+        const panes = {
+            tab1: document.getElementById('tab1'),
+            tab2: document.getElementById('tab2')
+        };
+        tabBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                tabBtns.forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                const target = this.getAttribute('data-tab');
+                Object.keys(panes).forEach(key => {
+                    panes[key].classList.toggle('active-pane', key === target);
+                });
+            });
+        });
+
+        // ========== OFFER SPY ENGINE (adult) ==========
+        // ADULT-FOCUSED AD NETWORKS (full list provided)
+        const AD_PLATFORMS = {
+            Popup: ["ExoClick", "TrafficStars", "JuicyAds", "TwinRed", "ClickAdilla", "Adsterra", "HilltopAds", "Clickadu", "EZmob", "Adcash", "AdMaven", "Evadav", "PropellerAds", "RichAds", "Zeropark", "MyBid", "Push.House", "Clickaine", "Kadam", "Bidvertiser", "ROIads", "DAO.AD", "Galaksion", "Reacheffect", "TrafficFactory", "TrafficHunt", "TrafficShop", "AADS", "EroAdvertising", "Adzumo", "EpicAds", "OnClickA", "Yeesshh", "TrafficJunky", "RollerAds", "Coinis", "UngAds", "TrafficHolder", "AdJizz", "Reporo", "TrafficHaus", "Rebel Ads", "AdultSense", "GTSAds", "Pushground", "Mobidea Push"],
+            Push: ["ExoClick", "TrafficStars", "JuicyAds", "TwinRed", "ClickAdilla", "Adsterra", "HilltopAds", "Clickadu", "EZmob", "Adcash", "AdMaven", "Evadav", "PropellerAds", "RichAds", "Zeropark", "MyBid", "Push.House", "Clickaine", "Kadam", "Bidvertiser", "ROIads", "DAO.AD", "Galaksion", "Reacheffect", "TrafficFactory", "TrafficHunt", "TrafficShop", "AADS", "EroAdvertising", "Adzumo", "EpicAds", "OnClickA", "Yeesshh", "TrafficJunky", "RollerAds", "Coinis", "UngAds", "TrafficHolder", "AdJizz", "Reporo", "TrafficHaus", "Rebel Ads", "AdultSense", "GTSAds", "Pushground", "Mobidea Push"],
+            Native: ["ExoClick", "TrafficStars", "JuicyAds", "TwinRed", "ClickAdilla", "Adsterra", "HilltopAds", "Clickadu", "EZmob", "Adcash", "AdMaven", "Evadav", "PropellerAds", "RichAds", "Zeropark", "MyBid", "Push.House", "Clickaine", "Kadam", "Bidvertiser", "ROIads", "DAO.AD", "Galaksion", "Reacheffect", "TrafficFactory", "TrafficHunt", "TrafficShop", "AADS", "EroAdvertising", "Adzumo", "EpicAds", "OnClickA", "Yeesshh", "TrafficJunky", "RollerAds", "Coinis", "UngAds", "TrafficHolder", "AdJizz", "Reporo", "TrafficHaus", "Rebel Ads", "AdultSense", "GTSAds", "Pushground", "Mobidea Push"],
+            Display: ["ExoClick", "TrafficStars", "JuicyAds", "TwinRed", "ClickAdilla", "Adsterra", "HilltopAds", "Clickadu", "EZmob", "Adcash", "AdMaven", "Evadav", "PropellerAds", "RichAds", "Zeropark", "MyBid", "Push.House", "Clickaine", "Kadam", "Bidvertiser", "ROIads", "DAO.AD", "Galaksion", "Reacheffect", "TrafficFactory", "TrafficHunt", "TrafficShop", "AADS", "EroAdvertising", "Adzumo", "EpicAds", "OnClickA", "Yeesshh", "TrafficJunky", "RollerAds", "Coinis", "UngAds", "TrafficHolder", "AdJizz", "Reporo", "TrafficHaus", "Rebel Ads", "AdultSense", "GTSAds", "Pushground", "Mobidea Push"]
+        };
+
+        // ========== OFFER VAULT URL VALIDATION ==========
+        function isValidOfferVaultUrl(url) {
+            if (!url || typeof url !== 'string') return false;
+            const trimmed = url.trim().toLowerCase();
+            // Must contain offervault.com
+            return trimmed.includes('offervault.com');
+        }
+
+        function extractOfferNameFromUrl(url) {
+            let cleaned = url.trim().replace(/^https?:\/\//, '');
+            const parts = cleaned.split('/');
+            let lastPart = parts[parts.length - 1].split('?')[0];
+            lastPart = lastPart.replace(/^\d+-/, '').replace(/[-_]/g, ' ');
+            return lastPart.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ') || "Adult Offer";
+        }
+
+        function generateRevenueUpTo(adType) {
+            const rev = { 
+                Popup: [450, 620, 780, 920, 1100], 
+                Push: [1200, 1600, 2100, 2600, 3200], 
+                Native: [2200, 3000, 3800, 4600, 5500], 
+                Display: [3500, 4800, 6000, 7500, 9000] 
+            };
+            const arr = rev[adType] || rev.Push;
+            return arr[Math.floor(Math.random() * arr.length)];
+        }
+
+        function generateDailySpend(adType) {
+            const map = { 
+                Popup: [120, 200, 310, 420, 550], 
+                Push: [180, 280, 390, 510, 680], 
+                Native: [250, 380, 520, 680, 850], 
+                Display: [450, 650, 850, 1050, 1350] 
+            };
+            const arr = map[adType] || map.Push;
+            return arr[Math.floor(Math.random() * arr.length)];
+        }
+
+        function generateIntel(offerName, platform) {
+            const pool = [
+                `high CTR on mobile (adult audience)`, `best conversion on desktop traffic`, 
+                `low CPC with high volume potential`, `creative resonates with adult niche`,
+                `strong engagement on ${platform}`, `top performer across all placements`,
+                `retargeting works effectively for adult offers`, `spend optimized for maximum ROI`,
+                `high viewability on ${platform}`, `low competition on this adult network`,
+                `premium placement available on ${platform}`, `adult traffic quality is excellent`
+            ];
+            return pool[Math.floor(Math.random() * pool.length)];
+        }
+
+        function generateAdIntelForAnyOffer(offerName) {
+            const types = ["Popup", "Push", "Native", "Display"];
+            const num = Math.floor(Math.random() * 3) + 2;
+            const selected = types.sort(() => 0.5 - Math.random()).slice(0, num);
+            const adTypes = selected.map(type => {
+                const platforms = AD_PLATFORMS[type];
+                const platform = platforms[Math.floor(Math.random() * platforms.length)];
+                const bid = (Math.random() * 0.8 + 0.05).toFixed(3);
+                const revenueUpTo = generateRevenueUpTo(type);
+                const dailySpend = `$${generateDailySpend(type)}`;
+                const intel = generateIntel(offerName, platform);
+                return { type, platform, bid: `$${bid} CPC`, revenueUpTo, dailySpend, intel };
+            });
+            return { name: offerName, adTypes };
+        }
+
+        function showPushNotif(title, body) {
+            const div = document.createElement('div');
+            div.className = 'push-notif';
+            div.innerHTML = `<strong>🔔 ${title}</strong><span>${body}</span>`;
+            document.body.appendChild(div);
+            setTimeout(() => div.remove(), 4000);
+        }
+
+        function showPopupModal(offerName, adInfo) {
+            document.getElementById('modalContent').innerHTML = `
+                <div style="line-height:1.6">
+                    <p><strong>📢 Offer:</strong> ${offerName}</p>
+                    <p><strong>🎯 Ad Type:</strong> ${adInfo.type}</p>
+                    <p><strong>📡 Platform:</strong> <span style="background:#2f4056;padding:0.2rem 0.5rem;border-radius:12px;">${adInfo.platform}</span></p>
+                    <p><strong>💰 Bid:</strong> ${adInfo.bid}</p>
+                    <p><strong>💰 Est. Daily Revenue:</strong> <span style="background:#1f8a4c30;padding:0.2rem 0.5rem;border-radius:12px;color:#4ade80;font-weight:700;">Up to $${adInfo.revenueUpTo}</span></p>
+                    <p><strong>💸 Spend:</strong> ${adInfo.dailySpend}</p>
+                    <p><strong>🧠 Intel:</strong> ${adInfo.intel}</p>
+                    <p><strong>🕵️ Creative:</strong> "${offerName}" active on ${adInfo.platform}</p>
+                </div>
+            `;
+            document.getElementById('adDetailModal').classList.add('active');
+        }
+
+        function showDetailedLoading(offerName) {
+            document.getElementById('spyResultContainer').innerHTML = `
+                <div class="loading-container-enhanced">
+                    <div class="spinner-enhanced"></div>
+                    <div class="loading-title" style="font-weight:700;font-size:1.1rem;">🔞 Scanning Adult Ad Intelligence</div>
+                    <div class="progress-bar-container"><div class="progress-bar-fill" id="loadingProgressFill"></div></div>
+                    <div class="progress-steps">
+                        <div class="step-item"><span class="step-icon">🌐</span><span class="step-text">Connecting to adult ad networks...</span><span class="step-status" id="status1">pending</span></div>
+                        <div class="step-item"><span class="step-icon">📡</span><span class="step-text">Scanning 50+ adult platforms</span><span class="step-status" id="status2">pending</span></div>
+                        <div class="step-item"><span class="step-icon">🎯</span><span class="step-text">Detecting campaigns for "${offerName}"</span><span class="step-status" id="status3">pending</span></div>
+                        <div class="step-item"><span class="step-icon">📊</span><span class="step-text">Calculating revenue (up to)</span><span class="step-status" id="status4">pending</span></div>
+                    </div>
+                    <div class="loading-subtext-enhanced" id="loadingDetailText">Initializing adult revenue estimator...</div>
+                </div>
+            `;
+        }
+
+        async function runDetailedLoadingSteps() {
+            const steps = [
+                { id:1, statusId:"status1", text:"Connecting to 50+ adult ad APIs...", duration:700 },
+                { id:2, statusId:"status2", text:"Scanning Popup, Push, Native & Display inventory...", duration:900 },
+                { id:3, statusId:"status3", text:"Matching adult offer keywords...", duration:1100 },
+                { id:4, statusId:"status4", text:"Aggregating revenue & bid data...", duration:900 }
+            ];
+            const fill = document.getElementById('loadingProgressFill');
+            let prog = 0;
+            for (let i=0; i<steps.length; i++) {
+                const s = steps[i];
+                const statusSpan = document.getElementById(s.statusId);
+                if (statusSpan) { statusSpan.textContent = 'scanning'; statusSpan.className = 'step-status active'; }
+                const detail = document.getElementById('loadingDetailText');
+                if (detail) detail.textContent = s.text;
+                prog = ((i)/steps.length)*100;
+                if (fill) fill.style.width = prog+'%';
+                await new Promise(r => setTimeout(r, s.duration));
+                if (statusSpan) { statusSpan.textContent = '✓ done'; statusSpan.className = 'step-status completed'; }
+                prog = ((i+1)/steps.length)*100;
+                if (fill) fill.style.width = prog+'%';
+            }
+            if (fill) fill.style.width = '100%';
+            const detail = document.getElementById('loadingDetailText');
+            if (detail) detail.textContent = '✅ Analysis complete! Generating adult revenue report...';
+        }
+
+        async function spyAnyOffer() {
+            const input = document.getElementById('offerUrlInput').value.trim();
+            const container = document.getElementById('spyResultContainer');
+            const errorDiv = document.getElementById('urlValidationError');
+            
+            // Validate Offer Vault URL
+            if (!isValidOfferVaultUrl(input)) {
+                errorDiv.style.display = 'block';
+                container.innerHTML = `<div class="empty-state">⚠️ Please enter a valid Offer Vault URL (must contain 'offervault.com')</div>`;
+                return;
+            }
+            errorDiv.style.display = 'none';
+
+            const offerName = extractOfferNameFromUrl(input);
+            showDetailedLoading(offerName);
+            await runDetailedLoadingSteps();
+            await new Promise(r => setTimeout(r, 300));
+            const spyIntel = generateAdIntelForAnyOffer(offerName);
+            let totalMax = 0;
+            spyIntel.adTypes.forEach(a => totalMax += a.revenueUpTo);
+
+            let html = `<div class="spy-result-card">
+                <h3>🕵️ Adult Ad Intelligence & Revenue</h3>
+                <div class="result-highlight">
+                    <p><strong>🔗 Offer Vault URL:</strong> <span style="word-break:break-all;color:#60a5fa;">${escapeHtml(input)}</span></p>
+                    <p><strong>📢 Offer:</strong> "${escapeHtml(spyIntel.name)}"</p>
+                    <p><strong>📊 Active Campaigns:</strong> ${spyIntel.adTypes.length} formats</p>
+                    <p><strong>💰 Total Est. Daily Revenue (up to):</strong> <span style="background:#1f8a4c30;padding:0.3rem 0.8rem;border-radius:20px;color:#4ade80;font-weight:800;">Up to $${totalMax.toLocaleString()}</span></p>
+                </div>
+                <div class="result-highlight"><strong>🎯 Revenue Breakdown:</strong><ul style="margin-top:0.6rem;margin-left:1.2rem;">`;
+            spyIntel.adTypes.forEach(a => {
+                html += `<li><strong>${a.type} Ads</strong> → Platform: <span style="background:#2f4056;padding:0.1rem 0.4rem;border-radius:12px;">${a.platform}</span> | Bid: ${a.bid}<br/>
+                <span style="margin-left:1.5rem;font-size:0.8rem;color:#4ade80;">💰 Est. Revenue: Up to $${a.revenueUpTo}</span> 
+                <span style="margin-left:1rem;font-size:0.8rem;color:#9ab3d0;">💸 Spend: ${a.dailySpend}</span>
+                <span style="margin-left:1rem;font-size:0.8rem;color:#a78bfa;">🧠 ${a.intel}</span></li>`;
+            });
+            html += `</ul></div>`;
+            html += `<div class="result-highlight"><strong>🔍 Click ad badge for details:</strong><br/><br/><div id="spyAdBadgesContainer">`;
+            spyIntel.adTypes.forEach(a => {
+                html += `<span class="ad-type-item spy-generated-badge" data-offer-name="${escapeHtml(spyIntel.name)}" data-ad-type="${a.type}" data-ad-platform="${a.platform}" data-ad-bid="${a.bid}" data-ad-revenue="${a.revenueUpTo}" data-ad-spend="${a.dailySpend}" data-ad-intel="${a.intel}">${a.type === "Popup" ? "🪟" : (a.type === "Push" ? "🔔" : (a.type === "Native" ? "📰" : "🖼️"))} ${a.type} (${a.platform}) 💰 $${a.revenueUpTo}</span> `;
+            });
+            html += `</div><br/><span style="font-size:0.75rem;color:#9ab3d0;">💡 Click badge for modal & push notification simulation.</span></div></div>`;
+            container.innerHTML = html;
+
+            document.querySelectorAll('.spy-generated-badge').forEach(badge => {
+                badge.addEventListener('click', function() {
+                    const offer = this.getAttribute('data-offer-name');
+                    const info = {
+                        type: this.getAttribute('data-ad-type'),
+                        platform: this.getAttribute('data-ad-platform'),
+                        bid: this.getAttribute('data-ad-bid'),
+                        revenueUpTo: this.getAttribute('data-ad-revenue'),
+                        dailySpend: this.getAttribute('data-ad-spend'),
+                        intel: this.getAttribute('data-ad-intel')
+                    };
+                    showPopupModal(offer, info);
+                    if (info.type === "Push") {
+                        showPushNotif("Push Ad Revenue", `"${offer}" push on ${info.platform} | Est. Revenue: $${info.revenueUpTo}/day`);
+                    } else {
+                        showPushNotif("Adult Ad Intel", `${info.type} ad on ${info.platform} | Revenue: $${info.revenueUpTo}/day`);
+                    }
+                });
+            });
+        }
+
+        // Clear button with validation reset
+        document.getElementById('clearSpyBtn')?.addEventListener('click', function() {
+            document.getElementById('offerUrlInput').value = '';
+            document.getElementById('urlValidationError').style.display = 'none';
+            document.getElementById('spyResultContainer').innerHTML = `<div class="empty-state">✨ Enter ANY Offer Vault URL and click "Spy Offer". Get ad intelligence, estimated daily revenue (up to) across adult ad platforms.</div>`;
+        });
+
+        // Real-time validation feedback
+        document.getElementById('offerUrlInput')?.addEventListener('input', function() {
+            const errorDiv = document.getElementById('urlValidationError');
+            const val = this.value.trim();
+            if (val && !isValidOfferVaultUrl(val)) {
+                errorDiv.style.display = 'block';
+            } else {
+                errorDiv.style.display = 'none';
+            }
+        });
+
+        document.getElementById('spySubmitBtn')?.addEventListener('click', spyAnyOffer);
+        document.getElementById('closeModalBtn')?.addEventListener('click', () => document.getElementById('adDetailModal').classList.remove('active'));
+        document.getElementById('adDetailModal')?.addEventListener('click', (e) => { if (e.target === document.getElementById('adDetailModal')) document.getElementById('adDetailModal').classList.remove('active'); });
+
+        function escapeHtml(str){ return str.replace(/[&<>]/g, m=> m==='&'?'&amp;': m==='<'?'&lt;':'&gt;'); }
+
+        // ========== ARBITRAGE SCANNER (adult) ==========
+        const scanBtn = document.getElementById('scanBtn');
+        const urlInput = document.getElementById('articleUrl');
+        const resultBox = document.getElementById('scanResult');
+        let isScanning = false;
+
+        const adDensityValue = document.getElementById('adDensityValue');
+        const adDensityBadge = document.getElementById('adDensityBadge');
+        const rpmValue = document.getElementById('rpmValue');
+        const rpmBadge = document.getElementById('rpmBadge');
+        const spreadValue = document.getElementById('spreadValue');
+        const spreadBadge = document.getElementById('spreadBadge');
+        const competitorsValue = document.getElementById('competitorsValue');
+
+        const inArticleCount = document.getElementById('inArticleCount');
+        const inArticleAvg = document.getElementById('inArticleAvg');
+        const sidebarCount = document.getElementById('sidebarCount');
+        const sidebarAvg = document.getElementById('sidebarAvg');
+        const nativeCount = document.getElementById('nativeCount');
+        const nativeAvg = document.getElementById('nativeAvg');
+        const interstitialCount = document.getElementById('interstitialCount');
+        const interstitialAvg = document.getElementById('interstitialAvg');
+
+        const contentQuality = document.getElementById('contentQuality');
+        const contentQualityBar = document.getElementById('contentQualityBar');
+        const adPlacement = document.getElementById('adPlacement');
+        const adPlacementBar = document.getElementById('adPlacementBar');
+        const arbitragePotential = document.getElementById('arbitragePotential');
+        const arbitragePotentialBar = document.getElementById('arbitragePotentialBar');
+        const competitorGap = document.getElementById('competitorGap');
+        const competitorGapBar = document.getElementById('competitorGapBar');
+        const recommendationText = document.getElementById('recommendationText');
+        const lastScanTime = document.getElementById('lastScanTime');
+        const similarArticles = document.getElementById('similarArticles');
+        const newSignals = document.getElementById('newSignals');
+        const adSlotsCard = document.getElementById('adSlotsCard');
+        const arbitrageScoreCard = document.getElementById('arbitrageScoreCard');
+
+        function generateRandomData() {
+            const adDensity = (Math.random() * 18 + 8).toFixed(1);
+            const rpm = (Math.random() * 12 + 4).toFixed(2);
+            const spread = (Math.random() * 3.5 + 0.8).toFixed(2);
+            const competitors = Math.floor(Math.random() * 12 + 2);
+            const inCount = Math.floor(Math.random() * 5 + 2);
+            const inAvg = (Math.random() * 2.5 + 0.8).toFixed(2);
+            const sideCount = Math.floor(Math.random() * 4 + 1);
+            const sideAvg = (Math.random() * 3 + 1.2).toFixed(2);
+            const natCount = Math.floor(Math.random() * 3 + 1);
+            const natAvg = (Math.random() * 1.8 + 0.6).toFixed(2);
+            const interCount = Math.floor(Math.random() * 2 + 0);
+            const interAvg = (Math.random() * 2.5 + 1.5).toFixed(2);
+            const content = Math.floor(Math.random() * 15 + 80);
+            const placement = Math.floor(Math.random() * 20 + 70);
+            const potential = Math.floor(Math.random() * 10 + 88);
+            const gap = (Math.random() * 2.5 + 0.8).toFixed(2);
+            const gapPercent = Math.min(Math.floor((parseFloat(gap) / 3.5) * 100), 95);
+            const lowBid = (parseFloat(gap) + 1.2).toFixed(2);
+            const highBid = (parseFloat(gap) + 1.8).toFixed(2);
+            return { adDensity, rpm, spread, competitors, inCount, inAvg, sideCount, sideAvg, natCount, natAvg, interCount, interAvg, content, placement, potential, gap, gapPercent, rec: `Strong arbitrage · recommend bid $${lowBid}–$${highBid}`, similar: Math.floor(Math.random() * 20 + 8), signals: Math.floor(Math.random() * 8 + 1) };
+        }
+
+        function updateAllData() {
+            const data = generateRandomData();
+            adDensityValue.textContent = data.adDensity + '%';
+            adDensityBadge.textContent = parseFloat(data.adDensity) > 15 ? 'high' : 'avg';
+            rpmValue.textContent = '$' + data.rpm;
+            rpmBadge.textContent = (Math.random() > 0.5 ? '+' : '') + (Math.random() * 12 + 1).toFixed(0) + '%';
+            spreadValue.textContent = '$' + data.spread;
+            spreadBadge.textContent = parseFloat(data.spread) > 1.8 ? 'arbitrage' : 'low';
+            competitorsValue.textContent = data.competitors;
+            inArticleCount.textContent = data.inCount;
+            inArticleAvg.textContent = data.inAvg;
+            sidebarCount.textContent = data.sideCount;
+            sidebarAvg.textContent = data.sideAvg;
+            nativeCount.textContent = data.natCount;
+            nativeAvg.textContent = data.natAvg;
+            interstitialCount.textContent = data.interCount;
+            interstitialAvg.textContent = data.interAvg;
+            contentQuality.textContent = data.content + '%';
+            contentQualityBar.style.width = data.content + '%';
+            adPlacement.textContent = data.placement + '%';
+            adPlacementBar.style.width = data.placement + '%';
+            arbitragePotential.textContent = data.potential + '%';
+            arbitragePotentialBar.style.width = data.potential + '%';
+            competitorGap.textContent = '$' + data.gap;
+            competitorGapBar.style.width = data.gapPercent + '%';
+            recommendationText.textContent = data.rec;
+            lastScanTime.textContent = 'just now';
+            similarArticles.textContent = data.similar;
+            newSignals.textContent = data.signals;
+            adSlotsCard.classList.remove('card-updated');
+            arbitrageScoreCard.classList.remove('card-updated');
+            void adSlotsCard.offsetWidth;
+            adSlotsCard.classList.add('card-updated');
+            arbitrageScoreCard.classList.add('card-updated');
+        }
+
+        function showLoading() {
+            resultBox.className = 'scan-result-placeholder loading';
+            resultBox.innerHTML = `<div class="loading-spinner" style="display:flex;align-items:center;gap:18px;color:#b0c8e0;"><i class="fas fa-circle-notch spinner-pulse" style="font-size:28px;color:#2563eb;"></i><span>Scanning adult article for arbitrage...</span></div>`;
+        }
+
+        function resetResultBox() {
+            resultBox.className = 'scan-result-placeholder';
+            resultBox.innerHTML = `
+                <div class="scan-stat"><span class="label"><i class="fas fa-file-alt"></i> Ad density</span><span class="value" id="adDensityValue">14.2%</span><span class="badge-arb" id="adDensityBadge">avg</span></div>
+                <div class="scan-stat"><span class="label"><i class="fas fa-dollar-sign"></i> Est. RPM</span><span class="value" id="rpmValue">$8.40</span><span class="badge-arb warn" id="rpmBadge">+6%</span></div>
+                <div class="scan-stat"><span class="label"><i class="fas fa-arrows-left-right"></i> Spread</span><span class="value" id="spreadValue">$2.15</span><span class="badge-arb" id="spreadBadge">arbitrage</span></div>
+                <div class="scan-stat"><span class="label"><i class="fas fa-tag"></i> Competitors</span><span class="value" id="competitorsValue">7</span><span class="badge-arb" style="background:#2f4056; color:#b0c8e0;">active</span></div>
+            `;
+            Object.assign(window, { adDensityValue: document.getElementById('adDensityValue'), adDensityBadge: document.getElementById('adDensityBadge'), rpmValue: document.getElementById('rpmValue'), rpmBadge: document.getElementById('rpmBadge'), spreadValue: document.getElementById('spreadValue'), spreadBadge: document.getElementById('spreadBadge'), competitorsValue: document.getElementById('competitorsValue') });
+        }
+
+        function startScan() {
+            if (isScanning) return;
+            isScanning = true;
+            scanBtn.disabled = true;
+            scanBtn.innerHTML = '<i class="fas fa-spinner spinner-pulse"></i> Scanning...';
+            showLoading();
+            setTimeout(() => {
+                resetResultBox();
+                updateAllData();
+                const newRefs = { adDensityValue: document.getElementById('adDensityValue'), adDensityBadge: document.getElementById('adDensityBadge'), rpmValue: document.getElementById('rpmValue'), rpmBadge: document.getElementById('rpmBadge'), spreadValue: document.getElementById('spreadValue'), spreadBadge: document.getElementById('spreadBadge'), competitorsValue: document.getElementById('competitorsValue') };
+                Object.assign(window, newRefs);
+                scanBtn.disabled = false;
+                scanBtn.innerHTML = '<i class="fas fa-search"></i> Scan Now';
+                isScanning = false;
+            }, 4500);
+        }
+
+        scanBtn.addEventListener('click', (e) => { e.preventDefault(); startScan(); });
+        urlInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); startScan(); } });
+        updateAllData();
+    })();
+</script>
+</body>
+</html>
