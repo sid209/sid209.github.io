@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Royal Smash! — Neon Physics Puzzle</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <canvas id="game"></canvas>
+
+  <!-- In-game HUD -->
+  <div id="hud" class="hidden">
+    <div class="hud-top">
+      <div class="hud-left">
+        <div class="hud-chip" id="hudLevel">1. First Smash</div>
+        <div class="hud-chip score">💎 <span id="hudScore">0</span></div>
+      </div>
+      <div class="hud-right">
+        <button class="icon-btn" id="btnRestart" title="Restart level">↻</button>
+        <button class="icon-btn" id="btnMenu" title="Arenas">☰</button>
+      </div>
+    </div>
+    <div class="hud-bottom">
+      <div class="ammo-wrap"><span class="lbl">BALLS</span><div id="ammo"></div></div>
+      <div class="prog-wrap">
+        <div class="prog-track"><div id="progBar"></div></div>
+        <div id="progTxt">0/0 SMASHED</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Menu / overlays -->
+  <div id="overlay" class="show"></div>
+
+  <script src="js/engine.js"></script>
+  <script src="js/levels.js"></script>
+  <script src="js/render.js"></script>
+  <script src="js/audio.js"></script>
+  <script src="js/game.js"></script>
+</body>
+</html>
