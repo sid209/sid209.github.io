@@ -278,27 +278,493 @@
             .result-value, .comp-value { font-size: 1.4rem; }
             button { padding: 0 20px; }
         }
+
+        body {
+            display: block;
+            padding: 32px 20px;
+            color: #172033;
+            background:
+                radial-gradient(circle at 8% 0%, rgba(249, 115, 22, 0.08), transparent 28rem),
+                #f4f6fa;
+        }
+
+        .main-card {
+            max-width: 1080px;
+            margin: 0 auto;
+            border: 1px solid #e8ebf1;
+            border-radius: 24px;
+            box-shadow: 0 24px 70px rgba(27, 39, 61, 0.10);
+        }
+
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+            padding: 24px 32px;
+            color: #172033;
+            background: #ffffff;
+            border-bottom: 1px solid #edf0f4;
+        }
+
+        .brand-lockup {
+            display: flex;
+            align-items: center;
+            gap: 13px;
+            min-width: 0;
+        }
+
+        .brand-mark {
+            display: grid;
+            width: 44px;
+            height: 44px;
+            flex: 0 0 44px;
+            place-items: center;
+            color: #ffffff;
+            font-size: 1.15rem;
+            background: linear-gradient(145deg, #fb923c, #ea580c);
+            border-radius: 15px;
+            box-shadow: 0 7px 16px rgba(234, 88, 12, 0.2);
+        }
+
+        .header h1 {
+            gap: 0;
+            color: #172033;
+            font-size: 1.05rem;
+            line-height: 1.35;
+        }
+
+        .header h1 i {
+            display: none;
+        }
+
+        .header p {
+            margin-top: 3px;
+            color: #778196;
+            font-size: 0.76rem;
+            opacity: 1;
+        }
+
+        .app-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            flex: 0 0 auto;
+            padding: 8px 11px;
+            color: #657187;
+            font-size: 0.67rem;
+            font-weight: 700;
+            letter-spacing: 0.06em;
+            background: #f7f8fa;
+            border: 1px solid #edf0f4;
+            border-radius: 999px;
+        }
+
+        .app-status::before {
+            width: 7px;
+            height: 7px;
+            content: "";
+            background: #22c55e;
+            border-radius: 50%;
+            box-shadow: 0 0 0 3px #dcfce7;
+        }
+
+        .content {
+            padding: 32px;
+        }
+
+        .page-intro {
+            margin-bottom: 24px;
+        }
+
+        .page-intro h2 {
+            color: #172033;
+            font-size: clamp(1.45rem, 3vw, 1.9rem);
+            letter-spacing: -0.045em;
+        }
+
+        .page-intro p {
+            margin-top: 7px;
+            color: #778196;
+            font-size: 0.88rem;
+            line-height: 1.55;
+        }
+
+        .url-section {
+            margin-bottom: 30px;
+            padding: 21px;
+            background: #f8f9fb;
+            border: 1px solid #edf0f4;
+            border-radius: 18px;
+        }
+
+        label {
+            margin-bottom: 10px;
+            color: #465166;
+            font-size: 0.69rem;
+            letter-spacing: 0.08em;
+        }
+
+        .input-wrapper {
+            flex-wrap: nowrap;
+            gap: 10px;
+        }
+
+        input {
+            min-width: 0;
+            min-height: 50px;
+            padding: 0 16px;
+            color: #263248;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.82rem;
+            border: 1px solid #dfe4ec;
+            border-radius: 12px;
+        }
+
+        input.valid {
+            border-color: #a7e4c5;
+            background: #ffffff;
+        }
+
+        input.invalid {
+            border-color: #f4b4b4;
+            background: #ffffff;
+        }
+
+        button {
+            min-height: 50px;
+            justify-content: center;
+            padding: 0 22px;
+            background: #f97316;
+            border-radius: 12px;
+            box-shadow: 0 5px 12px rgba(249, 115, 22, 0.16);
+        }
+
+        button:hover:not(:disabled) {
+            background: #ea580c;
+            transform: translateY(-1px);
+        }
+
+        button:disabled {
+            background: #aab2c0;
+            box-shadow: none;
+        }
+
+        .validation-status {
+            min-height: 16px;
+            margin-top: 10px;
+            color: #778196;
+            font-size: 0.72rem;
+        }
+
+        .results-heading {
+            display: flex;
+            align-items: end;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 14px;
+        }
+
+        .results-heading h2 {
+            color: #172033;
+            font-size: 1rem;
+            font-weight: 700;
+        }
+
+        .results-heading p {
+            margin-top: 4px;
+            color: #8992a2;
+            font-size: 0.75rem;
+        }
+
+        .results-grid {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 14px;
+            margin-top: 0;
+        }
+
+        .result-card {
+            min-width: 0;
+            padding: 19px 17px;
+            text-align: left;
+            background: #ffffff;
+            border: 1px solid #e9edf3;
+            border-radius: 17px;
+            box-shadow: 0 4px 12px rgba(26, 38, 59, 0.025);
+            transition: border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .result-card:hover {
+            transform: translateY(-2px);
+            border-color: #dce2eb;
+            box-shadow: 0 10px 24px rgba(26, 38, 59, 0.07);
+        }
+
+        .result-card > i {
+            display: grid;
+            width: 36px;
+            height: 36px;
+            margin: 0 0 16px;
+            place-items: center;
+            color: #ea580c;
+            font-size: 0.95rem;
+            background: #fff3e9;
+            border-radius: 11px;
+        }
+
+        .result-value,
+        .comp-value {
+            overflow-wrap: anywhere;
+            color: #172033;
+            font-size: clamp(1.4rem, 2.4vw, 1.85rem);
+            line-height: 1.2;
+        }
+
+        .result-value span {
+            color: #8992a2;
+            font-weight: 600;
+        }
+
+        .result-label {
+            min-height: 2.2em;
+            margin-top: 7px;
+            color: #778196;
+            font-size: 0.65rem;
+            line-height: 1.5;
+        }
+
+        .result-sub {
+            color: #66748a;
+            font-size: 0.68rem;
+            line-height: 1.5;
+        }
+
+        .search-breakdown {
+            max-width: 100%;
+            margin-top: 8px;
+            padding: 5px 8px;
+            color: #bd4d0b;
+            font-size: 0.64rem;
+            line-height: 1.4;
+            white-space: normal;
+            background: #fff4e9;
+            border-radius: 8px;
+        }
+
+        .comp-meter {
+            height: 5px;
+            margin-top: 13px;
+        }
+
+        .comp-badge {
+            margin-top: 9px;
+            padding: 4px 8px;
+            border-radius: 7px;
+        }
+
+        .comp-hint {
+            color: #66748a;
+        }
+
+        @media (max-width: 850px) {
+            .results-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+        }
+
+        @media (max-width: 600px) {
+            body {
+                min-height: 100vh;
+                padding: 0;
+                background: #ffffff;
+            }
+
+            .main-card {
+                min-height: 100vh;
+                border: 0;
+                border-radius: 0;
+                box-shadow: none;
+            }
+
+            .header {
+                position: sticky;
+                z-index: 2;
+                top: 0;
+                padding: calc(15px + env(safe-area-inset-top)) 19px 15px;
+                border-bottom-color: #f0f2f5;
+                box-shadow: 0 3px 12px rgba(26, 38, 59, 0.035);
+            }
+
+            .brand-mark {
+                width: 40px;
+                height: 40px;
+                flex-basis: 40px;
+                border-radius: 13px;
+            }
+
+            .header h1 {
+                font-size: 0.96rem;
+            }
+
+            .header p {
+                max-width: 220px;
+                font-size: 0.7rem;
+            }
+
+            .app-status {
+                padding: 7px 9px;
+                font-size: 0.58rem;
+            }
+
+            .content {
+                padding: 25px 18px calc(30px + env(safe-area-inset-bottom));
+            }
+
+            .page-intro {
+                margin-bottom: 21px;
+            }
+
+            .page-intro h2 {
+                font-size: 1.55rem;
+            }
+
+            .page-intro p {
+                font-size: 0.82rem;
+            }
+
+            .url-section {
+                margin-bottom: 27px;
+                padding: 16px;
+                border-radius: 16px;
+            }
+
+            .input-wrapper {
+                flex-direction: column;
+                gap: 9px;
+            }
+
+            input {
+                width: 100%;
+                min-height: 48px;
+                font-size: 0.77rem;
+            }
+
+            button {
+                width: 100%;
+                min-height: 48px;
+            }
+
+            .results-grid {
+                gap: 11px;
+            }
+
+            .result-card {
+                padding: 15px 13px;
+                border-radius: 15px;
+            }
+
+            .result-card > i {
+                width: 32px;
+                height: 32px;
+                margin-bottom: 13px;
+                border-radius: 10px;
+            }
+
+            .result-value,
+            .comp-value {
+                font-size: clamp(1.25rem, 6vw, 1.55rem);
+            }
+
+            .result-label {
+                min-height: 3em;
+                font-size: 0.61rem;
+            }
+
+            .result-sub {
+                font-size: 0.62rem;
+            }
+
+            .search-breakdown {
+                font-size: 0.59rem;
+            }
+
+            .results-heading {
+                align-items: start;
+                flex-direction: column;
+                gap: 3px;
+            }
+        }
+
+        @media (max-width: 350px) {
+            .header {
+                gap: 10px;
+                padding-right: 13px;
+                padding-left: 13px;
+            }
+
+            .app-status {
+                font-size: 0;
+            }
+
+            .app-status::before {
+                width: 8px;
+                height: 8px;
+            }
+
+            .content {
+                padding-right: 13px;
+                padding-left: 13px;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *,
+            *::before,
+            *::after {
+                scroll-behavior: auto !important;
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
     </style>
 </head>
 <body>
 <div class="main-card">
     <div class="header">
-        <h1><i class="fas fa-chart-line"></i> RedSpy • Marketplace Demand</h1>
-        <p>Paste Redbubble product URL → validate → scan → weekly sales + total revenue + estimated monthly searches + competition score</p>
+        <div class="brand-lockup">
+            <div class="brand-mark" aria-hidden="true"><i class="fas fa-chart-line"></i></div>
+            <div>
+                <h1>RedSpy</h1>
+                <p>Marketplace demand intelligence</p>
+            </div>
+        </div>
+        <span class="app-status">MARKET SCANNER</span>
     </div>
-    <div class="content">
+    <main class="content">
+        <div class="page-intro">
+            <h2>Find your next bestseller</h2>
+            <p>Explore estimated sales, search demand, and competition for any Redbubble product.</p>
+        </div>
         <div class="url-section">
-            <label><i class="fab fa-redbubble"></i> REDBUBBLE PRODUCT URL</label>
+            <label for="productUrl"><i class="fab fa-redbubble"></i> REDBUBBLE PRODUCT URL</label>
             <div class="input-wrapper">
-                <input type="text" id="productUrl" placeholder="https://www.redbubble.com/i/sticker/Design-Name-by-artist/123456789" value="https://www.redbubble.com/i/iphone-case/Crochet-Floral-Heart-Handmade-Flowers-of-Love-and-Remembrance-by-newsuept25/184083921/3bp7">
-                <button id="analyzeBtn" disabled><i class="fas fa-chart-simple"></i> Estimate</button>
+                <input type="text" id="productUrl" aria-describedby="validationStatus" placeholder="https://www.redbubble.com/i/sticker/Design-Name-by-artist/123456789" value="https://www.redbubble.com/i/iphone-case/Crochet-Floral-Heart-Handmade-Flowers-of-Love-and-Remembrance-by-newsuept25/184083921/3bp7" autocomplete="off" spellcheck="false">
+                <button id="analyzeBtn" type="button" disabled><i class="fas fa-chart-simple"></i> Estimate</button>
             </div>
             <div id="validationStatus" class="validation-status">
                 <i class="fas fa-spinner fa-pulse"></i> <span>Checking URL...</span>
             </div>
         </div>
 
-        <div class="results-grid">
+        <div class="results-heading">
+            <div>
+                <h2>Market snapshot</h2>
+                <p>Estimated performance indicators for this design</p>
+            </div>
+        </div>
+        <section class="results-grid" aria-label="Estimated market metrics">
             <div class="result-card">
                 <i class="fas fa-cart-shopping"></i>
                 <div class="result-value" id="weeklySales">—</div>
@@ -312,23 +778,23 @@
                 <div class="result-sub" id="royaltyHint">👤 artist royalty ~—</div>
             </div>
             <div class="result-card">
-                <i class="fas fa-magnifying-glass-chart"></i>
+                <i class="fas fa-magnifying-glass"></i>
                 <div class="result-value" id="searchVolume">—</div>
                 <div class="result-label">Predicted Monthly Searches</div>
                 <div class="search-breakdown" id="searchInsight">marketplace demand index</div>
             </div>
             <div class="result-card">
-                <i class="fas fa-swords"></i>
+                <i class="fas fa-users"></i>
                 <div class="comp-value" id="competitionScore">—</div>
                 <div class="result-label">Competition Score</div>
                 <div class="comp-meter">
                     <div class="comp-meter-fill" id="compMeterFill" style="width: 0%;"></div>
                 </div>
                 <div class="comp-badge" id="compBadge">—</div>
-                <div class="result-sub" id="compHint" style="color:#64748b;">saturation index —</div>
+                <div class="result-sub comp-hint" id="compHint">saturation index —</div>
             </div>
-        </div>
-    </div>
+        </section>
+    </main>
 </div>
 
 <script>
