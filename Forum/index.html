@@ -1,0 +1,1818 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>225T • BHW-style forum</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    body {
+      background: #0f0f13;
+      color: #e4e6eb;
+      line-height: 1.5;
+      padding: 1.5rem 1rem;
+    }
+
+    .forum-wrapper { max-width: 1200px; margin: 0 auto; }
+
+    /* ====== HEADER ====== */
+    .site-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-bottom: 2rem;
+      border-bottom: 1px solid #2a2c35;
+      padding-bottom: 1rem;
+    }
+
+    .logo-area { display: flex; align-items: center; gap: 0.6rem; cursor: pointer; }
+
+    .logo-icon {
+      background: #4a6cf7;
+      width: 40px; height: 40px;
+      border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.2rem; color: white; font-weight: 800;
+      box-shadow: 0 6px 12px rgba(74, 108, 247, 0.25);
+      letter-spacing: -0.5px;
+    }
+
+    .logo-text {
+      font-size: 1.9rem; font-weight: 700; letter-spacing: -0.5px;
+      background: linear-gradient(135deg, #ffffff, #b0b8ff);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+
+    .logo-text span { font-weight: 300; color: #8a93b0; -webkit-text-fill-color: #8a93b0; }
+
+    .header-actions { display: flex; align-items: center; gap: 0.7rem; flex-wrap: wrap; }
+
+    .join-btn {
+      background: linear-gradient(135deg, #4a6cf7, #6b4af7);
+      color: white; border: none;
+      padding: 0.6rem 1.2rem; border-radius: 40px;
+      font-size: 0.88rem; font-weight: 600; cursor: pointer;
+      display: flex; align-items: center; gap: 7px;
+      transition: transform 0.1s, box-shadow 0.15s;
+      box-shadow: 0 4px 14px rgba(74, 108, 247, 0.35);
+    }
+
+    .join-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 18px rgba(74, 108, 247, 0.5); }
+    .join-btn:active { transform: translateY(0); }
+
+    .user-badge {
+      background: #1e1f26; border: 1px solid #33363f;
+      padding: 0.5rem 1rem; border-radius: 40px;
+      display: flex; align-items: center; gap: 10px;
+      font-size: 0.9rem; color: #b9c2d9; cursor: pointer;
+    }
+
+    .user-badge i { color: #4a6cf7; }
+
+    /* ====== MEMBERSHIP BANNER ====== */
+    .membership-banner {
+      background: linear-gradient(135deg, #1a1e2e, #161a28);
+      border: 1px solid #2a3050;
+      border-radius: 20px;
+      padding: 1.4rem 1.8rem;
+      margin-bottom: 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .membership-banner::before {
+      content: '';
+      position: absolute;
+      top: -50%; right: -10%;
+      width: 300px; height: 300px;
+      background: radial-gradient(circle, rgba(74,108,247,0.18), transparent 70%);
+      pointer-events: none;
+    }
+
+    .banner-text { flex: 1; min-width: 240px; position: relative; z-index: 1; }
+
+    .banner-text h2 {
+      font-size: 1.15rem; font-weight: 700; color: #f0f3fa;
+      margin-bottom: 0.35rem;
+      display: flex; align-items: center; gap: 10px;
+    }
+
+    .banner-text h2 i { color: #f7b84b; }
+
+    .banner-text p { font-size: 0.88rem; color: #9aa5c4; }
+
+    .banner-actions { display: flex; gap: 0.7rem; flex-wrap: wrap; position: relative; z-index: 1; }
+
+    .banner-btn {
+      padding: 0.65rem 1.3rem; border-radius: 40px;
+      font-size: 0.85rem; font-weight: 600; cursor: pointer;
+      display: flex; align-items: center; gap: 7px;
+      transition: all 0.15s; border: 1px solid transparent;
+    }
+
+    .banner-btn.primary { background: #4a6cf7; color: white; }
+    .banner-btn.primary:hover { background: #5b7bff; }
+
+    .banner-btn.secondary {
+      background: transparent; color: #b9c2d9;
+      border-color: #3a4055;
+    }
+    .banner-btn.secondary:hover { background: #1f2330; color: #fff; border-color: #4a6cf7; }
+
+    /* ====== STATS BAR (LIVE) ====== */
+    .stats-bar {
+      display: flex; flex-wrap: wrap; gap: 1.5rem 2.5rem;
+      background: #181a20; border-radius: 16px;
+      padding: 1rem 1.5rem; margin-bottom: 2.5rem;
+      border: 1px solid #272932; font-size: 0.95rem; color: #b0b8cc;
+      justify-content: space-around;
+      align-items: center;
+    }
+
+    .stat-item i { color: #4a6cf7; margin-right: 8px; width: 18px; }
+    .stat-item strong { color: #ffffff; font-weight: 600; font-variant-numeric: tabular-nums; }
+
+    .stat-item strong.pulse {
+      animation: statPulse 0.6s ease;
+    }
+
+    @keyframes statPulse {
+      0% { color: #ffffff; }
+      40% { color: #4ade80; text-shadow: 0 0 8px rgba(74, 222, 128, 0.5); }
+      100% { color: #ffffff; }
+    }
+
+    .live-dot {
+      display: inline-block;
+      width: 8px; height: 8px;
+      background: #4ade80;
+      border-radius: 50%;
+      margin-right: 6px;
+      animation: liveBlink 1.5s infinite;
+      vertical-align: middle;
+    }
+
+    @keyframes liveBlink {
+      0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(74, 222, 128, 0.4); }
+      50% { opacity: 0.6; box-shadow: 0 0 0 5px rgba(74, 222, 128, 0); }
+    }
+
+    .last-activity {
+      font-size: 0.78rem;
+      color: #6b7690;
+      margin-left: auto;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      white-space: nowrap;
+    }
+
+    .last-activity i { color: #4a6cf7; }
+
+    /* ====== CATEGORY SECTIONS ====== */
+    .category-section {
+      margin-bottom: 2.5rem; background: #13151c;
+      border-radius: 20px; border: 1px solid #262932;
+      overflow: hidden; box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.5);
+      transition: border-color 0.2s;
+    }
+
+    .category-section:hover { border-color: #3b4050; }
+
+    .category-header {
+      display: flex; align-items: center; gap: 0.75rem;
+      padding: 1.2rem 1.5rem; background: #1a1d26;
+      border-bottom: 1px solid #262932;
+      font-weight: 600; font-size: 1.2rem; color: #f0f3fa;
+    }
+
+    .category-header i { color: #4a6cf7; font-size: 1.5rem; width: 2rem; text-align: center; }
+
+    .category-header .badge-count {
+      margin-left: auto; font-size: 0.8rem; background: #2d3343;
+      padding: 0.25rem 0.8rem; border-radius: 30px;
+      color: #b9c2e0; font-weight: 400;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .thread-list { display: flex; flex-direction: column; }
+
+    .composer-card {
+      background: #13151c; border: 1px solid #262932;
+      border-radius: 20px; padding: 1.5rem; margin-bottom: 2.5rem;
+      box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.35);
+    }
+
+    .composer-heading { margin-bottom: 1.2rem; }
+    .composer-heading h2 { color: #f0f3fa; font-size: 1.15rem; margin-bottom: 0.25rem; }
+    .composer-heading h2 i { color: #4a6cf7; margin-right: 0.45rem; }
+    .composer-heading p { color: #8a93b0; font-size: 0.85rem; }
+    .composer-lock {
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 1rem; flex-wrap: wrap; padding: 1rem;
+      background: #1a1e2a; border: 1px solid #2a3050; border-radius: 12px;
+    }
+    .composer-lock p { color: #b9c2d9; font-size: 0.88rem; }
+    .composer-lock p i { color: #f7b84b; margin-right: 0.4rem; }
+    .composer-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    .composer-field { display: flex; flex-direction: column; gap: 0.45rem; }
+    .composer-field.full-width { grid-column: 1 / -1; }
+    .composer-field label { color: #b9c2d9; font-size: 0.82rem; font-weight: 600; }
+    .composer-field input, .composer-field select, .composer-field textarea {
+      width: 100%; background: #181a24; border: 1px solid #2a2d3a;
+      border-radius: 10px; padding: 0.75rem 0.9rem; color: #e4e6eb;
+      font: inherit; font-size: 0.9rem; outline: none; transition: border-color 0.15s;
+    }
+    .composer-field select { color-scheme: dark; }
+    .composer-field textarea { min-height: 135px; resize: vertical; }
+    .composer-field input:focus, .composer-field select:focus, .composer-field textarea:focus { border-color: #4a6cf7; }
+    .composer-field input::placeholder, .composer-field textarea::placeholder { color: #5a637b; }
+    .composer-footer {
+      display: flex; align-items: center; justify-content: space-between;
+      flex-wrap: wrap; gap: 1rem; margin-top: 1rem;
+    }
+    .composer-hint { color: #6b7690; font-size: 0.78rem; }
+
+    .thread-item {
+      display: flex; align-items: center; gap: 1rem;
+      padding: 1rem 1.5rem; border-bottom: 1px solid #20222b;
+      transition: background 0.15s; cursor: pointer;
+    }
+
+    .thread-item:last-child { border-bottom: none; }
+    .thread-item:hover { background: #1b1e27; }
+
+    .thread-item.new-bump {
+      animation: newBump 1.8s ease;
+    }
+
+    @keyframes newBump {
+      0% { background: rgba(74, 108, 247, 0.15); }
+      100% { background: transparent; }
+    }
+
+    .thread-avatar {
+      width: 44px; height: 44px; border-radius: 12px;
+      background: #2c3140; display: flex; align-items: center; justify-content: center;
+      font-weight: 600; color: #7d8ab0; flex-shrink: 0; font-size: 1.2rem;
+    }
+
+    .thread-info { flex: 1; min-width: 0; }
+
+    .thread-title {
+      font-weight: 600; font-size: 1rem;
+      display: flex; align-items: center; flex-wrap: wrap;
+      gap: 8px; margin-bottom: 4px;
+    }
+
+    .thread-title a { color: #eef1fc; text-decoration: none; transition: color 0.15s; }
+    .thread-item:hover .thread-title a { color: #4a6cf7; }
+
+    .thread-meta {
+      display: flex; flex-wrap: wrap; gap: 1rem;
+      font-size: 0.8rem; color: #7f89a3;
+    }
+
+    .thread-meta i { margin-right: 4px; font-size: 0.75rem; color: #5c6a8f; }
+
+    .thread-stats {
+      display: flex; align-items: center; gap: 1.2rem;
+      font-size: 0.8rem; color: #8f9bb3; flex-shrink: 0;
+    }
+
+    .thread-stats i { margin-right: 4px; font-size: 0.75rem; color: #5c6a8f; }
+
+    .tag {
+      font-size: 0.7rem; background: #2a3042;
+      padding: 0.2rem 0.6rem; border-radius: 20px;
+      color: #b0c0ee; font-weight: 500;
+      text-transform: uppercase; letter-spacing: 0.3px;
+    }
+
+    .tag.hot { background: #4a2e2e; color: #ff9f9f; border: 1px solid #6b3e3e; }
+    .tag.verified { background: #1e3a3a; color: #7ed9d9; border: 1px solid #2e5a5a; }
+    .tag.member { background: #2e2440; color: #c4a7ff; border: 1px solid #4a3a6b; }
+
+    .last-post {
+      font-size: 0.75rem; color: #7a84a0;
+      display: flex; align-items: center; gap: 6px; white-space: nowrap;
+    }
+
+    .last-post i { font-size: 0.7rem; }
+
+    .locked-notice {
+      display: flex; align-items: center; gap: 8px;
+      font-size: 0.72rem; color: #f7b84b;
+      background: rgba(247, 184, 75, 0.08);
+      padding: 0.15rem 0.6rem; border-radius: 20px;
+      border: 1px solid rgba(247, 184, 75, 0.25);
+      margin-top: 6px;
+      width: fit-content;
+    }
+
+    .locked-notice i { font-size: 0.65rem; }
+
+    .lounge-message {
+      background: #1a1e2a; border-left: 3px solid #f7b84b;
+      padding: 0.8rem 1.2rem; margin: 1rem 1.5rem 1.5rem 1.5rem;
+      border-radius: 10px; display: flex; align-items: center;
+      gap: 10px; font-size: 0.9rem; color: #cbd2e8;
+    }
+
+    .lounge-message i { color: #f7b84b; font-size: 1.2rem; }
+
+    /* ====== PERKS STRIP ====== */
+    .perks-strip {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin-bottom: 2.5rem;
+    }
+
+    .perk-card {
+      background: #13151c;
+      border: 1px solid #262932;
+      border-radius: 16px;
+      padding: 1.2rem;
+      transition: border-color 0.2s, transform 0.15s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .perk-card:hover { border-color: #4a6cf7; transform: translateY(-2px); }
+
+    .perk-icon {
+      width: 40px; height: 40px; border-radius: 10px;
+      background: rgba(74, 108, 247, 0.12);
+      display: flex; align-items: center; justify-content: center;
+      color: #4a6cf7; font-size: 1.1rem; margin-bottom: 0.7rem;
+    }
+
+    .perk-card h4 { font-size: 0.92rem; font-weight: 600; color: #f0f3fa; margin-bottom: 0.25rem; }
+    .perk-card p { font-size: 0.78rem; color: #8a93b0; line-height: 1.5; }
+
+    /* ====== POST DETAIL VIEW ====== */
+    #post-view { display: none; }
+
+    .back-bar { display: flex; align-items: center; gap: 0.8rem; margin-bottom: 1.5rem; flex-wrap: wrap; }
+
+    .back-btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: #1e1f26; border: 1px solid #33363f;
+      color: #b9c2d9; padding: 0.6rem 1.1rem;
+      border-radius: 30px; font-size: 0.9rem; cursor: pointer;
+      transition: all 0.15s; font-weight: 500;
+    }
+
+    .back-btn:hover { background: #2a2c35; color: #fff; border-color: #4a6cf7; }
+    .back-btn i { color: #4a6cf7; }
+
+    .post-container {
+      background: #13151c; border: 1px solid #262932;
+      border-radius: 20px; overflow: hidden;
+      box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.5);
+    }
+
+    .post-header {
+      padding: 1.8rem 2rem 1.5rem 2rem;
+      border-bottom: 1px solid #20222b; background: #161821;
+    }
+
+    .post-title-row {
+      display: flex; align-items: flex-start; gap: 12px;
+      flex-wrap: wrap; margin-bottom: 1rem;
+    }
+
+    .post-title {
+      font-size: 1.6rem; font-weight: 700; color: #f0f3fa;
+      line-height: 1.3; flex: 1; min-width: 200px;
+    }
+
+    .post-meta-row {
+      display: flex; flex-wrap: wrap; gap: 1.5rem;
+      font-size: 0.85rem; color: #8f9bb3;
+    }
+
+    .post-meta-row i { margin-right: 6px; color: #5c6a8f; }
+    .post-meta-row .author { color: #4a6cf7; font-weight: 600; }
+
+    .post-body {
+      padding: 2rem; font-size: 0.98rem;
+      color: #d5dbea; line-height: 1.7;
+    }
+
+    .post-body p { margin-bottom: 1rem; }
+    .post-body ul, .post-body ol { margin: 1rem 0 1rem 1.5rem; }
+    .post-body li { margin-bottom: 0.5rem; }
+    .post-body strong { color: #ffffff; }
+
+    .post-replies { border-top: 1px solid #20222b; }
+
+    .replies-header {
+      padding: 1.2rem 2rem; background: #161821;
+      font-weight: 600; color: #e4e6eb;
+      display: flex; align-items: center; gap: 10px;
+      font-size: 1rem; border-bottom: 1px solid #20222b;
+    }
+
+    .replies-header i { color: #4a6cf7; }
+
+    .replies-header .reply-count {
+      background: #2d3343; font-size: 0.75rem;
+      padding: 0.15rem 0.6rem; border-radius: 20px;
+      color: #b9c2e0; font-weight: 400;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .reply-item {
+      display: flex; gap: 1rem;
+      padding: 1.2rem 2rem; border-bottom: 1px solid #1a1c24;
+    }
+
+    .reply-avatar {
+      width: 40px; height: 40px; border-radius: 10px;
+      background: #2c3140; display: flex; align-items: center; justify-content: center;
+      color: #7d8ab0; flex-shrink: 0; font-size: 1rem;
+    }
+
+    .reply-content { flex: 1; min-width: 0; }
+
+    .reply-top {
+      display: flex; align-items: center; gap: 10px;
+      margin-bottom: 6px; flex-wrap: wrap;
+    }
+
+    .reply-author { font-weight: 600; color: #4a6cf7; font-size: 0.9rem; }
+    .reply-time { font-size: 0.75rem; color: #6b7690; }
+
+    .reply-badge {
+      font-size: 0.65rem; background: #2a3042;
+      padding: 0.1rem 0.5rem; border-radius: 10px;
+      color: #b0c0ee; font-weight: 500;
+    }
+
+    .reply-text { font-size: 0.9rem; color: #c3cbe0; line-height: 1.6; }
+
+    .reply-actions {
+      display: flex; gap: 1.2rem; margin-top: 8px;
+      font-size: 0.78rem; color: #6b7690;
+    }
+
+    .reply-actions span { cursor: pointer; display: flex; align-items: center; gap: 5px; transition: color 0.15s; }
+    .reply-actions span:hover { color: #4a6cf7; }
+    .reply-actions i { font-size: 0.72rem; }
+    .like-btn.liked { color: #4a6cf7 !important; }
+
+    .reply-form { padding: 1.5rem 2rem 2rem 2rem; background: #10121a; }
+
+    .reply-form h4 {
+      color: #e4e6eb; font-size: 0.95rem;
+      margin-bottom: 0.8rem; display: flex; align-items: center; gap: 8px;
+    }
+
+    .reply-form h4 i { color: #4a6cf7; }
+
+    .reply-form textarea {
+      width: 100%; min-height: 100px;
+      background: #181a24; border: 1px solid #2a2d3a;
+      border-radius: 12px; padding: 1rem;
+      color: #e4e6eb; font-size: 0.9rem;
+      font-family: inherit; resize: vertical;
+      outline: none; transition: border-color 0.15s;
+    }
+
+    .reply-form textarea:focus { border-color: #4a6cf7; }
+    .reply-form textarea::placeholder { color: #5a637b; }
+
+    .reply-submit-row {
+      display: flex; align-items: center; justify-content: space-between;
+      flex-wrap: wrap; gap: 1rem; margin-top: 0.8rem;
+    }
+
+    .reply-submit-row .hint { font-size: 0.75rem; color: #5a637b; }
+
+    .submit-btn {
+      background: #4a6cf7; color: white; border: none;
+      padding: 0.7rem 1.8rem; border-radius: 30px;
+      font-size: 0.9rem; font-weight: 600; cursor: pointer;
+      transition: background 0.15s, transform 0.1s;
+      display: flex; align-items: center; gap: 8px;
+    }
+
+    .submit-btn:hover { background: #5b7bff; }
+    .submit-btn:active { transform: scale(0.98); }
+
+    /* ====== MODAL ====== */
+    .modal-overlay {
+      position: fixed; inset: 0;
+      background: rgba(6, 7, 10, 0.8);
+      backdrop-filter: blur(6px);
+      display: none;
+      align-items: center; justify-content: center;
+      padding: 1rem; z-index: 1000;
+      opacity: 0; transition: opacity 0.2s;
+    }
+
+    .modal-overlay.active { display: flex; opacity: 1; }
+
+    .modal {
+      background: #13151c;
+      border: 1px solid #2a2d3a;
+      border-radius: 24px;
+      max-width: 560px; width: 100%;
+      max-height: 92vh; overflow-y: auto;
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.7);
+      animation: modalIn 0.25s ease;
+    }
+
+    @keyframes modalIn {
+      from { transform: translateY(20px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+
+    .modal-header {
+      padding: 1.5rem 1.8rem 1rem 1.8rem;
+      border-bottom: 1px solid #20222b;
+      display: flex; align-items: flex-start;
+      justify-content: space-between; gap: 1rem;
+    }
+
+    .modal-header h2 {
+      font-size: 1.35rem; font-weight: 700; color: #f0f3fa;
+      display: flex; align-items: center; gap: 10px;
+    }
+
+    .modal-header h2 i { color: #f7b84b; }
+    .modal-header p { font-size: 0.85rem; color: #8a93b0; margin-top: 4px; }
+
+    .modal-close {
+      background: #1e1f26; border: 1px solid #33363f;
+      color: #b9c2d9; width: 34px; height: 34px;
+      border-radius: 50%; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; transition: all 0.15s; font-size: 0.9rem;
+    }
+
+    .modal-close:hover { background: #2a2c35; color: #fff; }
+
+    .modal-body { padding: 1.5rem 1.8rem 1.8rem 1.8rem; }
+
+    .modal-tabs {
+      display: flex; gap: 0.5rem;
+      background: #0f111a;
+      padding: 0.3rem; border-radius: 14px;
+      margin-bottom: 1.5rem;
+    }
+
+    .modal-tab {
+      flex: 1; padding: 0.65rem 0.5rem;
+      border: none; background: transparent;
+      color: #8a93b0; font-size: 0.85rem; font-weight: 600;
+      border-radius: 11px; cursor: pointer;
+      display: flex; align-items: center; justify-content: center; gap: 7px;
+      transition: all 0.15s; font-family: inherit;
+    }
+
+    .modal-tab.active { background: #4a6cf7; color: white; box-shadow: 0 4px 12px rgba(74,108,247,0.35); }
+    .modal-tab:not(.active):hover { color: #c4cce0; background: #181a24; }
+
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+
+    .field-label {
+      display: block; font-size: 0.8rem; font-weight: 600;
+      color: #b9c2d9; margin-bottom: 0.4rem;
+    }
+
+    .field-input {
+      width: 100%; background: #181a24;
+      border: 1px solid #2a2d3a; border-radius: 12px;
+      padding: 0.8rem 1rem; color: #e4e6eb;
+      font-size: 0.9rem; font-family: inherit;
+      outline: none; transition: border-color 0.15s;
+      margin-bottom: 1.1rem;
+    }
+
+    .field-input:focus { border-color: #4a6cf7; }
+    .field-input::placeholder { color: #5a637b; }
+
+    .field-hint { font-size: 0.74rem; color: #6b7690; margin-top: -0.7rem; margin-bottom: 1.1rem; }
+    .field-hint i { color: #f7b84b; margin-right: 4px; }
+
+    .modal-submit {
+      width: 100%; background: linear-gradient(135deg, #4a6cf7, #6b4af7);
+      color: white; border: none;
+      padding: 0.9rem; border-radius: 14px;
+      font-size: 0.95rem; font-weight: 700;
+      cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 9px;
+      transition: transform 0.1s, box-shadow 0.15s;
+      box-shadow: 0 6px 18px rgba(74,108,247,0.3);
+      font-family: inherit;
+    }
+
+    .modal-submit:hover { transform: translateY(-1px); box-shadow: 0 8px 22px rgba(74,108,247,0.45); }
+    .modal-submit:active { transform: translateY(0); }
+
+    .modal-perks {
+      background: #0f111a;
+      border: 1px solid #232633;
+      border-radius: 16px;
+      padding: 1.1rem 1.2rem;
+      margin-bottom: 1.4rem;
+    }
+
+    .modal-perks h4 {
+      font-size: 0.8rem; font-weight: 700;
+      color: #f7b84b; text-transform: uppercase;
+      letter-spacing: 0.6px; margin-bottom: 0.8rem;
+      display: flex; align-items: center; gap: 7px;
+    }
+
+    .modal-perk-list {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 0.6rem 1rem;
+    }
+
+    .modal-perk-item {
+      display: flex; align-items: center; gap: 8px;
+      font-size: 0.8rem; color: #c3cbe0;
+    }
+
+    .modal-perk-item i { color: #4ade80; font-size: 0.72rem; }
+
+    .price-display {
+      display: flex; align-items: center; justify-content: center;
+      gap: 8px; margin-bottom: 1.2rem;
+      background: #0f111a; border: 1px solid #232633;
+      border-radius: 16px; padding: 1rem;
+    }
+
+    .price-amount { font-size: 2rem; font-weight: 800; color: #ffffff; }
+    .price-period { font-size: 0.85rem; color: #8a93b0; margin-top: 6px; }
+
+    /* toast */
+    .toast {
+      position: fixed; bottom: 24px; left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      background: #1a1e2e; border: 1px solid #4a6cf7;
+      color: #e4e6eb; padding: 0.9rem 1.4rem;
+      border-radius: 14px; font-size: 0.88rem;
+      display: flex; align-items: center; gap: 10px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+      z-index: 2000; opacity: 0;
+      transition: transform 0.3s ease, opacity 0.3s ease;
+      pointer-events: none; max-width: calc(100vw - 2rem);
+    }
+
+    .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+    .toast i { color: #4ade80; font-size: 1.1rem; }
+
+    .member-pill {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: rgba(247, 184, 75, 0.1);
+      border: 1px solid rgba(247, 184, 75, 0.35);
+      color: #f7b84b; font-size: 0.72rem; font-weight: 600;
+      padding: 0.2rem 0.7rem; border-radius: 20px;
+    }
+
+    .member-pill i { font-size: 0.65rem; }
+
+    .footer-note {
+      text-align: center; margin-top: 3rem;
+      padding-top: 1.5rem; border-top: 1px solid #1e2028;
+      font-size: 0.8rem; color: #5a637b;
+    }
+
+    .footer-note i { color: #4a6cf7; }
+
+    @media (max-width: 700px) {
+      .thread-item { flex-wrap: wrap; align-items: flex-start; gap: 0.75rem; }
+      .thread-avatar { width: 36px; height: 36px; font-size: 1rem; }
+      .thread-stats { margin-left: 52px; width: 100%; justify-content: flex-start; gap: 1.5rem; }
+      .last-post { margin-left: 52px; font-size: 0.7rem; }
+      .thread-title { font-size: 0.95rem; }
+      .category-header { font-size: 1.1rem; padding: 1rem 1.2rem; }
+      .stats-bar { justify-content: flex-start; gap: 1rem; }
+      .last-activity { margin-left: 0; width: 100%; }
+      .post-title { font-size: 1.3rem; }
+      .post-header, .post-body { padding: 1.3rem; }
+      .reply-item { padding: 1rem 1.3rem; }
+      .reply-form { padding: 1.2rem 1.3rem; }
+      .membership-banner { padding: 1.2rem 1.3rem; }
+      .modal-perk-list { grid-template-columns: 1fr; }
+      .modal-header, .modal-body { padding-left: 1.3rem; padding-right: 1.3rem; }
+      .composer-card { padding: 1.2rem; }
+    }
+
+    @media (max-width: 450px) {
+      .logo-text { font-size: 1.5rem; }
+      .user-badge span { display: none; }
+      .thread-meta { gap: 0.7rem; }
+      .badge-count { display: none; }
+      .post-meta-row { gap: 0.8rem; font-size: 0.78rem; }
+      .modal-tab { font-size: 0.78rem; padding: 0.55rem 0.3rem; }
+      .price-amount { font-size: 1.6rem; }
+      .join-btn span { display: none; }
+      .join-btn { padding: 0.6rem 0.9rem; }
+    }
+  </style>
+</head>
+<body>
+  <div class="forum-wrapper">
+    <!-- ========== MAIN FORUM VIEW ========== -->
+    <div id="forum-view">
+      <header class="site-header">
+        <div class="logo-area" onclick="showForum()">
+          <div class="logo-icon">225T</div>
+          <div class="logo-text">225<span>T</span></div>
+        </div>
+        <div class="header-actions">
+          <button class="join-btn" onclick="openMembershipModal()">
+            <i class="fas fa-crown"></i> <span>Become a Member</span>
+          </button>
+          <div class="user-badge">
+            <i class="fas fa-user-circle"></i>
+            <span>@guest_viewer</span>
+            <i class="fas fa-chevron-down" style="font-size:0.7rem; opacity:0.7;"></i>
+          </div>
+        </div>
+      </header>
+
+      <!-- Membership banner -->
+      <div class="membership-banner" id="membership-banner">
+        <div class="banner-text">
+          <h2><i class="fas fa-crown"></i> Unlock the full 225T experience</h2>
+          <p>Join via invitation code or a $120/year membership. Both options include forum posting, early-access discounts, and group buys. Paid membership also includes an advertising boost.</p>
+        </div>
+        <div class="banner-actions">
+          <button class="banner-btn primary" onclick="openMembershipModal('invite')">
+            <i class="fas fa-ticket-alt"></i> I have an invite
+          </button>
+          <button class="banner-btn secondary" onclick="openMembershipModal('paid')">
+            <i class="fas fa-credit-card"></i> Join for $120/yr
+          </button>
+        </div>
+      </div>
+
+      <!-- LIVE STATS BAR -->
+      <div class="stats-bar">
+        <div class="stat-item">
+          <i class="fas fa-users"></i>
+          <strong id="stat-members">28,451</strong> members
+        </div>
+        <div class="stat-item">
+          <i class="fas fa-comment-dots"></i>
+          <strong id="stat-posts">142,893</strong> posts
+        </div>
+        <div class="stat-item">
+          <span class="live-dot"></span>
+          <strong id="stat-online">189</strong> online
+        </div>
+        <div class="last-activity" id="last-activity">
+          <i class="fas fa-bolt"></i> <span id="activity-text">Activity: just now</span>
+        </div>
+      </div>
+
+      <!-- Perks strip -->
+      <div class="perks-strip">
+        <div class="perk-card">
+          <div class="perk-icon"><i class="fas fa-pen-fancy"></i></div>
+          <h4>Post on the forum</h4>
+          <p>Create threads, reply to discussions, and build your reputation in the community.</p>
+        </div>
+        <div class="perk-card">
+          <div class="perk-icon"><i class="fas fa-tags"></i></div>
+          <h4>Early access discounts</h4>
+          <p>Get exclusive discount codes on verified tools and services before anyone else.</p>
+        </div>
+        <div class="perk-card">
+          <div class="perk-icon"><i class="fas fa-users-cog"></i></div>
+          <h4>Group buy access</h4>
+          <p>Join members-only group buys to split the cost of premium tools and services.</p>
+        </div>
+        <div class="perk-card" id="boost-perk">
+          <div class="perk-icon"><i class="fas fa-bullhorn"></i></div>
+          <h4>Paid membership: Advertise with boost</h4>
+          <p>Paid members can promote a product or service with an advertising boost.</p>
+        </div>
+      </div>
+
+      <section class="composer-card" aria-labelledby="composer-title">
+        <div class="composer-heading">
+          <h2 id="composer-title"><i class="fas fa-pen-fancy"></i> Member discussions</h2>
+          <p>Members can start discussions in any of the three main topics.</p>
+        </div>
+        <div class="composer-lock" id="composer-lock" hidden>
+          <p><i class="fas fa-lock"></i> Posting is available to members only.</p>
+          <button class="banner-btn primary" type="button" onclick="openMembershipModal()">
+            <i class="fas fa-crown"></i> Become a member
+          </button>
+        </div>
+        <form id="thread-form" onsubmit="submitThread(event)" hidden>
+          <div class="composer-grid">
+            <div class="composer-field">
+              <label for="thread-category">Main topic</label>
+              <select id="thread-category" name="category" required>
+                <option value="journey">Journey and Case Studies</option>
+                <option value="tools">Verified Tools and Services</option>
+                <option value="lounge">Lounge and Chit-Chat</option>
+              </select>
+            </div>
+            <div class="composer-field">
+              <label for="thread-title">Title</label>
+              <input id="thread-title" name="title" type="text" maxlength="120" placeholder="Give your discussion a clear title" required>
+            </div>
+            <div class="composer-field full-width">
+              <label for="thread-content">Your content</label>
+              <textarea id="thread-content" name="content" maxlength="5000" placeholder="Write the details you want to share..." required></textarea>
+            </div>
+          </div>
+          <div class="composer-footer">
+            <span class="composer-hint"><i class="fas fa-info-circle"></i> Posts are saved in this browser.</span>
+            <button class="submit-btn" type="submit"><i class="fas fa-paper-plane"></i> Publish discussion</button>
+          </div>
+        </form>
+      </section>
+
+      <!-- CATEGORY 1 -->
+      <div class="category-section">
+        <div class="category-header">
+          <i class="fas fa-chart-line"></i>
+          <span>Journey and Case Studies</span>
+          <span class="badge-count" id="count-journey">132 threads</span>
+        </div>
+        <div class="thread-list" id="journey-threads"></div>
+      </div>
+
+      <!-- CATEGORY 2 -->
+      <div class="category-section">
+        <div class="category-header">
+          <i class="fas fa-check-circle"></i>
+          <span>Verified Tools and Services</span>
+          <span class="badge-count" id="count-tools">87 threads</span>
+        </div>
+        <div class="thread-list" id="tools-threads"></div>
+      </div>
+
+      <!-- CATEGORY 3 -->
+      <div class="category-section">
+        <div class="category-header">
+          <i class="fas fa-comments"></i>
+          <span>Lounge and Chit-Chat</span>
+          <span class="badge-count" id="count-lounge">326 threads</span>
+        </div>
+        <div class="thread-list" id="lounge-threads"></div>
+        <div class="lounge-message">
+          <i class="fas fa-beer"></i>
+          <span>🍻 Welcome to the lounge — grab a virtual coffee, relax and chat. No self-promo, just good vibes.</span>
+        </div>
+      </div>
+
+      <div class="footer-note">
+        <i class="fas fa-code"></i> 225T — inspired by BHW • all topics are for demo purpose
+      </div>
+    </div>
+
+    <!-- ========== POST DETAIL VIEW ========== -->
+    <div id="post-view">
+      <div class="back-bar">
+        <button class="back-btn" onclick="showForum()">
+          <i class="fas fa-arrow-left"></i> Back to forum
+        </button>
+        <button class="join-btn" onclick="openMembershipModal()">
+          <i class="fas fa-crown"></i> <span>Become a Member</span>
+        </button>
+      </div>
+      <div class="post-container" id="post-container"></div>
+      <div class="footer-note">
+        <i class="fas fa-code"></i> 225T — inspired by BHW • all topics are for demo purpose
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== MEMBERSHIP MODAL ========== -->
+  <div class="modal-overlay" id="membership-modal" onclick="if(event.target===this) closeMembershipModal()">
+    <div class="modal">
+      <div class="modal-header">
+        <div>
+          <h2><i class="fas fa-crown"></i> Join 225T</h2>
+          <p>Choose your path to membership</p>
+        </div>
+        <button class="modal-close" onclick="closeMembershipModal()"><i class="fas fa-times"></i></button>
+      </div>
+      <div class="modal-body">
+        <div class="modal-tabs">
+          <button class="modal-tab active" id="tab-invite" onclick="switchTab('invite')">
+            <i class="fas fa-ticket-alt"></i> Invitation code
+          </button>
+          <button class="modal-tab" id="tab-paid" onclick="switchTab('paid')">
+            <i class="fas fa-credit-card"></i> Pay $120 / year
+          </button>
+        </div>
+
+        <div class="tab-panel active" id="panel-invite">
+          <div class="modal-perks">
+            <h4><i class="fas fa-gift"></i> Member perks included</h4>
+            <div class="modal-perk-list">
+              <div class="modal-perk-item"><i class="fas fa-check-circle"></i> Post on the forum</div>
+              <div class="modal-perk-item"><i class="fas fa-check-circle"></i> Early access discount codes</div>
+              <div class="modal-perk-item"><i class="fas fa-check-circle"></i> Group buy access</div>
+            </div>
+          </div>
+          <label class="field-label" for="invite-code">Invitation code</label>
+          <input type="text" class="field-input" id="invite-code" placeholder="e.g. 225T-XXXX-XXXX" autocomplete="off">
+          <div class="field-hint"><i class="fas fa-info-circle"></i> Invitation codes are shared by existing members. Each code is single-use.</div>
+          <button class="modal-submit" onclick="submitInvite()">
+            <i class="fas fa-unlock"></i> Redeem invitation code
+          </button>
+        </div>
+
+        <div class="tab-panel" id="panel-paid">
+          <div class="modal-perks">
+            <h4><i class="fas fa-gift"></i> Everything included with your $120/year</h4>
+            <div class="modal-perk-list">
+              <div class="modal-perk-item"><i class="fas fa-check-circle"></i> Post on the forum</div>
+              <div class="modal-perk-item"><i class="fas fa-check-circle"></i> Early access discount codes</div>
+              <div class="modal-perk-item"><i class="fas fa-check-circle"></i> Group buy access</div>
+              <div class="modal-perk-item"><i class="fas fa-check-circle"></i> Post product/service + ad boost</div>
+            </div>
+          </div>
+          <div class="price-display">
+            <span class="price-amount">$120</span>
+            <span class="price-period">/ year</span>
+          </div>
+          <label class="field-label" for="member-email">Email address</label>
+          <input type="email" class="field-input" id="member-email" placeholder="you@example.com" autocomplete="off">
+          <label class="field-label" for="member-name">Username</label>
+          <input type="text" class="field-input" id="member-name" placeholder="Pick a username" autocomplete="off">
+          <button class="modal-submit" onclick="submitPaid()">
+            <i class="fas fa-lock"></i> Pay $120 & become a member
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"><i class="fas fa-check-circle"></i> <span id="toast-text">Success</span></div>
+
+  <script>
+    // ==================== MEMBERSHIP STATE ====================
+    let isMember = false;
+    let memberName = 'guest_viewer';
+    const validInviteCodes = ['225T-2024-VIP', '225T-DEMO-CODE', '225T-JOIN-NOW'];
+
+    // ==================== LIVE STATS STATE ====================
+    const liveStats = {
+      members: 28451,
+      posts: 142893,
+      online: 189
+    };
+
+    const sampleUsernames = [
+      'growth_hacker', 'seo_ninja', 'dropship_king', 'affiliate_master',
+      'content_king', 'rankchaser', 'traffic_guru', 'ecom_boss',
+      'linkbuilder', 'pixel_hero', 'automation_pro', 'saas_builder',
+      'coffee_lover', 'proxy_guy', 'design_guru', 'dev_dave',
+      'micro_saas', 'retro_collector', 'freelance_vet', 'seo_queen'
+    ];
+    const userThreads = [];
+
+    function formatNumber(n) {
+      return n.toLocaleString('en-US');
+    }
+
+    function escapeHtml(value) {
+      return String(value).replace(/[&<>"']/g, character => ({
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#39;'
+      })[character]);
+    }
+
+    function pulseEl(el) {
+      el.classList.remove('pulse');
+      void el.offsetWidth;
+      el.classList.add('pulse');
+    }
+
+    // ==================== DATA ====================
+    const threads = {
+      journey: [
+        {
+          id: 'j1', icon: 'fa-rocket',
+          title: '$0 to $10k/month in 6 months — my SEO journey (case study)',
+          tags: [{ label: 'HOT', cls: 'hot' }],
+          author: 'SEO_Master', views: '4.2k', time: '2h ago',
+          comments: 87, likes: 142, lastReply: 'rankchaser', memberOnly: false,
+          body: `<p>Hey everyone, I wanted to share my complete journey from zero to $10k/month using pure SEO tactics. No paid ads, no shortcuts — just consistent effort and a solid strategy.</p>
+            <p><strong>The beginning:</strong> I started with a single niche site focused on home improvement. I had zero budget, so I relied on free tools and manual outreach.</p>
+            <p><strong>What worked for me:</strong></p>
+            <ul>
+              <li>Writing 3-5 in-depth articles per week (2,000+ words each)</li>
+              <li>Manual link building via HARO and guest posts</li>
+              <li>Building topical authority in a narrow niche first</li>
+              <li>Using internal linking strategically</li>
+              <li>Focusing on long-tail keywords with low competition</li>
+            </ul>
+            <p><strong>Months 1-3:</strong> Grind phase. No traffic, no money. I almost gave up multiple times. But I kept publishing.</p>
+            <p><strong>Months 4-6:</strong> Things started clicking. Google began ranking my content. Traffic went from 0 to 15k/month. I monetized with affiliate links and display ads.</p>
+            <p>Ask me anything about the process — happy to share more details!</p>`,
+          replies: [
+            { author: 'rankchaser', time: '1h ago', badge: 'Active', text: 'This is super inspiring! How many articles did you publish total before you saw significant traction?' },
+            { author: 'SEO_Master', time: '45m ago', badge: 'OP', text: '@rankchaser I published around 60 articles before things really took off. The first 30 felt like a waste but they built the foundation.' },
+            { author: 'growth_hacker', time: '30m ago', badge: 'Member', text: 'Did you use any specific keyword research tool or just free methods? Great journey btw 🔥' },
+            { author: 'linkbuilder', time: '15m ago', badge: 'Verified', text: 'Solid results. I followed a similar path — consistency is key. Congrats on the milestone!' }
+          ]
+        },
+        {
+          id: 'j2', icon: 'fa-flask',
+          title: 'Scaling a dropshipping store from $500 to $22k/mo — full breakdown',
+          tags: [{ label: 'VERIFIED', cls: 'verified' }],
+          author: 'ecom_boss', views: '2.8k', time: '6h ago',
+          comments: 42, likes: 76, lastReply: 'shopify_ninja', memberOnly: true,
+          body: `<p>I see a lot of people struggling with dropshipping, so I wanted to share exactly how I scaled my store from $500 to $22k/month in revenue over 8 months.</p>
+            <p><strong>Niche selection:</strong> I didn't pick a trendy product. Instead, I found a passionate niche (pet accessories) and built a brand around it.</p>
+            <p><strong>The numbers:</strong></p>
+            <ul>
+              <li>Starting capital: $500 (product samples + basic ads)</li>
+              <li>Month 1: $1.2k revenue</li>
+              <li>Month 3: $5.8k revenue</li>
+              <li>Month 6: $15.4k revenue</li>
+              <li>Month 8: $22.1k revenue</li>
+            </ul>
+            <p><strong>Key strategies:</strong></p>
+            <ol>
+              <li>UGC content — I paid creators $50-100 per video, got 10x returns</li>
+              <li>Email marketing — built a list of 8k subscribers, 30% of revenue came from email</li>
+              <li>Retargeting ads — 40% of conversions came from retargeting warm audiences</li>
+              <li>Exclusive product bundles — increased AOV by 35%</li>
+            </ol>
+            <p>Happy to answer questions about the ad strategy or product selection!</p>`,
+          replies: [
+            { author: 'shopify_ninja', time: '3h ago', badge: 'Active', text: 'What was your go-to method for finding winning products? Any specific criteria?' },
+            { author: 'ecom_boss', time: '2h ago', badge: 'OP', text: '@shopify_ninja I looked for products with 3x+ markup, passionate audience, and low competition on Amazon. Checked Facebook ads library to see what was working.' },
+            { author: 'dropship_king', time: '1h ago', badge: 'Member', text: 'UGC is such an underrated strategy. I started using it last month and my ROAS jumped from 1.8 to 3.2. Thanks for sharing!' }
+          ]
+        },
+        {
+          id: 'j3', icon: 'fa-code',
+          title: 'My SaaS journey: from side project to $3.5k MRR in 8 months',
+          tags: [{ label: 'MEMBER', cls: 'member' }],
+          author: 'indie_maker', views: '1.5k', time: '12h ago',
+          comments: 23, likes: 51, lastReply: 'micro_saas', memberOnly: true,
+          body: `<p>I've been lurking here for a while and finally decided to share my SaaS journey. I built a simple invoicing tool for freelancers and hit $3.5k MRR in 8 months.</p>
+            <p><strong>The idea:</strong> I was freelancing myself and hated the invoicing tools out there. They were either too complex or too expensive. So I built something simple.</p>
+            <p><strong>Tech stack:</strong> Next.js, Stripe, Supabase, deployed on Vercel. Total infra cost: ~$40/month.</p>
+            <p><strong>Growth channels:</strong></p>
+            <ul>
+              <li>SEO — wrote comparison articles ("X vs Y") that ranked for low-competition keywords</li>
+              <li>Twitter/X — built in public, shared every milestone</li>
+              <li>Reddit — answered questions in freelancing communities</li>
+              <li>Product Hunt launch — got 400 signups in one day</li>
+            </ul>
+            <p><strong>Pricing:</strong> $9/mo starter, $19/mo pro, $39/mo agency. 70% of customers chose Pro.</p>
+            <p>The key lesson: build for a specific audience you understand deeply. Don't try to compete with established players on features — compete on simplicity and focus.</p>`,
+          replies: [
+            { author: 'micro_saas', time: '8h ago', badge: 'Member', text: 'Thanks for the breakdown! How did you handle the first 100 users? Did you do cold outreach?' },
+            { author: 'indie_maker', time: '6h ago', badge: 'OP', text: '@micro_saas I reached out to freelancers on Twitter and in Facebook groups. Personal emails worked best — I offered free lifetime access for early feedback.' },
+            { author: 'saas_builder', time: '3h ago', badge: 'Active', text: 'Great story. The pricing tier insight is gold — most people underpriced their SaaS. What was your churn like?' }
+          ]
+        }
+      ],
+      tools: [
+        {
+          id: 't1', icon: 'fa-robot',
+          title: '[Verified] RankGenius AI — content writer & SEO optimizer (225T discount)',
+          tags: [{ label: 'VERIFIED', cls: 'verified' }],
+          author: 'tool_hunter', views: '3.1k', time: '1h ago',
+          comments: 54, likes: 112, lastReply: 'aiwriter_pro', memberOnly: true,
+          body: `<p><strong>RankGenius AI</strong> is a content writing and SEO optimization tool that I've personally tested for 3 months. Here's my honest review.</p>
+            <p><strong>What I tested:</strong></p>
+            <ul>
+              <li>Generated 50 articles (1,500-2,500 words each)</li>
+              <li>Optimized existing content for 20 target keywords</li>
+              <li>Used the built-in plagiarism checker</li>
+              <li>Tested the readability scoring system</li>
+            </ul>
+            <p><strong>Results:</strong></p>
+            <ul>
+              <li>8 articles ranked on page 1 within 30 days</li>
+              <li>Content quality was surprisingly good (7-8/10)</li>
+              <li>SEO suggestions were actionable and accurate</li>
+              <li>Zero plagiarism issues</li>
+            </ul>
+            <p><strong>Member discount:</strong> $49/mo for unlimited words. 225T members get 20% off with the early-access code <strong>FORUM20</strong>.</p>
+            <p><strong>Verdict:</strong> Solid tool for scaling content production. Not perfect — you still need to edit and add your own insights — but a huge time saver.</p>`,
+          replies: [
+            { author: 'aiwriter_pro', time: '50m ago', badge: 'Vendor', text: 'Thanks for the detailed review! Glad the tool is working well for you. We just pushed an update that improves the SEO scoring algorithm.' },
+            { author: 'content_king', time: '30m ago', badge: 'Member', text: 'I can vouch for this too. Been using it for 2 months and my content production tripled. The discount code works 👍' },
+            { author: 'seo_queen', time: '10m ago', badge: 'Active', text: 'Does it support different languages? I need content for German and Spanish markets.' },
+            { author: 'tool_hunter', time: '5m ago', badge: 'OP', text: '@seo_queen Yes, it supports 25+ languages including German and Spanish. Quality is slightly lower but still usable with editing.' }
+          ]
+        },
+        {
+          id: 't2', icon: 'fa-chart-pie',
+          title: '[Service] ProBacklink — high DA/PA manual outreach (tested & verified)',
+          tags: [{ label: 'VERIFIED', cls: 'verified' }],
+          author: 'linkbuilder', views: '2.2k', time: '4h ago',
+          comments: 38, likes: 95, lastReply: 'seo_queen', memberOnly: true,
+          body: `<p>I've been using ProBacklink for the past 6 months and wanted to share my experience. They offer manual link building with real outreach — no PBNs, no spam.</p>
+            <p><strong>What I ordered:</strong> 20 links/month for 6 months ($299/mo).</p>
+            <p><strong>Link quality:</strong></p>
+            <ul>
+              <li>Average DA: 45+</li>
+              <li>Average PA: 38+</li>
+              <li>Traffic: 500+ monthly visitors per site</li>
+              <li>All links are editorially placed in relevant content</li>
+              <li>Zero link farms or PBNs detected</li>
+            </ul>
+            <p><strong>Results:</strong></p>
+            <ul>
+              <li>Domain rating increased from 12 to 34</li>
+              <li>Organic traffic grew 180% over 6 months</li>
+              <li>Several keywords moved from page 3 to page 1</li>
+            </ul>
+            <p><strong>Group buy:</strong> Members can join the quarterly group buy for ProBacklink at 40% off — check the tools section for the current round.</p>
+            <p><strong>Verdict:</strong> Legitimate service. Not the cheapest, but quality is excellent. They provide full reports with URL, DA, PA, and traffic data.</p>`,
+          replies: [
+            { author: 'seo_queen', time: '2h ago', badge: 'Active', text: 'This is exactly what I\'ve been looking for. Do they offer custom packages or only monthly subscriptions?' },
+            { author: 'linkbuilder', time: '1h ago', badge: 'OP', text: '@seo_queen They offer custom packages too — I think minimum order is 5 links. Reach out to their support, they\'re responsive.' },
+            { author: 'rankchaser', time: '30m ago', badge: 'Active', text: 'I tried them last year. Good service but they take 3-4 weeks per batch. Worth the wait though.' }
+          ]
+        },
+        {
+          id: 't3', icon: 'fa-cloud',
+          title: 'CloudProxyPro — residential proxies for scraping (225T exclusive)',
+          tags: [{ label: 'TRIAL', cls: '' }],
+          author: 'proxy_guy', views: '1.8k', time: '8h ago',
+          comments: 17, likes: 43, lastReply: 'scrapemaster', memberOnly: false,
+          body: `<p>If you're doing any kind of web scraping or automation, residential proxies are essential. I've been testing CloudProxyPro for 2 weeks and here's what I found.</p>
+            <p><strong>What I tested:</strong></p>
+            <ul>
+              <li>100 proxies across US, UK, and Germany</li>
+              <li>Scraping e-commerce sites (product data)</li>
+              <li>Social media automation (account management)</li>
+              <li>Price monitoring on competitor sites</li>
+            </ul>
+            <p><strong>Performance:</strong></p>
+            <ul>
+              <li>Success rate: 94% (very good)</li>
+              <li>Average response time: 1.2 seconds</li>
+              <li>IP rotation: seamless, no detected patterns</li>
+              <li>Bandwidth: unlimited on all plans</li>
+            </ul>
+            <p><strong>Pricing:</strong> Starts at $15/GB for pay-as-you-go, or $99/mo for 10GB. 225T members get a 7-day free trial with 1GB bandwidth as an early-access perk.</p>
+            <p><strong>Verdict:</strong> Solid proxy provider. Not the cheapest, but reliability is excellent. The free trial is a no-brainer if you're in the market.</p>`,
+          replies: [
+            { author: 'scrapemaster', time: '5h ago', badge: 'Member', text: 'How does it compare to Bright Data? That\'s what I currently use but it\'s getting expensive.' },
+            { author: 'proxy_guy', time: '4h ago', badge: 'OP', text: '@scrapemaster Bright Data is more established but 2-3x the price. For most scraping projects, CloudProxyPro is more than enough.' },
+            { author: 'automation_pro', time: '2h ago', badge: 'Active', text: 'Signed up for the trial. Success rate is good but I noticed some IPs are slower than others. Overall decent for the price.' }
+          ]
+        }
+      ],
+      lounge: [
+        {
+          id: 'l1', icon: 'fa-coffee',
+          title: "What's your morning routine before hitting the IM grind?",
+          tags: [], author: 'earlybird', views: '1.1k', time: '25m ago',
+          comments: 64, likes: 32, lastReply: 'coffee_lover', memberOnly: false,
+          body: `<p>I'm curious how everyone starts their day. I've found that my mornings completely dictate my productivity for the rest of the day.</p>
+            <p><strong>My current routine:</strong></p>
+            <ul>
+              <li>5:30 AM — wake up, no phone for the first 30 minutes</li>
+              <li>5:45 AM — 20 minute workout (bodyweight or yoga)</li>
+              <li>6:15 AM — cold shower + coffee</li>
+              <li>6:45 AM — review goals and plan top 3 tasks for the day</li>
+              <li>7:00 AM — start deep work (no email, no Slack until 9 AM)</li>
+            </ul>
+            <p>This has been a game changer for me. I get more done before 9 AM than I used to get done in a full day.</p>
+            <p>What about you guys? Any unusual routines or productivity hacks?</p>`,
+          replies: [
+            { author: 'coffee_lover', time: '15m ago', badge: 'Member', text: 'Coffee is non-negotiable ☕ I do 3 espressos before I even look at my laptop. Then 30 mins of reading before anything else.' },
+            { author: 'earlybird', time: '10m ago', badge: 'OP', text: '@coffee_lover 3 espressos?! You must be vibrating by 8 AM 😂 Respect though.' },
+            { author: 'productivity_nerd', time: '5m ago', badge: 'Active', text: 'I do intermittent fasting + no phone until 9 AM. The no-phone thing was hard for the first week but now I can\'t live without it.' }
+          ]
+        },
+        {
+          id: 'l2', icon: 'fa-gamepad',
+          title: 'Anyone here into retro gaming? Just built my dream setup',
+          tags: [], author: 'pixel_hero', views: '850', time: '2h ago',
+          comments: 29, likes: 47, lastReply: '8bitfan', memberOnly: false,
+          body: `<p>Not strictly IM related, but I know there are some gamers here. I just finished building my retro gaming setup and wanted to share it.</p>
+            <p><strong>What I've got:</strong></p>
+            <ul>
+              <li>Original NES, SNES, and Sega Genesis (all refurbished)</li>
+              <li>CRT TV (because retro games look wrong on modern displays)</li>
+              <li>Everdrive flash carts for all three consoles</li>
+              <li>Wireless 8BitDo controllers</li>
+              <li>Custom-built shelving unit</li>
+            </ul>
+            <p>Total spent: around $800. Took me 6 months to collect everything at reasonable prices.</p>
+            <p>Currently playing through Chrono Trigger for the first time. I missed it as a kid and I'm loving it.</p>`,
+          replies: [
+            { author: '8bitfan', time: '1h ago', badge: 'Member', text: 'That sounds amazing! Pics?? Also Chrono Trigger is a masterpiece. You\'re in for a treat.' },
+            { author: 'pixel_hero', time: '45m ago', badge: 'OP', text: '@8bitfan I\'ll try to get some pics up later. The CRT makes all the difference — the scanlines are perfect.' },
+            { author: 'retro_collector', time: '20m ago', badge: 'Active', text: 'Everdrive carts are a lifesaver. I stopped collecting physical games years ago because the prices got insane.' }
+          ]
+        },
+        {
+          id: 'l3', icon: 'fa-meme',
+          title: "Share your worst client story (we've all been there 😅)",
+          tags: [], author: 'freelance_vet', views: '3.4k', time: '5h ago',
+          comments: 121, likes: 203, lastReply: 'clientnightmare', memberOnly: false,
+          body: `<p>I've been freelancing for 8 years and I've got some stories. Let me start with my worst:</p>
+            <p><strong>The client who wanted "just one small change" 47 times:</strong></p>
+            <p>I built a website for a local business. The project scope was clear: 5 pages, standard contact form, done in 2 weeks. Simple.</p>
+            <p>But every single day, the client sent a new email: "Just one small change." Some highlights:</p>
+            <ul>
+              <li>"Can we make the logo bigger?" (asked 6 times, each time after I already made it bigger)</li>
+              <li>"I showed my wife and she thinks blue would be better" (the entire site theme, 3 days before launch)</li>
+              <li>"Can you make it so when you hover over the phone number, it calls them?" (I explained that's not how websites work)</li>
+              <li>"The site is too fast. Can you slow it down?" (I wish I was joking)</li>
+            </ul>
+            <p>After 3 months of this (original timeline: 2 weeks), I fired the client. Best decision ever.</p>
+            <p>Your turn — what's your worst client story?</p>`,
+          replies: [
+            { author: 'clientnightmare', time: '3h ago', badge: 'Member', text: 'I had a client who asked me to "make it go viral" and got mad when I explained that\'s not a feature you can build. They refused to pay because "it wasn\'t going viral."' },
+            { author: 'freelance_vet', time: '2h ago', badge: 'OP', text: '@clientnightmare That\'s incredible. Did you take them to small claims court or just cut your losses?' },
+            { author: 'design_guru', time: '1h ago', badge: 'Active', text: 'I once had a client send me a PowerPoint presentation with 300 slides for a "simple logo revision." I should have run right then.' },
+            { author: 'dev_dave', time: '30m ago', badge: 'Member', text: 'The "make it slower" thing actually made me laugh out loud. These people are real and they walk among us 😂' }
+          ]
+        }
+      ]
+    };
+
+    // ==================== RENDER ====================
+    function renderThreadItem(thread, category) {
+      const tagsHtml = thread.tags.map(t => `<span class="tag ${t.cls}">${t.label}</span>`).join('');
+      const title = escapeHtml(thread.title);
+      const author = escapeHtml(thread.author);
+      const lastReply = escapeHtml(thread.lastReply);
+      const lockedHtml = (thread.memberOnly && !isMember)
+        ? `<div class="locked-notice"><i class="fas fa-lock"></i> Member-only thread — join to read</div>`
+        : '';
+      return `
+        <div class="thread-item" data-thread-id="${thread.id}" onclick="openPost('${category}', '${thread.id}')">
+          <div class="thread-avatar"><i class="fas ${thread.icon}"></i></div>
+          <div class="thread-info">
+            <div class="thread-title">
+              <a href="javascript:void(0)">${title}</a>
+              ${tagsHtml}
+            </div>
+            <div class="thread-meta">
+              <span><i class="fas fa-user"></i> ${author}</span>
+              <span><i class="fas fa-eye"></i> ${thread.views} views</span>
+              <span><i class="fas fa-clock"></i> ${thread.time}</span>
+            </div>
+            ${lockedHtml}
+          </div>
+          <div class="thread-stats">
+            <span><i class="fas fa-comment"></i> ${thread.comments}</span>
+            <span><i class="fas fa-thumbs-up"></i> ${thread.likes}</span>
+          </div>
+          <div class="last-post">
+            <i class="fas fa-reply"></i> by @${lastReply}
+          </div>
+        </div>
+      `;
+    }
+
+    function renderForum() {
+      document.getElementById('journey-threads').innerHTML = threads.journey.map(t => renderThreadItem(t, 'journey')).join('');
+      document.getElementById('tools-threads').innerHTML = threads.tools.map(t => renderThreadItem(t, 'tools')).join('');
+      document.getElementById('lounge-threads').innerHTML = threads.lounge.map(t => renderThreadItem(t, 'lounge')).join('');
+    }
+
+    function renderReply(reply) {
+      const badgeHtml = reply.badge ? `<span class="reply-badge">${reply.badge}</span>` : '';
+      const avatarIcon = reply.badge === 'OP' ? 'fa-user-tie' : (reply.badge === 'You' ? 'fa-user-astronaut' : 'fa-user');
+      return `
+        <div class="reply-item">
+          <div class="reply-avatar"><i class="fas ${avatarIcon}"></i></div>
+          <div class="reply-content">
+            <div class="reply-top">
+              <span class="reply-author">@${escapeHtml(reply.author)}</span>
+              ${badgeHtml}
+              <span class="reply-time"><i class="fas fa-clock"></i> ${escapeHtml(reply.time)}</span>
+            </div>
+            <div class="reply-text">${escapeHtml(reply.text)}</div>
+            <div class="reply-actions">
+              <span onclick="event.stopPropagation(); likeReply(this)"><i class="fas fa-thumbs-up"></i> Like</span>
+              <span><i class="fas fa-reply"></i> Reply</span>
+              <span><i class="fas fa-flag"></i> Report</span>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function openPost(category, id) {
+      const thread = threads[category].find(t => t.id === id);
+      if (!thread) return;
+
+      const tagsHtml = thread.tags.map(t => `<span class="tag ${t.cls}">${t.label}</span>`).join('');
+      const repliesHtml = thread.replies.map(r => renderReply(r)).join('');
+
+      let bodyHtml, replyFormHtml, repliesHeaderHtml;
+      if (thread.memberOnly && !isMember) {
+        bodyHtml = `
+          <div style="text-align:center; padding: 2rem 1rem;">
+            <div style="font-size: 2.5rem; color:#f7b84b; margin-bottom: 1rem;"><i class="fas fa-lock"></i></div>
+            <h3 style="color:#f0f3fa; margin-bottom:0.5rem;">Members-only content</h3>
+            <p style="color:#8a93b0; font-size:0.9rem; max-width:420px; margin: 0 auto 1.5rem auto;">This thread is available to 225T members. Join via invitation code or a $120/year membership to unlock it — plus early-access discounts, group buys, and ad-boosted posting.</p>
+            <button class="submit-btn" style="margin: 0 auto;" onclick="openMembershipModal()">
+              <i class="fas fa-crown"></i> Become a member to read
+            </button>
+          </div>`;
+        replyFormHtml = `
+          <div class="reply-form">
+            <div class="locked-notice" style="margin-top: 0;">
+              <i class="fas fa-lock"></i> You must be a member to reply to this thread.
+            </div>
+          </div>`;
+        repliesHeaderHtml = `
+          <div class="replies-header">
+            <i class="fas fa-lock"></i> Replies
+            <span class="reply-count">locked</span>
+          </div>`;
+      } else {
+        bodyHtml = thread.userContent
+          ? `<p>${escapeHtml(thread.userContent).replace(/\r?\n/g, '<br>')}</p>`
+          : thread.body;
+        replyFormHtml = `
+          <div class="reply-form">
+            <h4><i class="fas fa-pen"></i> Leave a reply</h4>
+            <textarea id="reply-input" placeholder="Share your thoughts..."></textarea>
+            <div class="reply-submit-row">
+              <span class="hint"><i class="fas fa-info-circle"></i> Be respectful and constructive</span>
+              <button class="submit-btn" onclick="submitReply('${category}', '${id}')">
+                <i class="fas fa-paper-plane"></i> Post reply
+              </button>
+            </div>
+          </div>`;
+        repliesHeaderHtml = `
+          <div class="replies-header">
+            <i class="fas fa-comments"></i> Replies
+            <span class="reply-count">${thread.replies.length}</span>
+          </div>`;
+      }
+
+      const memberPill = isMember
+        ? `<span class="member-pill"><i class="fas fa-crown"></i> Member</span>`
+        : '';
+
+      const container = document.getElementById('post-container');
+      container.innerHTML = `
+        <div class="post-header">
+          <div class="post-title-row">
+            <h1 class="post-title">${escapeHtml(thread.title)}</h1>
+            ${tagsHtml}
+            ${memberPill}
+          </div>
+          <div class="post-meta-row">
+            <span><i class="fas fa-user"></i> <span class="author">@${escapeHtml(thread.author)}</span></span>
+            <span><i class="fas fa-eye"></i> ${thread.views} views</span>
+            <span><i class="fas fa-clock"></i> Posted ${thread.time}</span>
+            <span><i class="fas fa-comment"></i> ${thread.replies.length} replies</span>
+            <span><i class="fas fa-thumbs-up"></i> ${thread.likes} likes</span>
+          </div>
+        </div>
+        <div class="post-body">${bodyHtml}</div>
+        <div class="post-replies">
+          ${repliesHeaderHtml}
+          ${(thread.memberOnly && !isMember) ? '' : repliesHtml}
+        </div>
+        ${replyFormHtml}
+      `;
+
+      document.getElementById('forum-view').style.display = 'none';
+      document.getElementById('post-view').style.display = 'block';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function showForum() {
+      document.getElementById('post-view').style.display = 'none';
+      document.getElementById('forum-view').style.display = 'block';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function submitReply(category, threadId) {
+      if (!isMember) {
+        openMembershipModal();
+        return;
+      }
+      const input = document.getElementById('reply-input');
+      const text = input.value.trim();
+      if (!text) {
+        input.focus();
+        input.style.borderColor = '#ff6b6b';
+        setTimeout(() => input.style.borderColor = '#2a2d3a', 800);
+        return;
+      }
+      const thread = threads[category].find(t => t.id === threadId);
+      if (!thread) return;
+      thread.replies.push({ author: memberName, time: 'just now', badge: 'You', text: text });
+      thread.comments += 1;
+      thread.time = 'just now';
+      thread.lastReply = memberName;
+
+      liveStats.posts += 1;
+      updateStatDisplay('posts', liveStats.posts);
+      showToast('Reply posted! Your post is now live on the forum.');
+
+      openPost(category, threadId);
+      renderForum();
+    }
+
+    function submitThread(event) {
+      event.preventDefault();
+      if (!isMember) {
+        updateThreadComposerAccess();
+        openMembershipModal();
+        showToast('Only members can publish discussions.', true);
+        return;
+      }
+
+      const category = document.getElementById('thread-category').value;
+      const titleInput = document.getElementById('thread-title');
+      const contentInput = document.getElementById('thread-content');
+      const title = titleInput.value.trim();
+      const content = contentInput.value.trim();
+      const categoryThreads = threads[category];
+
+      if (!Object.prototype.hasOwnProperty.call(threads, category) ||
+          !categoryThreads || !title || !content || title.length > 120 || content.length > 5000) {
+        showToast('Choose a topic and enter a title and content within the limits.', true);
+        return;
+      }
+
+      const author = memberName.slice(0, 80);
+      const thread = {
+        id: `user-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`,
+        icon: 'fa-pen',
+        title: title,
+        tags: [],
+        author: author,
+        views: '0',
+        time: 'just now',
+        comments: 0,
+        likes: 0,
+        lastReply: author,
+        memberOnly: false,
+        userContent: content,
+        replies: []
+      };
+      const savedThread = { id: thread.id, category: category, title: title, content: content, author: author };
+      let storageError = false;
+
+      try {
+        localStorage.setItem('225t-user-threads', JSON.stringify([
+          ...userThreads.map(item => ({
+            id: item.id,
+            category: item.category,
+            title: item.title,
+            content: item.content,
+            author: item.author
+          })),
+          savedThread
+        ]));
+      } catch (error) {
+        console.error('Unable to save the discussion in browser storage.', error);
+        storageError = true;
+      }
+
+      thread.category = category;
+      thread.content = content;
+      userThreads.push(thread);
+      categoryThreads.unshift(thread);
+      categoryCounts[category] += 1;
+      const countElement = document.getElementById('count-' + category);
+      countElement.textContent = categoryCounts[category] + ' threads';
+      liveStats.posts += 1;
+      updateStatDisplay('posts', liveStats.posts);
+
+      document.getElementById('thread-form').reset();
+      renderForum();
+      openPost(category, thread.id);
+      showToast(storageError
+        ? 'Discussion posted for this session, but could not be saved in this browser.'
+        : 'Your discussion is live in the selected topic.',
+        storageError);
+    }
+
+    function updateThreadComposerAccess() {
+      document.getElementById('thread-form').hidden = !isMember;
+      document.getElementById('composer-lock').hidden = isMember;
+    }
+
+    function likeReply(el) {
+      if (el.classList.contains('liked')) return;
+      el.classList.add('liked');
+      el.style.color = '#4a6cf7';
+    }
+
+    // ==================== LIVE STATS ENGINE ====================
+    const statEls = {
+      members: document.getElementById('stat-members'),
+      posts: document.getElementById('stat-posts'),
+      online: document.getElementById('stat-online')
+    };
+
+    function updateStatDisplay(key, value, pulse = true) {
+      if (!statEls[key]) return;
+      statEls[key].textContent = formatNumber(value);
+      if (pulse) pulseEl(statEls[key]);
+    }
+
+    function updateActivityText(text) {
+      const el = document.getElementById('activity-text');
+      if (el) el.textContent = 'Activity: ' + text;
+    }
+
+    function simulateActivity() {
+      const roll = Math.random();
+      let events = [];
+
+      const onlineDrift = Math.floor(Math.random() * 9) - 4;
+      liveStats.online = Math.max(120, liveStats.online + onlineDrift);
+      updateStatDisplay('online', liveStats.online, true);
+
+      if (roll > 0.25) {
+        const joiners = Math.random() > 0.85 ? 2 : 1;
+        liveStats.members += joiners;
+        updateStatDisplay('members', liveStats.members);
+        if (joiners === 2) events.push('2 new members joined');
+        else events.push('a new member joined');
+      }
+
+      if (roll > 0.15) {
+        const posts = Math.floor(Math.random() * 4) + 1;
+        liveStats.posts += posts;
+        updateStatDisplay('posts', liveStats.posts);
+        events.push(posts === 1 ? '1 new post' : posts + ' new posts');
+      }
+
+      if (roll > 0.6) {
+        bumpRandomThread();
+      }
+
+      if (events.length) {
+        updateActivityText(events.join(' • '));
+      } else {
+        updateActivityText('someone is browsing quietly');
+      }
+
+      if (roll > 0.8) {
+        incrementCategoryCount();
+      }
+    }
+
+    function bumpRandomThread() {
+      const categories = ['journey', 'tools', 'lounge'];
+      const cat = categories[Math.floor(Math.random() * categories.length)];
+      const list = threads[cat];
+      const thread = list[Math.floor(Math.random() * list.length)];
+      thread.comments += 1;
+      thread.lastReply = sampleUsernames[Math.floor(Math.random() * sampleUsernames.length)];
+      thread.time = 'just now';
+
+      if (cat === 'journey') {
+        document.getElementById('journey-threads').innerHTML = threads.journey.map(t => renderThreadItem(t, 'journey')).join('');
+      } else if (cat === 'tools') {
+        document.getElementById('tools-threads').innerHTML = threads.tools.map(t => renderThreadItem(t, 'tools')).join('');
+      } else {
+        document.getElementById('lounge-threads').innerHTML = threads.lounge.map(t => renderThreadItem(t, 'lounge')).join('');
+      }
+
+      const el = document.querySelector(`[data-thread-id="${thread.id}"]`);
+      if (el) {
+        el.classList.add('new-bump');
+        setTimeout(() => el.classList.remove('new-bump'), 1800);
+      }
+    }
+
+    const categoryCounts = { journey: 132, tools: 87, lounge: 326 };
+    function loadUserThreads() {
+      try {
+        const saved = localStorage.getItem('225t-user-threads');
+        if (!saved) return;
+        const savedThreads = JSON.parse(saved);
+        const validCategories = ['journey', 'tools', 'lounge'];
+        if (!Array.isArray(savedThreads) || !savedThreads.every(thread =>
+          thread &&
+          typeof thread.id === 'string' &&
+          /^user-[a-z0-9-]+$/.test(thread.id) &&
+          validCategories.includes(thread.category) &&
+          typeof thread.title === 'string' &&
+          thread.title.trim().length > 0 &&
+          thread.title.length <= 120 &&
+          typeof thread.content === 'string' &&
+          thread.content.trim().length > 0 &&
+          thread.content.length <= 5000 &&
+          typeof thread.author === 'string' &&
+          thread.author.length > 0 &&
+          thread.author.length <= 80
+        ) || new Set(savedThreads.map(thread => thread.id)).size !== savedThreads.length) {
+          throw new Error('Saved discussion data is not valid.');
+        }
+
+        savedThreads.forEach(savedThread => {
+          const thread = {
+            id: savedThread.id,
+            category: savedThread.category,
+            icon: 'fa-pen',
+            title: savedThread.title,
+            tags: [],
+            author: savedThread.author,
+            views: '0',
+            time: 'saved',
+            comments: 0,
+            likes: 0,
+            lastReply: savedThread.author,
+            memberOnly: false,
+            userContent: savedThread.content,
+            content: savedThread.content,
+            replies: []
+          };
+          userThreads.push(thread);
+          threads[savedThread.category].unshift(thread);
+          categoryCounts[savedThread.category] += 1;
+        });
+
+        validCategories.forEach(category => {
+          document.getElementById('count-' + category).textContent = categoryCounts[category] + ' threads';
+        });
+      } catch (error) {
+        console.error('Unable to load saved discussions from browser storage.', error);
+        showToast('Saved discussions could not be loaded from this browser.', true);
+      }
+    }
+
+    function incrementCategoryCount() {
+      const cats = ['journey', 'tools', 'lounge'];
+      const cat = cats[Math.floor(Math.random() * cats.length)];
+      categoryCounts[cat] += 1;
+      const el = document.getElementById('count-' + cat);
+      if (el) {
+        el.textContent = categoryCounts[cat] + ' threads';
+        pulseEl(el);
+      }
+    }
+
+    function startLiveStats() {
+      updateStatDisplay('members', liveStats.members, false);
+      updateStatDisplay('posts', liveStats.posts, false);
+      updateStatDisplay('online', liveStats.online, false);
+
+      setInterval(() => {
+        const drift = Math.floor(Math.random() * 7) - 3;
+        liveStats.online = Math.max(120, liveStats.online + drift);
+        updateStatDisplay('online', liveStats.online, true);
+      }, 3000);
+
+      function scheduleActivity() {
+        simulateActivity();
+        const next = 4000 + Math.random() * 3000;
+        setTimeout(scheduleActivity, next);
+      }
+      setTimeout(scheduleActivity, 1500);
+
+      setInterval(() => {
+        updateActivityText('just now');
+      }, 15000);
+    }
+
+    // ==================== MEMBERSHIP MODAL ====================
+    function openMembershipModal(tab) {
+      const modal = document.getElementById('membership-modal');
+      modal.classList.add('active');
+      document.body.style.overflow = 'hidden';
+      if (tab) switchTab(tab);
+    }
+
+    function closeMembershipModal() {
+      document.getElementById('membership-modal').classList.remove('active');
+      document.body.style.overflow = '';
+    }
+
+    function switchTab(tab) {
+      document.getElementById('tab-invite').classList.toggle('active', tab === 'invite');
+      document.getElementById('tab-paid').classList.toggle('active', tab === 'paid');
+      document.getElementById('panel-invite').classList.toggle('active', tab === 'invite');
+      document.getElementById('panel-paid').classList.toggle('active', tab === 'paid');
+    }
+
+    function submitInvite() {
+      const input = document.getElementById('invite-code');
+      const code = input.value.trim().toUpperCase();
+      if (!code) {
+        input.style.borderColor = '#ff6b6b';
+        setTimeout(() => input.style.borderColor = '#2a2d3a', 800);
+        showToast('Enter an invitation code to continue', true);
+        return;
+      }
+      if (validInviteCodes.includes(code)) {
+        becomeMember('invite');
+      } else {
+        input.style.borderColor = '#ff6b6b';
+        setTimeout(() => input.style.borderColor = '#2a2d3a', 800);
+        showToast('Invalid invitation code — try 225T-DEMO-CODE', true);
+      }
+    }
+
+    function submitPaid() {
+      const email = document.getElementById('member-email');
+      const name = document.getElementById('member-name');
+      let ok = true;
+      if (!email.value.trim() || !email.value.includes('@')) {
+        email.style.borderColor = '#ff6b6b';
+        setTimeout(() => email.style.borderColor = '#2a2d3a', 800);
+        ok = false;
+      }
+      if (!name.value.trim()) {
+        name.style.borderColor = '#ff6b6b';
+        setTimeout(() => name.style.borderColor = '#2a2d3a', 800);
+        ok = false;
+      }
+      if (!ok) { showToast('Please fill in your email and username', true); return; }
+      becomeMember('paid', name.value.trim());
+    }
+
+    function becomeMember(method, name) {
+      isMember = true;
+      memberName = name || 'new_member';
+      updateThreadComposerAccess();
+      document.getElementById('boost-perk').hidden = method === 'invite';
+
+      const userBadge = document.querySelector('.user-badge span');
+      if (userBadge) userBadge.textContent = '@' + memberName;
+
+      document.querySelectorAll('.join-btn').forEach(btn => {
+        if (method === 'paid') {
+          btn.innerHTML = `<i class="fas fa-crown"></i> <span>Member until 2027</span>`;
+        } else {
+          btn.innerHTML = `<i class="fas fa-crown"></i> <span>Verified Member</span>`;
+        }
+        btn.style.background = 'linear-gradient(135deg, #1e3a2e, #1a2e24)';
+        btn.style.color = '#7ed9a9';
+        btn.style.boxShadow = 'none';
+        btn.style.border = '1px solid #2e5a4a';
+        btn.onclick = () => showToast('You are already a member 🎉');
+      });
+
+      const banner = document.getElementById('membership-banner');
+      if (banner) banner.style.display = 'none';
+
+      liveStats.members += 1;
+      updateStatDisplay('members', liveStats.members);
+
+      closeMembershipModal();
+      renderForum();
+      showToast(method === 'invite'
+        ? 'Invitation accepted — welcome to 225T! 🎉'
+        : 'Membership activated — welcome to 225T! 🎉');
+    }
+
+    // ==================== TOAST ====================
+    let toastTimer;
+    function showToast(message, isError) {
+      const toast = document.getElementById('toast');
+      const text = document.getElementById('toast-text');
+      const icon = toast.querySelector('i');
+      text.textContent = message;
+      icon.className = isError ? 'fas fa-exclamation-circle' : 'fas fa-check-circle';
+      icon.style.color = isError ? '#ff6b6b' : '#4ade80';
+      toast.style.borderColor = isError ? '#ff6b6b' : '#4a6cf7';
+      toast.classList.add('show');
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => toast.classList.remove('show'), 3500);
+    }
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeMembershipModal();
+    });
+
+    // ==================== INIT ====================
+    loadUserThreads();
+    updateThreadComposerAccess();
+    renderForum();
+    startLiveStats();
+  </script>
+</body>
+</html>
