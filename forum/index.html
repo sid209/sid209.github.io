@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>225T • BHW-style forum</title>
+  <title>DADD112 FORUM • BHW-style forum</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <style>
     * {
@@ -41,13 +41,13 @@
       width: 40px; height: 40px;
       border-radius: 12px;
       display: flex; align-items: center; justify-content: center;
-      font-size: 1.2rem; color: white; font-weight: 800;
+      font-size: 0.75rem; color: white; font-weight: 800;
       box-shadow: 0 6px 12px rgba(74, 108, 247, 0.25);
-      letter-spacing: -0.5px;
+      letter-spacing: -0.3px;
     }
 
     .logo-text {
-      font-size: 1.9rem; font-weight: 700; letter-spacing: -0.5px;
+      font-size: 1.5rem; font-weight: 700; letter-spacing: -0.5px;
       background: linear-gradient(135deg, #ffffff, #b0b8ff);
       -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
     }
@@ -210,42 +210,6 @@
     }
 
     .thread-list { display: flex; flex-direction: column; }
-
-    .composer-card {
-      background: #13151c; border: 1px solid #262932;
-      border-radius: 20px; padding: 1.5rem; margin-bottom: 2.5rem;
-      box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.35);
-    }
-
-    .composer-heading { margin-bottom: 1.2rem; }
-    .composer-heading h2 { color: #f0f3fa; font-size: 1.15rem; margin-bottom: 0.25rem; }
-    .composer-heading h2 i { color: #4a6cf7; margin-right: 0.45rem; }
-    .composer-heading p { color: #8a93b0; font-size: 0.85rem; }
-    .composer-lock {
-      display: flex; align-items: center; justify-content: space-between;
-      gap: 1rem; flex-wrap: wrap; padding: 1rem;
-      background: #1a1e2a; border: 1px solid #2a3050; border-radius: 12px;
-    }
-    .composer-lock p { color: #b9c2d9; font-size: 0.88rem; }
-    .composer-lock p i { color: #f7b84b; margin-right: 0.4rem; }
-    .composer-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
-    .composer-field { display: flex; flex-direction: column; gap: 0.45rem; }
-    .composer-field.full-width { grid-column: 1 / -1; }
-    .composer-field label { color: #b9c2d9; font-size: 0.82rem; font-weight: 600; }
-    .composer-field input, .composer-field select, .composer-field textarea {
-      width: 100%; background: #181a24; border: 1px solid #2a2d3a;
-      border-radius: 10px; padding: 0.75rem 0.9rem; color: #e4e6eb;
-      font: inherit; font-size: 0.9rem; outline: none; transition: border-color 0.15s;
-    }
-    .composer-field select { color-scheme: dark; }
-    .composer-field textarea { min-height: 135px; resize: vertical; }
-    .composer-field input:focus, .composer-field select:focus, .composer-field textarea:focus { border-color: #4a6cf7; }
-    .composer-field input::placeholder, .composer-field textarea::placeholder { color: #5a637b; }
-    .composer-footer {
-      display: flex; align-items: center; justify-content: space-between;
-      flex-wrap: wrap; gap: 1rem; margin-top: 1rem;
-    }
-    .composer-hint { color: #6b7690; font-size: 0.78rem; }
 
     .thread-item {
       display: flex; align-items: center; gap: 1rem;
@@ -715,11 +679,10 @@
       .membership-banner { padding: 1.2rem 1.3rem; }
       .modal-perk-list { grid-template-columns: 1fr; }
       .modal-header, .modal-body { padding-left: 1.3rem; padding-right: 1.3rem; }
-      .composer-card { padding: 1.2rem; }
     }
 
     @media (max-width: 450px) {
-      .logo-text { font-size: 1.5rem; }
+      .logo-text { font-size: 1.15rem; }
       .user-badge span { display: none; }
       .thread-meta { gap: 0.7rem; }
       .badge-count { display: none; }
@@ -737,8 +700,8 @@
     <div id="forum-view">
       <header class="site-header">
         <div class="logo-area" onclick="showForum()">
-          <div class="logo-icon">225T</div>
-          <div class="logo-text">225<span>T</span></div>
+          <div class="logo-icon">D112</div>
+          <div class="logo-text">DADD112<span> FORUM</span></div>
         </div>
         <div class="header-actions">
           <button class="join-btn" onclick="openMembershipModal()">
@@ -755,8 +718,8 @@
       <!-- Membership banner -->
       <div class="membership-banner" id="membership-banner">
         <div class="banner-text">
-          <h2><i class="fas fa-crown"></i> Unlock the full 225T experience</h2>
-          <p>Join via invitation code or a $120/year membership. Both options include forum posting, early-access discounts, and group buys. Paid membership also includes an advertising boost.</p>
+          <h2><i class="fas fa-crown"></i> Unlock the full DADD112 FORUM experience</h2>
+          <p>Join via invitation code or a $120/year membership. Post threads, grab early-access discounts, join group buys, and advertise your product with a boost.</p>
         </div>
         <div class="banner-actions">
           <button class="banner-btn primary" onclick="openMembershipModal('invite')">
@@ -804,49 +767,12 @@
           <h4>Group buy access</h4>
           <p>Join members-only group buys to split the cost of premium tools and services.</p>
         </div>
-        <div class="perk-card" id="boost-perk">
+        <div class="perk-card">
           <div class="perk-icon"><i class="fas fa-bullhorn"></i></div>
-          <h4>Paid membership: Advertise with boost</h4>
-          <p>Paid members can promote a product or service with an advertising boost.</p>
+          <h4>Advertise with boost</h4>
+          <p>Post your product or service with external advertising boost to reach buyers faster.</p>
         </div>
       </div>
-
-      <section class="composer-card" aria-labelledby="composer-title">
-        <div class="composer-heading">
-          <h2 id="composer-title"><i class="fas fa-pen-fancy"></i> Member discussions</h2>
-          <p>Members can start discussions in any of the three main topics.</p>
-        </div>
-        <div class="composer-lock" id="composer-lock" hidden>
-          <p><i class="fas fa-lock"></i> Posting is available to members only.</p>
-          <button class="banner-btn primary" type="button" onclick="openMembershipModal()">
-            <i class="fas fa-crown"></i> Become a member
-          </button>
-        </div>
-        <form id="thread-form" onsubmit="submitThread(event)" hidden>
-          <div class="composer-grid">
-            <div class="composer-field">
-              <label for="thread-category">Main topic</label>
-              <select id="thread-category" name="category" required>
-                <option value="journey">Journey and Case Studies</option>
-                <option value="tools">Verified Tools and Services</option>
-                <option value="lounge">Lounge and Chit-Chat</option>
-              </select>
-            </div>
-            <div class="composer-field">
-              <label for="thread-title">Title</label>
-              <input id="thread-title" name="title" type="text" maxlength="120" placeholder="Give your discussion a clear title" required>
-            </div>
-            <div class="composer-field full-width">
-              <label for="thread-content">Your content</label>
-              <textarea id="thread-content" name="content" maxlength="5000" placeholder="Write the details you want to share..." required></textarea>
-            </div>
-          </div>
-          <div class="composer-footer">
-            <span class="composer-hint"><i class="fas fa-info-circle"></i> Posts are saved in this browser.</span>
-            <button class="submit-btn" type="submit"><i class="fas fa-paper-plane"></i> Publish discussion</button>
-          </div>
-        </form>
-      </section>
 
       <!-- CATEGORY 1 -->
       <div class="category-section">
@@ -883,7 +809,7 @@
       </div>
 
       <div class="footer-note">
-        <i class="fas fa-code"></i> 225T — inspired by BHW • all topics are for demo purpose
+        <i class="fas fa-code"></i> DADD112 FORUM — inspired by BHW • all topics are for demo purpose
       </div>
     </div>
 
@@ -899,7 +825,7 @@
       </div>
       <div class="post-container" id="post-container"></div>
       <div class="footer-note">
-        <i class="fas fa-code"></i> 225T — inspired by BHW • all topics are for demo purpose
+        <i class="fas fa-code"></i> DADD112 FORUM — inspired by BHW • all topics are for demo purpose
       </div>
     </div>
   </div>
@@ -909,7 +835,7 @@
     <div class="modal">
       <div class="modal-header">
         <div>
-          <h2><i class="fas fa-crown"></i> Join 225T</h2>
+          <h2><i class="fas fa-crown"></i> Join DADD112 FORUM</h2>
           <p>Choose your path to membership</p>
         </div>
         <button class="modal-close" onclick="closeMembershipModal()"><i class="fas fa-times"></i></button>
@@ -931,10 +857,11 @@
               <div class="modal-perk-item"><i class="fas fa-check-circle"></i> Post on the forum</div>
               <div class="modal-perk-item"><i class="fas fa-check-circle"></i> Early access discount codes</div>
               <div class="modal-perk-item"><i class="fas fa-check-circle"></i> Group buy access</div>
+              <div class="modal-perk-item"><i class="fas fa-check-circle"></i> Post product/service + ad boost</div>
             </div>
           </div>
           <label class="field-label" for="invite-code">Invitation code</label>
-          <input type="text" class="field-input" id="invite-code" placeholder="e.g. 225T-XXXX-XXXX" autocomplete="off">
+          <input type="text" class="field-input" id="invite-code" placeholder="e.g. DADD112-XXXX-XXXX" autocomplete="off">
           <div class="field-hint"><i class="fas fa-info-circle"></i> Invitation codes are shared by existing members. Each code is single-use.</div>
           <button class="modal-submit" onclick="submitInvite()">
             <i class="fas fa-unlock"></i> Redeem invitation code
@@ -973,7 +900,7 @@
     // ==================== MEMBERSHIP STATE ====================
     let isMember = false;
     let memberName = 'guest_viewer';
-    const validInviteCodes = ['225T-2024-VIP', '225T-DEMO-CODE', '225T-JOIN-NOW'];
+    const validInviteCodes = ['DADD112-2024-VIP', 'DADD112-DEMO-CODE', 'DADD112-JOIN-NOW'];
 
     // ==================== LIVE STATS STATE ====================
     const liveStats = {
@@ -989,20 +916,9 @@
       'coffee_lover', 'proxy_guy', 'design_guru', 'dev_dave',
       'micro_saas', 'retro_collector', 'freelance_vet', 'seo_queen'
     ];
-    const userThreads = [];
 
     function formatNumber(n) {
       return n.toLocaleString('en-US');
-    }
-
-    function escapeHtml(value) {
-      return String(value).replace(/[&<>"']/g, character => ({
-        '&': '&amp;',
-        '<': '&lt;',
-        '>': '&gt;',
-        '"': '&quot;',
-        "'": '&#39;'
-      })[character]);
     }
 
     function pulseEl(el) {
@@ -1098,7 +1014,7 @@
       tools: [
         {
           id: 't1', icon: 'fa-robot',
-          title: '[Verified] RankGenius AI — content writer & SEO optimizer (225T discount)',
+          title: '[Verified] RankGenius AI — content writer & SEO optimizer (DADD112 discount)',
           tags: [{ label: 'VERIFIED', cls: 'verified' }],
           author: 'tool_hunter', views: '3.1k', time: '1h ago',
           comments: 54, likes: 112, lastReply: 'aiwriter_pro', memberOnly: true,
@@ -1117,7 +1033,7 @@
               <li>SEO suggestions were actionable and accurate</li>
               <li>Zero plagiarism issues</li>
             </ul>
-            <p><strong>Member discount:</strong> $49/mo for unlimited words. 225T members get 20% off with the early-access code <strong>FORUM20</strong>.</p>
+            <p><strong>Member discount:</strong> $49/mo for unlimited words. DADD112 FORUM members get 20% off with the early-access code <strong>FORUM20</strong>.</p>
             <p><strong>Verdict:</strong> Solid tool for scaling content production. Not perfect — you still need to edit and add your own insights — but a huge time saver.</p>`,
           replies: [
             { author: 'aiwriter_pro', time: '50m ago', badge: 'Vendor', text: 'Thanks for the detailed review! Glad the tool is working well for you. We just pushed an update that improves the SEO scoring algorithm.' },
@@ -1158,7 +1074,7 @@
         },
         {
           id: 't3', icon: 'fa-cloud',
-          title: 'CloudProxyPro — residential proxies for scraping (225T exclusive)',
+          title: 'CloudProxyPro — residential proxies for scraping (DADD112 exclusive)',
           tags: [{ label: 'TRIAL', cls: '' }],
           author: 'proxy_guy', views: '1.8k', time: '8h ago',
           comments: 17, likes: 43, lastReply: 'scrapemaster', memberOnly: false,
@@ -1177,7 +1093,7 @@
               <li>IP rotation: seamless, no detected patterns</li>
               <li>Bandwidth: unlimited on all plans</li>
             </ul>
-            <p><strong>Pricing:</strong> Starts at $15/GB for pay-as-you-go, or $99/mo for 10GB. 225T members get a 7-day free trial with 1GB bandwidth as an early-access perk.</p>
+            <p><strong>Pricing:</strong> Starts at $15/GB for pay-as-you-go, or $99/mo for 10GB. DADD112 FORUM members get a 7-day free trial with 1GB bandwidth as an early-access perk.</p>
             <p><strong>Verdict:</strong> Solid proxy provider. Not the cheapest, but reliability is excellent. The free trial is a no-brainer if you're in the market.</p>`,
           replies: [
             { author: 'scrapemaster', time: '5h ago', badge: 'Member', text: 'How does it compare to Bright Data? That\'s what I currently use but it\'s getting expensive.' },
@@ -1261,9 +1177,6 @@
     // ==================== RENDER ====================
     function renderThreadItem(thread, category) {
       const tagsHtml = thread.tags.map(t => `<span class="tag ${t.cls}">${t.label}</span>`).join('');
-      const title = escapeHtml(thread.title);
-      const author = escapeHtml(thread.author);
-      const lastReply = escapeHtml(thread.lastReply);
       const lockedHtml = (thread.memberOnly && !isMember)
         ? `<div class="locked-notice"><i class="fas fa-lock"></i> Member-only thread — join to read</div>`
         : '';
@@ -1272,11 +1185,11 @@
           <div class="thread-avatar"><i class="fas ${thread.icon}"></i></div>
           <div class="thread-info">
             <div class="thread-title">
-              <a href="javascript:void(0)">${title}</a>
+              <a href="javascript:void(0)">${thread.title}</a>
               ${tagsHtml}
             </div>
             <div class="thread-meta">
-              <span><i class="fas fa-user"></i> ${author}</span>
+              <span><i class="fas fa-user"></i> ${thread.author}</span>
               <span><i class="fas fa-eye"></i> ${thread.views} views</span>
               <span><i class="fas fa-clock"></i> ${thread.time}</span>
             </div>
@@ -1287,7 +1200,7 @@
             <span><i class="fas fa-thumbs-up"></i> ${thread.likes}</span>
           </div>
           <div class="last-post">
-            <i class="fas fa-reply"></i> by @${lastReply}
+            <i class="fas fa-reply"></i> by @${thread.lastReply}
           </div>
         </div>
       `;
@@ -1307,11 +1220,11 @@
           <div class="reply-avatar"><i class="fas ${avatarIcon}"></i></div>
           <div class="reply-content">
             <div class="reply-top">
-              <span class="reply-author">@${escapeHtml(reply.author)}</span>
+              <span class="reply-author">@${reply.author}</span>
               ${badgeHtml}
-              <span class="reply-time"><i class="fas fa-clock"></i> ${escapeHtml(reply.time)}</span>
+              <span class="reply-time"><i class="fas fa-clock"></i> ${reply.time}</span>
             </div>
-            <div class="reply-text">${escapeHtml(reply.text)}</div>
+            <div class="reply-text">${reply.text}</div>
             <div class="reply-actions">
               <span onclick="event.stopPropagation(); likeReply(this)"><i class="fas fa-thumbs-up"></i> Like</span>
               <span><i class="fas fa-reply"></i> Reply</span>
@@ -1335,7 +1248,7 @@
           <div style="text-align:center; padding: 2rem 1rem;">
             <div style="font-size: 2.5rem; color:#f7b84b; margin-bottom: 1rem;"><i class="fas fa-lock"></i></div>
             <h3 style="color:#f0f3fa; margin-bottom:0.5rem;">Members-only content</h3>
-            <p style="color:#8a93b0; font-size:0.9rem; max-width:420px; margin: 0 auto 1.5rem auto;">This thread is available to 225T members. Join via invitation code or a $120/year membership to unlock it — plus early-access discounts, group buys, and ad-boosted posting.</p>
+            <p style="color:#8a93b0; font-size:0.9rem; max-width:420px; margin: 0 auto 1.5rem auto;">This thread is available to DADD112 FORUM members. Join via invitation code or a $120/year membership to unlock it — plus early-access discounts, group buys, and ad-boosted posting.</p>
             <button class="submit-btn" style="margin: 0 auto;" onclick="openMembershipModal()">
               <i class="fas fa-crown"></i> Become a member to read
             </button>
@@ -1352,9 +1265,7 @@
             <span class="reply-count">locked</span>
           </div>`;
       } else {
-        bodyHtml = thread.userContent
-          ? `<p>${escapeHtml(thread.userContent).replace(/\r?\n/g, '<br>')}</p>`
-          : thread.body;
+        bodyHtml = thread.body;
         replyFormHtml = `
           <div class="reply-form">
             <h4><i class="fas fa-pen"></i> Leave a reply</h4>
@@ -1381,12 +1292,12 @@
       container.innerHTML = `
         <div class="post-header">
           <div class="post-title-row">
-            <h1 class="post-title">${escapeHtml(thread.title)}</h1>
+            <h1 class="post-title">${thread.title}</h1>
             ${tagsHtml}
             ${memberPill}
           </div>
           <div class="post-meta-row">
-            <span><i class="fas fa-user"></i> <span class="author">@${escapeHtml(thread.author)}</span></span>
+            <span><i class="fas fa-user"></i> <span class="author">@${thread.author}</span></span>
             <span><i class="fas fa-eye"></i> ${thread.views} views</span>
             <span><i class="fas fa-clock"></i> Posted ${thread.time}</span>
             <span><i class="fas fa-comment"></i> ${thread.replies.length} replies</span>
@@ -1438,87 +1349,6 @@
 
       openPost(category, threadId);
       renderForum();
-    }
-
-    function submitThread(event) {
-      event.preventDefault();
-      if (!isMember) {
-        updateThreadComposerAccess();
-        openMembershipModal();
-        showToast('Only members can publish discussions.', true);
-        return;
-      }
-
-      const category = document.getElementById('thread-category').value;
-      const titleInput = document.getElementById('thread-title');
-      const contentInput = document.getElementById('thread-content');
-      const title = titleInput.value.trim();
-      const content = contentInput.value.trim();
-      const categoryThreads = threads[category];
-
-      if (!Object.prototype.hasOwnProperty.call(threads, category) ||
-          !categoryThreads || !title || !content || title.length > 120 || content.length > 5000) {
-        showToast('Choose a topic and enter a title and content within the limits.', true);
-        return;
-      }
-
-      const author = memberName.slice(0, 80);
-      const thread = {
-        id: `user-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`,
-        icon: 'fa-pen',
-        title: title,
-        tags: [],
-        author: author,
-        views: '0',
-        time: 'just now',
-        comments: 0,
-        likes: 0,
-        lastReply: author,
-        memberOnly: false,
-        userContent: content,
-        replies: []
-      };
-      const savedThread = { id: thread.id, category: category, title: title, content: content, author: author };
-      let storageError = false;
-
-      try {
-        localStorage.setItem('225t-user-threads', JSON.stringify([
-          ...userThreads.map(item => ({
-            id: item.id,
-            category: item.category,
-            title: item.title,
-            content: item.content,
-            author: item.author
-          })),
-          savedThread
-        ]));
-      } catch (error) {
-        console.error('Unable to save the discussion in browser storage.', error);
-        storageError = true;
-      }
-
-      thread.category = category;
-      thread.content = content;
-      userThreads.push(thread);
-      categoryThreads.unshift(thread);
-      categoryCounts[category] += 1;
-      const countElement = document.getElementById('count-' + category);
-      countElement.textContent = categoryCounts[category] + ' threads';
-      liveStats.posts += 1;
-      updateStatDisplay('posts', liveStats.posts);
-
-      document.getElementById('thread-form').reset();
-      renderForum();
-      openPost(category, thread.id);
-      showToast(storageError
-        ? 'Discussion posted for this session, but could not be saved in this browser.'
-        : 'Your discussion is live in the selected topic.',
-        storageError);
-    }
-
-    function updateThreadComposerAccess() {
-      document.getElementById('thread-form').hidden = !isMember;
-      document.getElementById('composer-lock').hidden = isMember;
     }
 
     function likeReply(el) {
@@ -1608,62 +1438,6 @@
     }
 
     const categoryCounts = { journey: 132, tools: 87, lounge: 326 };
-    function loadUserThreads() {
-      try {
-        const saved = localStorage.getItem('225t-user-threads');
-        if (!saved) return;
-        const savedThreads = JSON.parse(saved);
-        const validCategories = ['journey', 'tools', 'lounge'];
-        if (!Array.isArray(savedThreads) || !savedThreads.every(thread =>
-          thread &&
-          typeof thread.id === 'string' &&
-          /^user-[a-z0-9-]+$/.test(thread.id) &&
-          validCategories.includes(thread.category) &&
-          typeof thread.title === 'string' &&
-          thread.title.trim().length > 0 &&
-          thread.title.length <= 120 &&
-          typeof thread.content === 'string' &&
-          thread.content.trim().length > 0 &&
-          thread.content.length <= 5000 &&
-          typeof thread.author === 'string' &&
-          thread.author.length > 0 &&
-          thread.author.length <= 80
-        ) || new Set(savedThreads.map(thread => thread.id)).size !== savedThreads.length) {
-          throw new Error('Saved discussion data is not valid.');
-        }
-
-        savedThreads.forEach(savedThread => {
-          const thread = {
-            id: savedThread.id,
-            category: savedThread.category,
-            icon: 'fa-pen',
-            title: savedThread.title,
-            tags: [],
-            author: savedThread.author,
-            views: '0',
-            time: 'saved',
-            comments: 0,
-            likes: 0,
-            lastReply: savedThread.author,
-            memberOnly: false,
-            userContent: savedThread.content,
-            content: savedThread.content,
-            replies: []
-          };
-          userThreads.push(thread);
-          threads[savedThread.category].unshift(thread);
-          categoryCounts[savedThread.category] += 1;
-        });
-
-        validCategories.forEach(category => {
-          document.getElementById('count-' + category).textContent = categoryCounts[category] + ' threads';
-        });
-      } catch (error) {
-        console.error('Unable to load saved discussions from browser storage.', error);
-        showToast('Saved discussions could not be loaded from this browser.', true);
-      }
-    }
-
     function incrementCategoryCount() {
       const cats = ['journey', 'tools', 'lounge'];
       const cat = cats[Math.floor(Math.random() * cats.length)];
@@ -1732,7 +1506,7 @@
       } else {
         input.style.borderColor = '#ff6b6b';
         setTimeout(() => input.style.borderColor = '#2a2d3a', 800);
-        showToast('Invalid invitation code — try 225T-DEMO-CODE', true);
+        showToast('Invalid invitation code — try DADD112-DEMO-CODE', true);
       }
     }
 
@@ -1757,8 +1531,6 @@
     function becomeMember(method, name) {
       isMember = true;
       memberName = name || 'new_member';
-      updateThreadComposerAccess();
-      document.getElementById('boost-perk').hidden = method === 'invite';
 
       const userBadge = document.querySelector('.user-badge span');
       if (userBadge) userBadge.textContent = '@' + memberName;
@@ -1785,8 +1557,8 @@
       closeMembershipModal();
       renderForum();
       showToast(method === 'invite'
-        ? 'Invitation accepted — welcome to 225T! 🎉'
-        : 'Membership activated — welcome to 225T! 🎉');
+        ? 'Invitation accepted — welcome to DADD112 FORUM! 🎉'
+        : 'Membership activated — welcome to DADD112 FORUM! 🎉');
     }
 
     // ==================== TOAST ====================
@@ -1809,8 +1581,6 @@
     });
 
     // ==================== INIT ====================
-    loadUserThreads();
-    updateThreadComposerAccess();
     renderForum();
     startLiveStats();
   </script>
