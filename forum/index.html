@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0f0f13">
+  <title>225T • BHW-style forum</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    * { box-sizing: border-box; margin: 0; font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+    body { background: #0f0f13; color: #e4e6eb; line-height: 1.5; padding: 24px 16px; }
+    .wrap { max-width: 1100px; margin: auto; }
+    header, .bar, .row, .actions { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+    header { border-bottom: 1px solid #2a2c35; padding: 0 0 18px; margin-bottom: 24px; }
+    .logo { font-size: 1.8rem; font-weight: 800; color: #fff; text-decoration: none; }
+    .logo b { color: #8a9cff; }
+    button, .button { border: 0; border-radius: 30px; background: #4a6cf7; color: white; padding: 10px 17px; font-weight: 650; cursor: pointer; text-decoration: none; }
+    button:hover, .button:hover { background: #5b7bff; }
+    .banner, .stats, .category, .composer { background: #13151c; border: 1px solid #292c38; border-radius: 16px; margin-bottom: 20px; }
+    .banner { padding: 22px; background: linear-gradient(135deg,#1a1e2e,#161a28); }
+    .banner h1 { font-size: 1.25rem; margin-bottom: 6px; }
+    .banner p, .muted { color: #9aa5c4; font-size: .9rem; }
+    .stats { display: flex; justify-content: space-around; flex-wrap: wrap; padding: 16px; gap: 14px; color: #b0b8cc; }
+    .stats strong { color: white; }
+    .category { overflow: hidden; }
+    .category h2 { background: #1a1d26; padding: 15px 18px; font-size: 1.05rem; border-bottom: 1px solid #292c38; }
+    .thread { display: flex; align-items: center; gap: 14px; padding: 15px 18px; border-bottom: 1px solid #20222b; cursor: pointer; }
+    .thread:last-child { border-bottom: 0; }
+    .thread:hover { background: #1b1e27; }
+    .avatar { width: 42px; height: 42px; display: grid; place-items: center; flex: 0 0 42px; background: #2c3140; border-radius: 12px; color: #93a2d0; }
+    .thread-info { flex: 1; min-width: 0; }
+    .thread-title { color: #eef1fc; font-weight: 650; }
+    .meta { color: #7f89a3; font-size: .8rem; margin-top: 4px; }
+    .counts { color: #9aa5c4; font-size: .82rem; white-space: nowrap; }
+    .tag { display: inline-block; margin-left: 6px; padding: 2px 7px; border-radius: 12px; color: #ffb0b0; background: #4a2e2e; font-size: .65rem; vertical-align: 2px; }
+    .composer { padding: 18px; }
+    .composer h2 { margin-bottom: 5px; }
+    input, select, textarea { width: 100%; color: #e4e6eb; background: #181a24; border: 1px solid #333746; border-radius: 9px; padding: 11px; margin: 7px 0 12px; font: inherit; }
+    textarea { min-height: 110px; resize: vertical; }
+    label { color: #b9c2d9; font-size: .84rem; font-weight: 600; }
+    .hidden { display: none !important; }
+    .notice { border-left: 3px solid #f7b84b; padding: 12px 15px; color: #cbd2e8; background: #1a1e2a; border-radius: 8px; margin-top: 14px; }
+    .post { background: #13151c; border: 1px solid #292c38; border-radius: 16px; padding: 22px; }
+    .post h1 { margin-bottom: 12px; }
+    .post-body { white-space: pre-wrap; color: #d5dbea; margin: 20px 0; }
+    .reply { border-top: 1px solid #292c38; padding: 14px 0; color: #c3cbe0; }
+    footer { border-top: 1px solid #252731; padding: 20px 0; margin-top: 30px; text-align: center; color: #6b7690; font-size: .82rem; }
+    @media(max-width:600px) { .counts { width: 100%; padding-left: 56px; } .thread { flex-wrap: wrap; } }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <div id="forum-view">
+      <header>
+        <a class="logo" href="/">225<b>T</b></a>
+        <div class="actions"><span class="muted" id="user">@guest_viewer</span><button id="join" onclick="joinForum()"><i class="fas fa-crown"></i> Become a Member</button></div>
+      </header>
+      <section class="banner">
+        <div class="bar"><div><h1><i class="fas fa-crown" style="color:#f7b84b"></i> Unlock the full 225T experience</h1><p>Join the community to start discussions and access member-only content. Demo membership is stored only in this browser.</p></div><button onclick="joinForum()">Join the community</button></div>
+      </section>
+      <section class="stats"><span><i class="fas fa-users"></i> <strong>28,451</strong> members</span><span><i class="fas fa-comments"></i> <strong id="post-count">142,893</strong> posts</span><span><i class="fas fa-circle" style="color:#4ade80"></i> <strong>189</strong> online</span></section>
+      <section class="composer">
+        <h2><i class="fas fa-pen-fancy" style="color:#4a6cf7"></i> Member discussions</h2><p class="muted">Start a discussion in any of the three main topics.</p>
+        <div id="locked" class="notice">Posting is available to members only. <button style="margin-left:10px" onclick="joinForum()">Become a member</button></div>
+        <form id="thread-form" class="hidden">
+          <label for="category">Main topic</label><select id="category"><option value="journey">Journey and Case Studies</option><option value="tools">Verified Tools and Services</option><option value="lounge">Lounge and Chit-Chat</option></select>
+          <label for="title">Title</label><input id="title" maxlength="120" required placeholder="Give your discussion a clear title">
+          <label for="content">Your content</label><textarea id="content" maxlength="5000" required placeholder="Write the details you want to share..."></textarea>
+          <button type="submit">Publish discussion</button><p class="muted">Posts are saved in this browser.</p>
+        </form>
+      </section>
+      <div id="categories"></div>
+      <footer>225T — inspired by BHW • forum demonstration. Membership, payment, and live statistics are not connected to a backend.</footer>
+    </div>
+    <section id="post-view" class="hidden"><div class="bar" style="margin-bottom:16px"><button onclick="showForum()"><i class="fas fa-arrow-left"></i> Back to forum</button><button onclick="joinForum()">Become a Member</button></div><article id="post" class="post"></article></section>
+  </main>
+<script>
+  const seed = {
+    journey: [
+      {title:'$0 to $10k/month in 6 months — my SEO journey (case study)',author:'SEO_Master',time:'2h ago',comments:87,body:'I wanted to share my journey from zero to $10k/month using consistent SEO work.\n\nWhat worked: publishing in-depth articles, building topical authority, and focusing on long-tail keywords. Ask me anything about the process.',locked:false,tag:'HOT'},
+      {title:'Scaling a dropshipping store from $500 to $22k/mo — full breakdown',author:'ecom_boss',time:'6h ago',comments:42,body:'A practical breakdown of niche selection, product testing, content, and customer retention.',locked:true,tag:'VERIFIED'},
+      {title:'My SaaS journey: from side project to $3.5k MRR in 8 months',author:'indie_maker',time:'12h ago',comments:23,body:'Lessons from building a small invoicing product for freelancers: understand a specific audience and keep the product focused.',locked:true,tag:'MEMBER'}
+    ],
+    tools: [
+      {title:'[Verified] RankGenius AI — content writer & SEO optimizer',author:'tool_hunter',time:'1h ago',comments:54,body:'A community review and discussion of content workflows and SEO tools.',locked:true,tag:'VERIFIED'},
+      {title:'[Service] ProBacklink — manual outreach (tested & reviewed)',author:'linkbuilder',time:'4h ago',comments:38,body:'Share your experience and questions about outreach services and link quality.',locked:true,tag:'VERIFIED'},
+      {title:'CloudProxyPro — residential proxies for data collection',author:'proxy_guy',time:'8h ago',comments:17,body:'A discussion about proxy reliability, pricing, and responsible data collection.',locked:false,tag:'TRIAL'}
+    ],
+    lounge: [
+      {title:"What's your morning routine before hitting the IM grind?",author:'earlybird',time:'25m ago',comments:64,body:'How do you start your day? Share routines and productivity ideas with the community.',locked:false},
+      {title:'Anyone here into retro gaming? Just built my dream setup',author:'pixel_hero',time:'2h ago',comments:29,body:'A relaxed chat about retro games, consoles, and favorite classics.',locked:false},
+      {title:"Share your worst client story (we've all been there)",author:'freelance_vet',time:'5h ago',comments:121,body:'Freelancers: tell us about the client projects that taught you the most.',locked:false}
+    ]
+  };
+  let isMember = localStorage.getItem('225t-member') === 'true';
+  const escaped = value => String(value).replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+  function allThreads(category) {
+    try { const saved = JSON.parse(localStorage.getItem('225t-threads') || '[]'); return [...saved.filter(t=>t.category===category), ...seed[category]]; }
+    catch { return seed[category]; }
+  }
+  function render() {
+    document.getElementById('user').textContent = isMember ? '@member' : '@guest_viewer';
+    document.getElementById('join').textContent = isMember ? 'Member' : 'Become a Member';
+    document.getElementById('locked').classList.toggle('hidden', isMember);
+    document.getElementById('thread-form').classList.toggle('hidden', !isMember);
+    const labels = {journey:'Journey and Case Studies',tools:'Verified Tools and Services',lounge:'Lounge and Chit-Chat'};
+    document.getElementById('categories').innerHTML = Object.keys(seed).map(cat => `<section class="category"><h2>${labels[cat]}</h2>${allThreads(cat).map((t,i)=>`<div class="thread" onclick="openPost('${cat}',${i})"><div class="avatar"><i class="fas fa-comments"></i></div><div class="thread-info"><div class="thread-title">${escaped(t.title)} ${t.tag?`<span class="tag">${escaped(t.tag)}</span>`:''}</div><div class="meta">@${escaped(t.author)} · ${escaped(t.time)}${t.locked&&!isMember?' · 🔒 Members only':''}</div></div><div class="counts"><i class="fas fa-comment"></i> ${Number(t.comments)||0}</div></div>`).join('')}</section>`).join('');
+  }
+  function joinForum() { if (isMember) return alert('You are already a demo member.'); if (confirm('Activate demo membership in this browser? This does not process a payment.')) { isMember=true; localStorage.setItem('225t-member','true'); render(); } }
+  function openPost(category,index) {
+    const thread=allThreads(category)[index]; if(!thread)return;
+    document.getElementById('forum-view').classList.add('hidden'); document.getElementById('post-view').classList.remove('hidden');
+    document.getElementById('post').innerHTML=`<h1>${escaped(thread.title)}</h1><p class="muted">@${escaped(thread.author)} · ${escaped(thread.time)} · ${Number(thread.comments)||0} replies</p>${thread.locked&&!isMember?'<div class="notice">This is a members-only discussion. <button onclick="joinForum()">Become a member</button></div>':`<div class="post-body">${escaped(thread.content||thread.body)}</div><h2>Replies</h2><div class="reply">Welcome to the discussion. Keep replies respectful and constructive.</div>${isMember?'<textarea id="reply" placeholder="Share your thoughts..."></textarea><button onclick="addReply()">Post reply</button>':'<p class="muted">Join to reply to discussions.</p>'}`}`;
+    window.currentThread={category,index}; window.scrollTo(0,0);
+  }
+  function addReply(){const input=document.getElementById('reply');if(input&&input.value.trim()){alert('Reply saved for this demo session.');input.value='';}}
+  function showForum(){document.getElementById('post-view').classList.add('hidden');document.getElementById('forum-view').classList.remove('hidden');render();window.scrollTo(0,0);}
+  document.getElementById('thread-form').addEventListener('submit',event=>{event.preventDefault();if(!isMember)return;const category=document.getElementById('category').value,title=document.getElementById('title').value.trim(),content=document.getElementById('content').value.trim();if(!title||!content)return;let saved=[];try{saved=JSON.parse(localStorage.getItem('225t-threads')||'[]')}catch{}saved.unshift({category,title,content,author:'member',time:'just now',comments:0,locked:false});localStorage.setItem('225t-threads',JSON.stringify(saved));event.target.reset();render();});
+  render();
+</script>
+</body>
+</html>
