@@ -3,119 +3,146 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#0f0f13">
-  <title>225T • BHW-style forum</title>
+  <meta name="theme-color" content="#10131c">
+  <meta name="description" content="A community forum for the dreamers and doers building with code.">
+  <title>Community Forum • Dreamers &amp; Doers Devs</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <style>
     * { box-sizing: border-box; margin: 0; font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
-    body { background: #0f0f13; color: #e4e6eb; line-height: 1.5; padding: 24px 16px; }
-    .wrap { max-width: 1100px; margin: auto; }
-    header, .bar, .row, .actions { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
-    header { border-bottom: 1px solid #2a2c35; padding: 0 0 18px; margin-bottom: 24px; }
-    .logo { font-size: 1.8rem; font-weight: 800; color: #fff; text-decoration: none; }
-    .logo b { color: #8a9cff; }
-    button, .button { border: 0; border-radius: 30px; background: #4a6cf7; color: white; padding: 10px 17px; font-weight: 650; cursor: pointer; text-decoration: none; }
-    button:hover, .button:hover { background: #5b7bff; }
-    .banner, .stats, .category, .composer { background: #13151c; border: 1px solid #292c38; border-radius: 16px; margin-bottom: 20px; }
-    .banner { padding: 22px; background: linear-gradient(135deg,#1a1e2e,#161a28); }
-    .banner h1 { font-size: 1.25rem; margin-bottom: 6px; }
-    .banner p, .muted { color: #9aa5c4; font-size: .9rem; }
-    .stats { display: flex; justify-content: space-around; flex-wrap: wrap; padding: 16px; gap: 14px; color: #b0b8cc; }
-    .stats strong { color: white; }
+    body { background: #10131c; color: #e8ebf3; line-height: 1.55; padding: 24px 16px; }
+    .wrap { max-width: 1080px; margin: auto; }
+    header, .bar, .actions { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+    header { border-bottom: 1px solid #292e3a; padding: 0 0 18px; margin-bottom: 24px; }
+    .logo { font-size: 1.25rem; font-weight: 800; color: #fff; text-decoration: none; letter-spacing: -.03em; }
+    .logo i { color: #8c7cff; margin-right: 8px; }
+    button, .button { border: 0; border-radius: 9px; background: #7564f5; color: white; padding: 10px 16px; font-weight: 650; cursor: pointer; text-decoration: none; transition: background .15s ease, transform .15s ease; }
+    button:hover, .button:hover { background: #887aff; transform: translateY(-1px); }
+    button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible { outline: 3px solid #b0a7ff; outline-offset: 3px; }
+    .banner, .stats, .category, .composer, .post { background: #171b26; border: 1px solid #2b3040; border-radius: 14px; margin-bottom: 18px; }
+    .banner { padding: 27px; background: radial-gradient(ellipse at 90% 0%, #302a58 0%, transparent 52%), linear-gradient(135deg,#1d2232,#171b26); }
+    .banner h1 { font-size: clamp(1.45rem, 3vw, 2rem); margin-bottom: 8px; letter-spacing: -.03em; }
+    .banner p, .muted { color: #aab2c8; font-size: .92rem; }
+    .banner .bar { align-items: flex-end; }
+    .banner-copy { max-width: 650px; }
+    .eyebrow { color: #b6adff; font-size: .78rem; font-weight: 750; letter-spacing: .12em; text-transform: uppercase; margin-bottom: 8px; }
+    .stats { display: flex; justify-content: space-around; flex-wrap: wrap; padding: 15px; gap: 14px; color: #bbc2d3; }
+    .stats strong { color: #fff; }
     .category { overflow: hidden; }
-    .category h2 { background: #1a1d26; padding: 15px 18px; font-size: 1.05rem; border-bottom: 1px solid #292c38; }
-    .thread { display: flex; align-items: center; gap: 14px; padding: 15px 18px; border-bottom: 1px solid #20222b; cursor: pointer; }
+    .category h2 { background: #1d2230; padding: 15px 18px; font-size: 1rem; border-bottom: 1px solid #2b3040; }
+    .category h2 i { color: #a59aff; width: 25px; }
+    .thread { display: flex; align-items: center; gap: 14px; padding: 15px 18px; border-bottom: 1px solid #252a37; cursor: pointer; }
     .thread:last-child { border-bottom: 0; }
-    .thread:hover { background: #1b1e27; }
-    .avatar { width: 42px; height: 42px; display: grid; place-items: center; flex: 0 0 42px; background: #2c3140; border-radius: 12px; color: #93a2d0; }
+    .thread:hover { background: #1d2230; }
+    .avatar { width: 42px; height: 42px; display: grid; place-items: center; flex: 0 0 42px; background: #292743; border-radius: 12px; color: #b1a8ff; }
     .thread-info { flex: 1; min-width: 0; }
-    .thread-title { color: #eef1fc; font-weight: 650; }
-    .meta { color: #7f89a3; font-size: .8rem; margin-top: 4px; }
-    .counts { color: #9aa5c4; font-size: .82rem; white-space: nowrap; }
-    .tag { display: inline-block; margin-left: 6px; padding: 2px 7px; border-radius: 12px; color: #ffb0b0; background: #4a2e2e; font-size: .65rem; vertical-align: 2px; }
-    .composer { padding: 18px; }
+    .thread-title { color: #eef0f8; font-weight: 650; }
+    .meta { color: #929bb1; font-size: .8rem; margin-top: 4px; }
+    .counts { color: #aab2c8; font-size: .82rem; white-space: nowrap; }
+    .tag { display: inline-block; margin-left: 6px; padding: 2px 7px; border-radius: 12px; color: #d3ccff; background: #343052; font-size: .65rem; vertical-align: 2px; }
+    .composer { padding: 19px; }
     .composer h2 { margin-bottom: 5px; }
-    input, select, textarea { width: 100%; color: #e4e6eb; background: #181a24; border: 1px solid #333746; border-radius: 9px; padding: 11px; margin: 7px 0 12px; font: inherit; }
+    input, select, textarea { width: 100%; color: #e8ebf3; background: #11151f; border: 1px solid #363c4d; border-radius: 8px; padding: 11px; margin: 7px 0 12px; font: inherit; }
     textarea { min-height: 110px; resize: vertical; }
-    label { color: #b9c2d9; font-size: .84rem; font-weight: 600; }
+    label { color: #c4cad9; font-size: .84rem; font-weight: 600; }
     .hidden { display: none !important; }
-    .notice { border-left: 3px solid #f7b84b; padding: 12px 15px; color: #cbd2e8; background: #1a1e2a; border-radius: 8px; margin-top: 14px; }
-    .post { background: #13151c; border: 1px solid #292c38; border-radius: 16px; padding: 22px; }
+    .notice { border-left: 3px solid #9b8cff; padding: 12px 15px; color: #d1d5e2; background: #202237; border-radius: 7px; margin-top: 14px; }
+    .notice button { margin-left: 10px; }
+    .post { padding: 22px; }
     .post h1 { margin-bottom: 12px; }
-    .post-body { white-space: pre-wrap; color: #d5dbea; margin: 20px 0; }
-    .reply { border-top: 1px solid #292c38; padding: 14px 0; color: #c3cbe0; }
-    footer { border-top: 1px solid #252731; padding: 20px 0; margin-top: 30px; text-align: center; color: #6b7690; font-size: .82rem; }
-    @media(max-width:600px) { .counts { width: 100%; padding-left: 56px; } .thread { flex-wrap: wrap; } }
+    .post-body { white-space: pre-wrap; overflow-wrap: anywhere; color: #d5dbea; margin: 20px 0; }
+    .reply { border-top: 1px solid #2b3040; padding: 14px 0; color: #c3cbe0; }
+    footer { border-top: 1px solid #292e3a; padding: 20px 0; margin-top: 28px; text-align: center; color: #8992a8; font-size: .82rem; }
+    footer a { color: #b6adff; }
+    @media(max-width:600px) { body { padding: 18px 12px; } .counts { width: 100%; padding-left: 56px; } .thread { flex-wrap: wrap; } .banner { padding: 21px; } }
   </style>
 </head>
 <body>
   <main class="wrap">
     <div id="forum-view">
       <header>
-        <a class="logo" href="/">225<b>T</b></a>
-        <div class="actions"><span class="muted" id="user">@guest_viewer</span><button id="join" onclick="joinForum()"><i class="fas fa-crown"></i> Become a Member</button></div>
+        <a class="logo" href="https://dreamersanddoersdevs.com/"><i class="fas fa-code"></i>Dreamers &amp; Doers Devs</a>
+        <div class="actions"><span class="muted" id="user">@guest</span><button id="join" onclick="joinForum()"><i class="fas fa-users"></i> Join the community</button></div>
       </header>
       <section class="banner">
-        <div class="bar"><div><h1><i class="fas fa-crown" style="color:#f7b84b"></i> Unlock the full 225T experience</h1><p>Join the community to start discussions and access member-only content. Demo membership is stored only in this browser.</p></div><button onclick="joinForum()">Join the community</button></div>
+        <div class="bar">
+          <div class="banner-copy"><div class="eyebrow">Learn together. Build together.</div><h1>A community for people who make things happen.</h1><p>Share what you're building, get unstuck, and trade practical advice with fellow developers and curious creators.</p></div>
+          <a class="button" href="https://dreamersanddoersdevs.com/">About the community <i class="fas fa-arrow-up-right-from-square"></i></a>
+        </div>
       </section>
-      <section class="stats"><span><i class="fas fa-users"></i> <strong>28,451</strong> members</span><span><i class="fas fa-comments"></i> <strong id="post-count">142,893</strong> posts</span><span><i class="fas fa-circle" style="color:#4ade80"></i> <strong>189</strong> online</span></section>
+      <section class="stats" aria-label="Forum information"><span><i class="fas fa-lightbulb"></i> Share ideas and works in progress</span><span><i class="fas fa-comments"></i> Ask questions and help others</span><span><i class="fas fa-code-branch"></i> Celebrate what you build</span></section>
       <section class="composer">
-        <h2><i class="fas fa-pen-fancy" style="color:#4a6cf7"></i> Member discussions</h2><p class="muted">Start a discussion in any of the three main topics.</p>
-        <div id="locked" class="notice">Posting is available to members only. <button style="margin-left:10px" onclick="joinForum()">Become a member</button></div>
+        <h2><i class="fas fa-pen-fancy" style="color:#a59aff"></i> Start a discussion</h2><p class="muted">Choose a topic and tell the community what's on your mind.</p>
+        <div id="locked" class="notice">Posting is available in this local demo after joining. <button onclick="joinForum()">Join the community</button></div>
         <form id="thread-form" class="hidden">
-          <label for="category">Main topic</label><select id="category"><option value="journey">Journey and Case Studies</option><option value="tools">Verified Tools and Services</option><option value="lounge">Lounge and Chit-Chat</option></select>
+          <label for="category">Topic</label><select id="category"><option value="projects">Projects and Showcases</option><option value="help">Code Help and Q&amp;A</option><option value="community">Community and Ideas</option></select>
           <label for="title">Title</label><input id="title" maxlength="120" required placeholder="Give your discussion a clear title">
-          <label for="content">Your content</label><textarea id="content" maxlength="5000" required placeholder="Write the details you want to share..."></textarea>
-          <button type="submit">Publish discussion</button><p class="muted">Posts are saved in this browser.</p>
+          <label for="content">Your post</label><textarea id="content" maxlength="5000" required placeholder="Share details, context, or a question..."></textarea>
+          <button type="submit">Publish discussion</button><p class="muted">Discussions are saved in this browser only; this demo has no shared backend.</p>
         </form>
       </section>
       <div id="categories"></div>
-      <footer>225T — inspired by BHW • forum demonstration. Membership, payment, and live statistics are not connected to a backend.</footer>
+      <footer>Community Forum demo for <a href="https://dreamersanddoersdevs.com/">Dreamers &amp; Doers Devs</a>. Membership and posts are stored locally in this browser; no account or backend is connected.</footer>
     </div>
-    <section id="post-view" class="hidden"><div class="bar" style="margin-bottom:16px"><button onclick="showForum()"><i class="fas fa-arrow-left"></i> Back to forum</button><button onclick="joinForum()">Become a Member</button></div><article id="post" class="post"></article></section>
+    <section id="post-view" class="hidden"><div class="bar" style="margin-bottom:16px"><button onclick="showForum()"><i class="fas fa-arrow-left"></i> Back to forum</button><button onclick="joinForum()">Join the community</button></div><article id="post" class="post"></article></section>
   </main>
 <script>
   const seed = {
-    journey: [
-      {title:'$0 to $10k/month in 6 months — my SEO journey (case study)',author:'SEO_Master',time:'2h ago',comments:87,body:'I wanted to share my journey from zero to $10k/month using consistent SEO work.\n\nWhat worked: publishing in-depth articles, building topical authority, and focusing on long-tail keywords. Ask me anything about the process.',locked:false,tag:'HOT'},
-      {title:'Scaling a dropshipping store from $500 to $22k/mo — full breakdown',author:'ecom_boss',time:'6h ago',comments:42,body:'A practical breakdown of niche selection, product testing, content, and customer retention.',locked:true,tag:'VERIFIED'},
-      {title:'My SaaS journey: from side project to $3.5k MRR in 8 months',author:'indie_maker',time:'12h ago',comments:23,body:'Lessons from building a small invoicing product for freelancers: understand a specific audience and keep the product focused.',locked:true,tag:'MEMBER'}
+    projects: [
+      {title:'I shipped my first open-source tool — feedback welcome',author:'pixelbuilder',time:'2h ago',comments:8,body:'After a few weekends of work, I published a small tool to make a repetitive part of my workflow easier. I would love feedback on the onboarding and documentation. What do you look for when trying a new developer tool?\n\nShare a link to your own project if you have something in progress, too.',tag:'Showcase'},
+      {title:'Building a tiny app to help our neighborhood share resources',author:'maria_codes',time:'Yesterday',comments:5,body:'I am working on a simple community directory and would appreciate advice on keeping the first version focused. How do you decide what belongs in an MVP?',tag:'In progress'},
+      {title:'What are you building this week?',author:'ship_small',time:'2 days ago',comments:16,body:'A low-pressure thread to share this week’s goals, experiments, and little wins. What are you hoping to make or learn?',tag:'Weekly thread'}
     ],
-    tools: [
-      {title:'[Verified] RankGenius AI — content writer & SEO optimizer',author:'tool_hunter',time:'1h ago',comments:54,body:'A community review and discussion of content workflows and SEO tools.',locked:true,tag:'VERIFIED'},
-      {title:'[Service] ProBacklink — manual outreach (tested & reviewed)',author:'linkbuilder',time:'4h ago',comments:38,body:'Share your experience and questions about outreach services and link quality.',locked:true,tag:'VERIFIED'},
-      {title:'CloudProxyPro — residential proxies for data collection',author:'proxy_guy',time:'8h ago',comments:17,body:'A discussion about proxy reliability, pricing, and responsible data collection.',locked:false,tag:'TRIAL'}
+    help: [
+      {title:'How do you structure a small project before it gets complicated?',author:'curiousdev',time:'1h ago',comments:12,body:'I am starting a small web app and want to keep it understandable as it grows. What conventions or lightweight planning habits have worked well for you?',tag:'Discussion'},
+      {title:'Debugging tip: explain the problem before changing the code',author:'debug_day',time:'6h ago',comments:7,body:'Writing down what you expected, what happened, and the smallest steps to reproduce it has helped me find bugs faster. What debugging habits do you recommend to newer developers?',tag:'Tips'},
+      {title:'Which testing habits give you the most confidence?',author:'test_driven',time:'Yesterday',comments:9,body:'I am looking for practical ways to add tests to a side project without slowing down. What do you test first, and which tools do you enjoy using?',tag:'Question'}
     ],
-    lounge: [
-      {title:"What's your morning routine before hitting the IM grind?",author:'earlybird',time:'25m ago',comments:64,body:'How do you start your day? Share routines and productivity ideas with the community.',locked:false},
-      {title:'Anyone here into retro gaming? Just built my dream setup',author:'pixel_hero',time:'2h ago',comments:29,body:'A relaxed chat about retro games, consoles, and favorite classics.',locked:false},
-      {title:"Share your worst client story (we've all been there)",author:'freelance_vet',time:'5h ago',comments:121,body:'Freelancers: tell us about the client projects that taught you the most.',locked:false}
+    community: [
+      {title:'What helped you stay motivated while learning to code?',author:'newbranch',time:'3h ago',comments:18,body:'Learning something new can feel like a long journey. What routines, communities, or small milestones helped you keep going?',tag:'Conversation'},
+      {title:'Suggest a topic for our next community discussion',author:'build_together',time:'Yesterday',comments:6,body:'What would you like to learn about or discuss with other builders? Add a topic and a question you would like the group to explore.',tag:'Community'},
+      {title:'A small win worth celebrating',author:'ship_small',time:'2 days ago',comments:11,body:'Finished a course, fixed a stubborn bug, helped someone out, or simply made time to build? Share your win with us.',tag:'Wins'}
     ]
   };
-  let isMember = localStorage.getItem('225t-member') === 'true';
+  const labels = {projects:'Projects and Showcases',help:'Code Help and Q&A',community:'Community and Ideas'};
+  const icons = {projects:'fa-rocket',help:'fa-circle-question',community:'fa-people-group'};
+  let isMember = localStorage.getItem('dddevs-member') === 'true';
   const escaped = value => String(value).replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
   function allThreads(category) {
-    try { const saved = JSON.parse(localStorage.getItem('225t-threads') || '[]'); return [...saved.filter(t=>t.category===category), ...seed[category]]; }
+    try { const saved = JSON.parse(localStorage.getItem('dddevs-threads') || '[]'); return [...saved.filter(t => t.category === category), ...seed[category]]; }
     catch { return seed[category]; }
   }
   function render() {
-    document.getElementById('user').textContent = isMember ? '@member' : '@guest_viewer';
-    document.getElementById('join').textContent = isMember ? 'Member' : 'Become a Member';
+    document.getElementById('user').textContent = isMember ? '@community_member' : '@guest';
+    document.getElementById('join').innerHTML = isMember ? '<i class="fas fa-check"></i> Joined' : '<i class="fas fa-users"></i> Join the community';
     document.getElementById('locked').classList.toggle('hidden', isMember);
     document.getElementById('thread-form').classList.toggle('hidden', !isMember);
-    const labels = {journey:'Journey and Case Studies',tools:'Verified Tools and Services',lounge:'Lounge and Chit-Chat'};
-    document.getElementById('categories').innerHTML = Object.keys(seed).map(cat => `<section class="category"><h2>${labels[cat]}</h2>${allThreads(cat).map((t,i)=>`<div class="thread" onclick="openPost('${cat}',${i})"><div class="avatar"><i class="fas fa-comments"></i></div><div class="thread-info"><div class="thread-title">${escaped(t.title)} ${t.tag?`<span class="tag">${escaped(t.tag)}</span>`:''}</div><div class="meta">@${escaped(t.author)} · ${escaped(t.time)}${t.locked&&!isMember?' · 🔒 Members only':''}</div></div><div class="counts"><i class="fas fa-comment"></i> ${Number(t.comments)||0}</div></div>`).join('')}</section>`).join('');
+    document.getElementById('categories').innerHTML = Object.keys(seed).map(cat => `<section class="category"><h2><i class="fas ${icons[cat]}"></i>${labels[cat]}</h2>${allThreads(cat).map((t,i)=>`<div class="thread" role="button" tabindex="0" onclick="openPost('${cat}',${i})" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openPost('${cat}',${i})}"><div class="avatar"><i class="fas ${icons[cat]}"></i></div><div class="thread-info"><div class="thread-title">${escaped(t.title)}${t.tag?`<span class="tag">${escaped(t.tag)}</span>`:''}</div><div class="meta">Started by ${escaped(t.author)} · ${escaped(t.time)}</div></div><div class="counts"><i class="far fa-comment"></i> ${Number(t.comments)||0} replies</div></div>`).join('')}</section>`).join('');
   }
-  function joinForum() { if (isMember) return alert('You are already a demo member.'); if (confirm('Activate demo membership in this browser? This does not process a payment.')) { isMember=true; localStorage.setItem('225t-member','true'); render(); } }
+  function joinForum() {
+    if (isMember) return alert('You have joined this demo community in this browser.');
+    if (confirm('Join this local demo community? This does not create an account or send any data.')) { isMember = true; localStorage.setItem('dddevs-member','true'); render(); }
+  }
   function openPost(category,index) {
-    const thread=allThreads(category)[index]; if(!thread)return;
-    document.getElementById('forum-view').classList.add('hidden'); document.getElementById('post-view').classList.remove('hidden');
-    document.getElementById('post').innerHTML=`<h1>${escaped(thread.title)}</h1><p class="muted">@${escaped(thread.author)} · ${escaped(thread.time)} · ${Number(thread.comments)||0} replies</p>${thread.locked&&!isMember?'<div class="notice">This is a members-only discussion. <button onclick="joinForum()">Become a member</button></div>':`<div class="post-body">${escaped(thread.content||thread.body)}</div><h2>Replies</h2><div class="reply">Welcome to the discussion. Keep replies respectful and constructive.</div>${isMember?'<textarea id="reply" placeholder="Share your thoughts..."></textarea><button onclick="addReply()">Post reply</button>':'<p class="muted">Join to reply to discussions.</p>'}`}`;
-    window.currentThread={category,index}; window.scrollTo(0,0);
+    const thread = allThreads(category)[index]; if (!thread) return;
+    document.getElementById('forum-view').classList.add('hidden');
+    document.getElementById('post-view').classList.remove('hidden');
+    document.getElementById('post').innerHTML = `<p class="eyebrow">${labels[category]}</p><h1>${escaped(thread.title)}</h1><p class="muted">Started by ${escaped(thread.author)} · ${escaped(thread.time)} · ${Number(thread.comments)||0} replies</p><div class="post-body">${escaped(thread.body || '')}</div><div class="reply"><strong>Join the conversation</strong><p class="muted" style="margin:6px 0 12px">Replies are not connected in this demo. Join the community to start a discussion in your browser.</p><button onclick="joinForum()">Join the community</button></div>`;
+    window.scrollTo(0,0);
   }
-  function addReply(){const input=document.getElementById('reply');if(input&&input.value.trim()){alert('Reply saved for this demo session.');input.value='';}}
-  function showForum(){document.getElementById('post-view').classList.add('hidden');document.getElementById('forum-view').classList.remove('hidden');render();window.scrollTo(0,0);}
-  document.getElementById('thread-form').addEventListener('submit',event=>{event.preventDefault();if(!isMember)return;const category=document.getElementById('category').value,title=document.getElementById('title').value.trim(),content=document.getElementById('content').value.trim();if(!title||!content)return;let saved=[];try{saved=JSON.parse(localStorage.getItem('225t-threads')||'[]')}catch{}saved.unshift({category,title,content,author:'member',time:'just now',comments:0,locked:false});localStorage.setItem('225t-threads',JSON.stringify(saved));event.target.reset();render();});
+  function showForum() { document.getElementById('post-view').classList.add('hidden'); document.getElementById('forum-view').classList.remove('hidden'); render(); window.scrollTo(0,0); }
+  document.getElementById('thread-form').addEventListener('submit',event=>{
+    event.preventDefault(); if (!isMember) return;
+    const category = document.getElementById('category').value;
+    const title = document.getElementById('title').value.trim();
+    const body = document.getElementById('content').value.trim();
+    if (!title || !body || !seed[category]) return;
+    try {
+      const saved = JSON.parse(localStorage.getItem('dddevs-threads') || '[]');
+      saved.unshift({category,title,body,author:'community_member',time:'Just now',comments:0,tag:'New'});
+      localStorage.setItem('dddevs-threads',JSON.stringify(saved));
+      event.target.reset(); render(); alert('Your discussion was saved in this browser.');
+    } catch { alert('Could not save your discussion. Check that browser storage is enabled.'); }
+  });
   render();
 </script>
 </body>
