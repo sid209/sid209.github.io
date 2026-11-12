@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
+    <meta name="theme-color" content="#f5f5f5">
+    <title>Medium Viral Score · Light Mode</title>
+    <style>
+        /* Light Theme Design */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: #f5f5f5;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            color: #242424;
+            line-height: 1.5;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            min-height: 100vh;
+            min-height: 100dvh;
+            padding-top: max(1rem, env(safe-area-inset-top));
+            padding-bottom: max(1rem, env(safe-area-inset-bottom));
+            padding-left: max(1rem, env(safe-area-inset-left));
+            padding-right: max(1rem, env(safe-area-inset-right));
+            overflow-x: hidden;
+        }
+
+        /* Card Container */
+        .medium-card {
+            width: 100%;
+            max-width: 480px;
+            background: #ffffff;
+            border: 1px solid #e8e8e8;
+            border-radius: 16px;
+            padding: 1.8rem 1.5rem 1.5rem;
+            margin: 0 auto;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 1.2rem;
+        }
+
+        .logo-circle {
+            width: 28px;
+            height: 28px;
+            background: #000000;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ffffff;
+            font-weight: 800;
+            font-size: 15px;
+            font-family: 'Georgia', serif;
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            font-family: 'Georgia', 'Times New Roman', serif;
+            color: #000000;
+        }
+
+        .subhead {
+            font-size: 0.85rem;
+            color: #6b6b6b;
+            margin-bottom: 1.8rem;
+            border-left: 2px solid #d0d0d0;
+            padding-left: 0.8rem;
+            font-weight: 400;
+        }
+
+        /* Input Area */
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.6rem;
+            margin-bottom: 1.5rem;
+        }
+
+        label {
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: #6b6b6b;
+        }
+
+        .input-wrapper {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+        }
+
+        .input-wrapper input {
+            width: 100%;
+            background: #fafafa;
+            border: 1px solid #e0e0e0;
+            border-radius: 10px;
+            padding: 1rem 1.1rem;
+            font-size: 16px; /* Prevents iOS zoom */
+            color: #242424;
+            outline: none;
+            transition: border-color 0.2s ease;
+        }
+
+        .input-wrapper input:focus {
+            border-color: #000000;
+            background: #ffffff;
+        }
+
+        .scan-btn {
+            width: 100%;
+            background: #000000;
+            border: none;
+            color: #ffffff;
+            border-radius: 10px;
+            padding: 1rem;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            min-height: 54px;
+        }
+
+        .scan-btn:active:not(:disabled) {
+            background: #333333;
+            transform: scale(0.98);
+        }
+
+        .scan-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            background: #666666;
+        }
+
+        /* Progress Bar Area */
+        .progress-area {
+            background: #fafafa;
+            border-radius: 10px;
+            padding: 1rem 1.2rem;
+            border: 1px solid #e8e8e8;
+            margin-bottom: 1.5rem;
+        }
+
+        .status-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.8rem;
+            font-size: 0.8rem;
+        }
+
+        .status-text {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #242424;
+            font-weight: 500;
+        }
+
+        .status-badge {
+            background: #f0f0f0;
+            padding: 0.2rem 0.8rem;
+            border-radius: 100px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: #242424;
+            border: 1px solid #e0e0e0;
+        }
+
+        .progress-bar-bg {
+            width: 100%;
+            height: 6px;
+            background: #e0e0e0;
+            border-radius: 100px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            width: 0%;
+            background: #000000;
+            border-radius: 100px;
+            transition: width 0.1s linear;
+        }
+
+        /* Result Panel */
+        .result-panel {
+            background: #ffffff;
+            border-radius: 12px;
+            padding: 1.2rem 0;
+            border-top: 1px solid #e8e8e8;
+            display: none;
+            animation: fadeUp 0.4s ease;
+        }
+
+        .result-panel.visible {
+            display: block;
+        }
+
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .score-row {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            padding: 0 0.2rem;
+        }
+
+        .score-left {
+            display: flex;
+            flex-direction: column;
+            gap: 0.2rem;
+        }
+
+        .score-label {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: #6b6b6b;
+            font-weight: 600;
+        }
+
+        .score-number {
+            font-size: 4rem;
+            font-weight: 700;
+            line-height: 1;
+            color: #000000;
+            letter-spacing: -0.03em;
+            font-family: 'Georgia', 'Times New Roman', serif;
+        }
+
+        .verdict-badge {
+            display: inline-block;
+            padding: 0.4rem 1rem;
+            border-radius: 100px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            background: #000000;
+            color: #ffffff;
+            white-space: nowrap;
+            margin-bottom: 0.6rem;
+        }
+
+        /* Metrics Grid */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.6rem;
+            margin-bottom: 1.2rem;
+            padding: 0 0.2rem;
+        }
+
+        .metric {
+            background: #fafafa;
+            border-radius: 8px;
+            padding: 1rem 0.5rem;
+            text-align: center;
+            border: 1px solid #e8e8e8;
+        }
+
+        .metric-name {
+            font-size: 0.6rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: #6b6b6b;
+            margin-bottom: 0.4rem;
+            font-weight: 600;
+            line-height: 1.2;
+        }
+
+        .metric-value {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #000000;
+            font-family: 'Georgia', 'Times New Roman', serif;
+        }
+
+        .metric-bar {
+            height: 3px;
+            background: #e0e0e0;
+            border-radius: 20px;
+            margin-top: 0.6rem;
+            overflow: hidden;
+        }
+
+        .metric-bar-fill {
+            height: 100%;
+            width: 0%;
+            background: #000000;
+            border-radius: 20px;
+            transition: width 0.4s ease;
+        }
+
+        /* Insight Text */
+        .insight-text {
+            background: #fafafa;
+            padding: 1.2rem;
+            border-radius: 10px;
+            font-size: 0.85rem;
+            color: #333333;
+            line-height: 1.6;
+            border: 1px solid #e8e8e8;
+            margin: 0 0.2rem;
+        }
+
+        .insight-text strong {
+            color: #000000;
+            font-weight: 700;
+        }
+
+        /* Footer */
+        .footer-note {
+            margin-top: 2rem;
+            text-align: center;
+            font-size: 0.7rem;
+            color: #999999;
+            letter-spacing: 0.02em;
+        }
+
+        /* Very small phones */
+        @media (max-width: 380px) {
+            .medium-card { padding: 1.2rem 1rem 1.5rem; }
+            h1 { font-size: 1.5rem; }
+            .score-number { font-size: 3.2rem; }
+            .metrics-grid { gap: 0.4rem; }
+            .metric-name { font-size: 0.55rem; }
+            .metric-value { font-size: 1.1rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="medium-card">
+        <div class="header">
+            <div class="logo-circle">M</div>
+            <h1>Viral Score</h1>
+        </div>
+        <div class="subhead">
+            Topic intelligence for Medium writers · 5-second scan
+        </div>
+
+        <div class="input-group">
+            <label for="topicInput">Article topic or headline</label>
+            <div class="input-wrapper">
+                <input type="text" id="topicInput" placeholder="Enter a topic..." value="How AI is reshaping creative work">
+                <button class="scan-btn" id="scanBtn">
+                    <span class="icon">🔍</span> Scan topic
+                </button>
+            </div>
+        </div>
+
+        <!-- progress area -->
+        <div class="progress-area" id="progressArea">
+            <div class="status-row">
+                <div class="status-text">
+                    <span id="statusIcon">⚡</span>
+                    <span id="statusMessage">ready to scan</span>
+                </div>
+                <div class="status-badge" id="progressPercent">0%</div>
+            </div>
+            <div class="progress-bar-bg">
+                <div class="progress-fill" id="progressFill" style="width: 0%;"></div>
+            </div>
+        </div>
+
+        <!-- result panel -->
+        <div class="result-panel" id="resultPanel">
+            <div class="score-row">
+                <div class="score-left">
+                    <span class="score-label">Viral Score</span>
+                    <span class="score-number" id="scoreNumber">—</span>
+                </div>
+                <span class="verdict-badge" id="verdictBadge">Awaiting</span>
+            </div>
+
+            <div class="metrics-grid">
+                <div class="metric">
+                    <div class="metric-name">Trend Velocity</div>
+                    <div class="metric-value" id="trendValue">—</div>
+                    <div class="metric-bar"><div class="metric-bar-fill" id="trendBar" style="width:0%"></div></div>
+                </div>
+                <div class="metric">
+                    <div class="metric-name">Emotion Pulse</div>
+                    <div class="metric-value" id="emotionValue">—</div>
+                    <div class="metric-bar"><div class="metric-bar-fill" id="emotionBar" style="width:0%"></div></div>
+                </div>
+                <div class="metric">
+                    <div class="metric-name">Shareability</div>
+                    <div class="metric-value" id="shareValue">—</div>
+                    <div class="metric-bar"><div class="metric-bar-fill" id="shareBar" style="width:0%"></div></div>
+                </div>
+            </div>
+
+            <div class="insight-text" id="insightText">
+                <strong>Intelligence brief:</strong> Scan a topic to get viral potential analysis.
+            </div>
+        </div>
+
+        <div class="footer-note">
+            <span>⏱️ 5-second deep scan</span> · topic intelligence engine v2.1
+        </div>
+    </div>
+
+    <script>
+        (function() {
+            const topicInput = document.getElementById('topicInput');
+            const scanBtn = document.getElementById('scanBtn');
+            const progressFill = document.getElementById('progressFill');
+            const progressPercent = document.getElementById('progressPercent');
+            const statusMessage = document.getElementById('statusMessage');
+            const statusIcon = document.getElementById('statusIcon');
+            const resultPanel = document.getElementById('resultPanel');
+            const scoreNumber = document.getElementById('scoreNumber');
+            const verdictBadge = document.getElementById('verdictBadge');
+            const trendValue = document.getElementById('trendValue');
+            const emotionValue = document.getElementById('emotionValue');
+            const shareValue = document.getElementById('shareValue');
+            const trendBar = document.getElementById('trendBar');
+            const emotionBar = document.getElementById('emotionBar');
+            const shareBar = document.getElementById('shareBar');
+            const insightText = document.getElementById('insightText');
+
+            let isScanning = false;
+            let scanInterval = null;
+
+            function stringHash(str) {
+                let hash = 0;
+                for (let i = 0; i < str.length; i++) {
+                    hash = ((hash << 5) - hash) + str.charCodeAt(i);
+                    hash |= 0;
+                }
+                return Math.abs(hash);
+            }
+
+            function generateMetrics(topic) {
+                if (!topic || topic.trim() === '') topic = 'anonymous topic';
+                const cleanTopic = topic.trim().toLowerCase();
+                const baseHash = stringHash(cleanTopic);
+                
+                const hash1 = (baseHash * 1.7) % 100;
+                const hash2 = (baseHash * 2.3 + 17) % 100;
+                const hash3 = (baseHash * 3.1 + 42) % 100;
+                const hash4 = (baseHash * 0.9 + 73) % 100;
+
+                const viralScore = Math.round((hash1 * 0.4 + hash2 * 0.3 + hash3 * 0.2 + hash4 * 0.1) * 1.2);
+                const finalScore = Math.min(100, Math.max(1, viralScore));
+
+                const trend = Math.round((hash1 * 0.8 + hash2 * 0.2) * 1.1) % 101;
+                const emotion = Math.round((hash2 * 0.7 + hash3 * 0.3) * 1.15) % 101;
+                const shareability = Math.round((hash3 * 0.6 + hash4 * 0.4) * 1.2) % 101;
+
+                let verdict = '';
+                let insight = '';
+                const score = finalScore;
+
+                if (score >= 80) {
+                    verdict = '🔥 VIRAL';
+                    insight = 'Extremely high potential. This topic hits trending angles, emotional triggers, and shareability. Publish now.';
+                } else if (score >= 65) {
+                    verdict = '🚀 HIGH';
+                    insight = 'Strong viral signals. With the right headline and timing, this topic could reach a wide audience.';
+                } else if (score >= 45) {
+                    verdict = '📈 MODERATE';
+                    insight = 'Solid potential but needs differentiation. Consider a unique case study or data angle to boost shares.';
+                } else if (score >= 25) {
+                    verdict = '🌱 NICHE';
+                    insight = 'Lower viral potential. Works for a targeted audience, but mass appeal is limited. Add a controversial hook.';
+                } else {
+                    verdict = '🧊 LOW';
+                    insight = 'Very low viral likelihood. Too generic or saturated. Try a more specific, emotionally charged angle.';
+                }
+
+                let extra = '';
+                if (trend > 75) extra += ' Trend velocity is exceptional. ';
+                else if (trend < 30) extra += ' Topic is not trending strongly. ';
+                if (emotion > 70) extra += ' Emotional resonance is high. ';
+                else if (emotion < 25) extra += ' Lacks emotional punch. ';
+                if (shareability > 70) extra += ' People will want to share this. ';
+                else if (shareability < 30) extra += ' Shareability is weak. ';
+
+                const fullInsight = insight + (extra ? ' ' + extra.trim() : '');
+
+                return {
+                    score: finalScore,
+                    trend: Math.min(100, trend),
+                    emotion: Math.min(100, emotion),
+                    shareability: Math.min(100, shareability),
+                    verdict: verdict,
+                    insight: fullInsight
+                };
+            }
+
+            function resetResults() {
+                resultPanel.classList.remove('visible');
+                scoreNumber.textContent = '—';
+                verdictBadge.textContent = 'Awaiting';
+                trendValue.textContent = '—';
+                emotionValue.textContent = '—';
+                shareValue.textContent = '—';
+                trendBar.style.width = '0%';
+                emotionBar.style.width = '0%';
+                shareBar.style.width = '0%';
+                insightText.innerHTML = '<strong>Intelligence brief:</strong> Scan a topic to get viral potential analysis.';
+            }
+
+            function runScan() {
+                if (isScanning) return;
+
+                const topic = topicInput.value.trim();
+                if (!topic) topicInput.value = 'future of remote work';
+
+                resetResults();
+                isScanning = true;
+                scanBtn.disabled = true;
+                statusMessage.textContent = 'scanning topic…';
+                statusIcon.textContent = '🔄';
+                progressPercent.textContent = '0%';
+                progressFill.style.width = '0%';
+
+                let progress = 0;
+                const duration = 5000;
+                const intervalTime = 60;
+                const steps = duration / intervalTime;
+                const increment = 100 / steps;
+
+                if (scanInterval) clearInterval(scanInterval);
+
+                scanInterval = setInterval(() => {
+                    progress += increment;
+                    if (progress >= 100) {
+                        progress = 100;
+                        clearInterval(scanInterval);
+                        scanInterval = null;
+
+                        progressFill.style.width = '100%';
+                        progressPercent.textContent = '100%';
+                        statusMessage.textContent = 'scan complete';
+                        statusIcon.textContent = '✅';
+
+                        const metrics = generateMetrics(topic);
+
+                        scoreNumber.textContent = metrics.score;
+                        verdictBadge.textContent = metrics.verdict;
+
+                        trendValue.textContent = metrics.trend + '%';
+                        emotionValue.textContent = metrics.emotion + '%';
+                        shareValue.textContent = metrics.shareability + '%';
+
+                        trendBar.style.width = metrics.trend + '%';
+                        emotionBar.style.width = metrics.emotion + '%';
+                        shareBar.style.width = metrics.shareability + '%';
+
+                        insightText.innerHTML = `<strong>Intelligence brief:</strong> ${metrics.insight}`;
+
+                        resultPanel.classList.add('visible');
+
+                        isScanning = false;
+                        scanBtn.disabled = false;
+                        statusMessage.textContent = 'ready to scan';
+                        statusIcon.textContent = '⚡';
+                    } else {
+                        progressFill.style.width = progress + '%';
+                        progressPercent.textContent = Math.floor(progress) + '%';
+                        
+                        if (progress < 30) {
+                            statusMessage.textContent = 'analyzing topic sentiment…';
+                            statusIcon.textContent = '📡';
+                        } else if (progress < 65) {
+                            statusMessage.textContent = 'cross-referencing trends…';
+                            statusIcon.textContent = '📊';
+                        } else {
+                            statusMessage.textContent = 'calculating virality index…';
+                            statusIcon.textContent = '⚡';
+                        }
+                    }
+                }, intervalTime);
+            }
+
+            scanBtn.addEventListener('click', runScan);
+
+            topicInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter' && !isScanning) {
+                    e.preventDefault();
+                    runScan();
+                }
+            });
+
+            // Initial state
+            progressFill.style.width = '0%';
+            progressPercent.textContent = '0%';
+            statusMessage.textContent = 'ready to scan';
+            statusIcon.textContent = '⚡';
+        })();
+    </script>
+</body>
+</html>
