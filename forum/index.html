@@ -1411,8 +1411,8 @@
       :root {
         --topbar-h: 56px;
         --ad-w: 320px;
-        --ad-slot-h: 50px;
-        --ad-h: 58px;
+        --ad-slot-h: 100px;
+        --ad-h: 108px;
         --tabbar-h: 67px;
       }
 
@@ -1421,7 +1421,7 @@
         bottom: 0; z-index: 92;
         padding-bottom: calc(4px + env(safe-area-inset-bottom));
       }
-      .ad-slot:empty::after { content: "Advertisement · 320 × 50"; }
+      .ad-slot:empty::after { content: "Advertisement · 320 × 100"; }
       .toast { bottom: calc(78px + var(--ad-h) + env(safe-area-inset-bottom)); }
 
       body { overscroll-behavior-y: none; }
