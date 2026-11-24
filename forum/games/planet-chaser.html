@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>PLANET CHASER - PLANET CHASER</title>
+    <style>
+* { box-sizing: border-box; }
+body, html {
+    margin: 0; padding: 0; width: 100%; height: 100%;
+    background-color: #030305; overflow: hidden;
+    font-family: 'Courier New', Courier, monospace;
+    color: white; touch-action: none; user-select: none;
+    -webkit-tap-highlight-color: transparent;
+}
+#gameCanvas {
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: calc(100% - 90px); /* reserve space for banner ad */
+}
+#ui-layer {
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    pointer-events: none; display: flex; flex-direction: column;
+    justify-content: space-between;
+    padding: 20px;
+    padding-bottom: 100px; /* reserve space for banner ad */
+    box-sizing: border-box;
+}
+.top-bar { display: flex; justify-content: space-between; align-items: flex-start; width: 100%; }
+.stats-container { display: flex; flex-direction: column; gap: 12px; }
+#score-display, #time-display {
+    font-size: 26px; font-weight: 700; letter-spacing: 3px;
+    text-shadow: 0 0 20px rgba(255, 255, 255, 0.6), 0 0 40px rgba(255, 255, 255, 0.3);
+    transition: color 0.3s ease, text-shadow 0.3s ease;
+    background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 100%);
+    padding: 8px 16px; border-radius: 8px; backdrop-filter: blur(4px);
+    border: 1px solid rgba(255,255,255,0.1);
+}
+#time-display { color: #00f0ff; text-shadow: 0 0 20px rgba(0, 240, 255, 0.7), 0 0 40px rgba(0, 240, 255, 0.3); }
+#time-display.warning {
+    color: #ff0044 !important;
+    text-shadow: 0 0 25px rgba(255, 0, 68, 0.9), 0 0 50px rgba(255, 0, 68, 0.5) !important;
+    animation: pulseWarning 0.8s infinite;
+}
+@keyframes pulseWarning {
+    0% { transform: scale(1); } 50% { transform: scale(1.08); } 100% { transform: scale(1); }
+}
+#instructions {
+    text-align: center; font-size: 15px; opacity: 0.7; margin-bottom: 25px;
+    line-height: 1.7; letter-spacing: 1px; text-shadow: 0 0 10px rgba(255,255,255,0.3);
+}
+#mute-btn {
+    position: absolute; top: 20px; right: 20px;
+    background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.4);
+    color: white; padding: 10px 20px; font-family: inherit;
+    font-size: 14px; font-weight: bold; letter-spacing: 2px; cursor: pointer;
+    pointer-events: auto; border-radius: 6px; transition: all 0.3s ease; z-index: 30;
+    backdrop-filter: blur(8px); text-shadow: 0 0 10px rgba(255,255,255,0.5);
+}
+#mute-btn:hover {
+    background: rgba(255, 255, 255, 0.25); border-color: white;
+    box-shadow: 0 0 20px rgba(255,255,255,0.4); transform: translateY(-2px);
+}
+#mute-btn:active { transform: translateY(0); }
+#mute-btn.muted {
+    background: rgba(255, 0, 68, 0.2);
+    border-color: #ff0044;
+    color: #ff0044;
+    box-shadow: 0 0 15px rgba(255, 0, 68, 0.5);
+}
+.drama-text {
+    position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+    font-size: 6vw; font-weight: 900; letter-spacing: 8px; color: #ffffff;
+    text-shadow: 0 0 30px rgba(255, 255, 255, 0.9), 0 0 60px rgba(255, 255, 255, 0.5), 0 0 100px rgba(0, 240, 255, 0.4);
+    opacity: 0; pointer-events: none; animation: textPulse 1.5s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    z-index: 10; white-space: nowrap;
+}
+@keyframes textPulse {
+    0% { opacity: 0; transform: translate(-50%, -50%) scale(0.6); filter: blur(10px); }
+    20% { opacity: 1; transform: translate(-50%, -50%) scale(1.08); filter: blur(0px); }
+    70% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+    100% { opacity: 0; transform: translate(-50%, -50%) scale(1.15); filter: blur(5px); }
+}
+.screen {
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.75); display: flex; flex-direction: column;
+    align-items: center; justify-content: center; z-index: 20;
+    pointer-events: auto; backdrop-filter: blur(12px);
+    padding-bottom: 90px; /* keep buttons above ad */
+}
+.screen h1 {
+    font-size: 5.5vw; margin: 0 0 15px 0; letter-spacing: 6px;
+    text-shadow: 0 0 25px #00f0ff, 0 0 50px rgba(0, 240, 255, 0.4);
+    text-align: center; background: linear-gradient(135deg, #ffffff 0%, #00f0ff 50%, #ffffff 100%);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text; animation: shimmer 3s ease-in-out infinite;
+}
+@keyframes shimmer {
+    0%, 100% { filter: brightness(1); } 50% { filter: brightness(1.3); }
+}
+.screen p {
+    font-size: 2.8vw; margin: 0 0 40px 0; color: #ff8c00;
+    text-shadow: 0 0 20px rgba(255, 140, 0, 0.7), 0 0 40px rgba(255, 140, 0, 0.3);
+    text-align: center; letter-spacing: 2px; line-height: 1.6;
+}
+.screen button {
+    padding: 18px 50px; font-size: 20px; font-weight: bold; letter-spacing: 3px;
+    background: transparent; color: white; border: 2px solid rgba(255, 255, 255, 0.7);
+    cursor: pointer; font-family: inherit; transition: all 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+    border-radius: 6px; position: relative; overflow: hidden;
+}
+.screen button::before {
+    content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+    transition: left 0.5s ease;
+}
+.screen button:hover {
+    background: white; color: black; box-shadow: 0 0 30px white, 0 0 60px rgba(255,255,255,0.5);
+    border-color: white; transform: scale(1.05);
+}
+.screen button:hover::before { left: 100%; }
+.screen button:active { transform: scale(0.98); }
+#pause-screen h1 { animation: none; }
+#pause-screen p { color: #00f0ff; text-shadow: 0 0 20px rgba(0, 240, 255, 0.6); }
+@media (max-width: 768px) {
+    #score-display, #time-display { font-size: 18px; padding: 6px 12px; }
+    .screen h1 { font-size: 8vw; } .screen p { font-size: 4.5vw; }
+    .drama-text { font-size: 10vw; letter-spacing: 4px; } #instructions { font-size: 12px; }
+    /* Push mute button above the ad banner */
+    #mute-btn { top: auto; bottom: 110px; right: 20px; font-size: 12px; padding: 8px 14px; }
+    /* Make sure instructions stay above ad */
+    #instructions { margin-bottom: 90px; }
+}
+    </style>
+</head>
+<body>
+
+    <canvas id="gameCanvas"></canvas>
+
+    <div id="ui-layer">
+        <div class="top-bar">
+            <div class="stats-container">
+                <div id="score-display">SCORE: 0</div>
+                <div id="time-display">TIME: 03:00</div>
+            </div>
+        </div>
+        <button id="mute-btn">MUTE</button>
+        <div id="instructions">DRAG TO MOVE SHIPS<br>CATCH THE PULSING RED PLANET</div>
+    </div>
+
+    <audio id="bg-music" src="PLANET%20CATCHER.mp3" preload="auto" loop></audio>
+
+    <div id="start-screen" class="screen">
+        <h1>PLANET CHASER</h1>
+        <p>CATCH THE PLANET<br>YOU HAVE 3 MINUTES</p>
+        <button id="start-btn">GAME START</button>
+    </div>
+
+    <div id="game-over-screen" class="screen" style="display: none;">
+        <h1>TIME'S UP</h1>
+        <p id="final-score">FINAL SCORE: 0</p>
+        <button id="restart-btn">PLAY AGAIN</button>
+    </div>
+
+    <div id="pause-screen" class="screen" style="display: none;">
+        <h1>PAUSED</h1>
+        <p>GAME PAUSED<br>RETURN TO THE TAB TO CONTINUE</p>
+        <button id="resume-btn">RESUME</button>
+    </div>
+
+    <script>
+/* ==========================================================
+   BACKGROUND MUSIC (MP3)
+   - Streams the attached track, loops for the whole session
+   - Smooth fade in / fade out with working mute button
+   ========================================================== */
+
+let isMuted = false;
+const bgMusic = document.getElementById('bg-music');
+const MUSIC_VOLUME = 0.65;
+const MUSIC_URL = 'PLANET%20CATCHER.mp3';
+let fadeTimer = null;
+if (bgMusic) bgMusic.volume = 0;
+
+// Web Audio path: fetch + decode the MP3, which works even when the browser
+// refuses to stream a local file through an <audio> element.
+let audioCtx = null;
+let musicBuffer = null;
+let musicSource = null;
+let musicGain = null;
+let musicLoading = false;
+let musicOffset = 0;      // seconds into the track
+let musicStartedAt = 0;   // audioCtx.currentTime when the source started
+
+function ensureAudioContext() {
+    if (audioCtx) return audioCtx;
+    const Ctx = window.AudioContext || window.webkitAudioContext;
+    if (!Ctx) return null;
+    audioCtx = new Ctx();
+    musicGain = audioCtx.createGain();
+    musicGain.gain.value = 0;
+    musicGain.connect(audioCtx.destination);
+    return audioCtx;
+}
+
+function loadMusic() {
+    if (musicBuffer || musicLoading) return;
+    const ctx = ensureAudioContext();
+    if (!ctx) return;
+    musicLoading = true;
+    fetch(MUSIC_URL)
+        .then(function (res) { return res.arrayBuffer(); })
+        .then(function (data) { return ctx.decodeAudioData(data); })
+        .then(function (decoded) {
+            musicBuffer = decoded;
+            if (gameRunning && !isMuted && !musicSource) startMusic();
+        })
+        .catch(function (err) {
+            console.warn('MP3 decode failed, falling back to <audio>:', err);
+        })
+        .then(function () { musicLoading = false; });
+}
+
+function fadeGain(target, duration, done) {
+    if (!musicGain || !audioCtx) return;
+    const now = audioCtx.currentTime;
+    musicGain.gain.cancelScheduledValues(now);
+    musicGain.gain.setValueAtTime(musicGain.gain.value, now);
+    musicGain.gain.linearRampToValueAtTime(target, now + duration);
+    if (done) setTimeout(done, duration * 1000);
+}
+
+function fadeMusic(target, duration, done) {
+    if (!bgMusic) return;
+    clearInterval(fadeTimer);
+    const start = bgMusic.volume;
+    const steps = 30;
+    let step = 0;
+    fadeTimer = setInterval(function () {
+        step++;
+        const t = step / steps;
+        bgMusic.volume = Math.min(1, Math.max(0, start + (target - start) * t));
+        if (step >= steps) {
+            clearInterval(fadeTimer);
+            if (done) done();
+        }
+    }, duration / steps);
+}
+
+function startMusic() {
+    if (isMuted) return;
+    const ctx = ensureAudioContext();
+
+    if (ctx && musicBuffer) {
+        if (ctx.state === 'suspended') ctx.resume();
+        if (musicSource) {
+            try { musicSource.stop(); } catch (e) {}
+            try { musicSource.disconnect(); } catch (e) {}
+            musicSource = null;
+        }
+        musicSource = ctx.createBufferSource();
+        musicSource.buffer = musicBuffer;
+        musicSource.loop = true;
+        musicSource.connect(musicGain);
+        const offset = musicBuffer.duration ? musicOffset % musicBuffer.duration : 0;
+        musicSource.start(0, offset);
+        musicStartedAt = ctx.currentTime;
+        fadeGain(MUSIC_VOLUME, 1.5);
+        return;
+    }
+
+    if (!bgMusic) return;
+    bgMusic.loop = true;
+    const p = bgMusic.play();
+    if (p && p.catch) p.catch(function () {});
+    fadeMusic(MUSIC_VOLUME, 1500);
+}
+
+function rememberMusicPosition() {
+    if (!musicSource || !audioCtx || !musicBuffer) return;
+    musicOffset = (musicOffset + (audioCtx.currentTime - musicStartedAt)) % musicBuffer.duration;
+}
+
+function stopMusic(immediate) {
+    const src = musicSource;
+    if (src && musicGain && audioCtx) {
+        rememberMusicPosition();
+        if (immediate) {
+            try { src.stop(); } catch (e) {}
+            try { src.disconnect(); } catch (e) {}
+            if (musicSource === src) musicSource = null;
+            musicGain.gain.cancelScheduledValues(audioCtx.currentTime);
+            musicGain.gain.value = 0;
+        } else {
+            fadeGain(0, 1.2, function () {
+                if (!src || musicSource !== src) return;
+                try { src.stop(); } catch (e) {}
+                try { src.disconnect(); } catch (e) {}
+                musicSource = null;
+            });
+        }
+    }
+    if (bgMusic) {
+        if (immediate) {
+            clearInterval(fadeTimer);
+            bgMusic.volume = 0;
+            bgMusic.pause();
+        } else {
+            fadeMusic(0, 1200, function () { bgMusic.pause(); });
+        }
+    }
+}
+
+function toggleMute() {
+    isMuted = !isMuted;
+    const muteBtn = document.getElementById('mute-btn');
+
+    if (isMuted) {
+        stopMusic();
+        muteBtn.innerText = "UNMUTE";
+        muteBtn.classList.add('muted');
+    } else {
+        muteBtn.innerText = "MUTE";
+        muteBtn.classList.remove('muted');
+        if (gameRunning) startMusic();
+    }
+}
+
+if (bgMusic) {
+    bgMusic.addEventListener('error', function () {
+        console.warn('Audio element could not load the MP3, using decoded buffer instead.');
+    });
+}
+
+loadMusic();
+
+/* =============================================
+   GAME ENGINE
+   ============================================= */
+
+const canvas = document.getElementById('gameCanvas');
+const ctx = canvas.getContext('2d');
+const scoreDisplay = document.getElementById('score-display');
+const timeDisplay = document.getElementById('time-display');
+const startScreen = document.getElementById('start-screen');
+const gameOverScreen = document.getElementById('game-over-screen');
+const finalScoreDisplay = document.getElementById('final-score');
+const startBtn = document.getElementById('start-btn');
+const restartBtn = document.getElementById('restart-btn');
+const muteBtn = document.getElementById('mute-btn');
+const pauseScreen = document.getElementById('pause-screen');
+const resumeBtn = document.getElementById('resume-btn');
+
+let width, height;
+let gameRunning = false;
+let isPaused = false;
+let score = 0;
+let frameCount = 0;
+let mouseX = 0, mouseY = 0;
+const ROUND_SECONDS = 180;
+let timeLeft = ROUND_SECONDS;
+let lastTimeUpdate = 0;
+
+function resize() {
+    width = canvas.width = window.innerWidth;
+    // Reserve ~90px at the bottom for the banner ad
+    height = canvas.height = window.innerHeight - 90;
+    mouseX = width / 2; mouseY = height / 2;
+}
+window.addEventListener('resize', resize);
+resize();
+
+window.addEventListener('mousemove', e => { mouseX = e.clientX; mouseY = e.clientY; });
+window.addEventListener('touchmove', e => { 
+    mouseX = e.touches[0].clientX; mouseY = e.touches[0].clientY; 
+}, {passive: false});
+window.addEventListener('touchstart', e => {
+    mouseX = e.touches[0].clientX; mouseY = e.touches[0].clientY;
+}, {passive: false});
+
+const rand = (min, max) => Math.random() * (max - min) + min;
+
+class Ship {
+    constructor(color, spring, friction) {
+        this.x = width / 2; this.y = height / 2;
+        this.vx = 0; this.vy = 0;
+        this.color = color; this.spring = spring; this.friction = friction;
+        this.trail = []; this.maxTrail = 35; this.radius = 8;
+    }
+    update() {
+        this.vx += (mouseX - this.x) * this.spring;
+        this.vy += (mouseY - this.y) * this.spring;
+        this.vx *= this.friction; this.vy *= this.friction;
+        this.x += this.vx; this.y += this.vy;
+        this.trail.unshift({ x: this.x, y: this.y });
+        if (this.trail.length > this.maxTrail) this.trail.pop();
+    }
+    draw() {
+        if (this.trail.length > 1) {
+            ctx.beginPath();
+            ctx.moveTo(this.trail[0].x, this.trail[0].y);
+            for (let i = 1; i < this.trail.length; i++) ctx.lineTo(this.trail[i].x, this.trail[i].y);
+            ctx.strokeStyle = this.color; ctx.lineWidth = 3;
+            ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+            ctx.shadowBlur = 15; ctx.shadowColor = this.color;
+            ctx.stroke(); ctx.shadowBlur = 0;
+        }
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+        ctx.fillStyle = '#ffffff';
+        ctx.shadowBlur = 20; ctx.shadowColor = this.color;
+        ctx.fill(); ctx.shadowBlur = 0;
+    }
+}
+
+class RedStar {
+    constructor() { this.radius = 12; this.respawn(); }
+    respawn() {
+        this.x = rand(50, width - 50); this.y = rand(50, height - 50);
+        let speed = rand(3.0, 5.5); let angle = rand(0, Math.PI * 2);
+        this.vx = Math.cos(angle) * speed; this.vy = Math.sin(angle) * speed;
+    }
+    update() {
+        this.x += this.vx; this.y += this.vy;
+        if (this.x < this.radius || this.x > width - this.radius) this.vx *= -1;
+        if (this.y < this.radius || this.y > height - this.radius) this.vy *= -1;
+    }
+    draw() {
+        let pulse = Math.sin(frameCount * 0.18) * 18 + 25;
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+        ctx.fillStyle = '#ff0044'; ctx.shadowBlur = pulse; ctx.shadowColor = '#ff0044';
+        ctx.fill();
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.radius * 0.4, 0, Math.PI * 2);
+        ctx.fillStyle = '#ffffff'; ctx.fill(); ctx.shadowBlur = 0;
+    }
+}
+
+class Particle {
+    constructor(x, y, color) {
+        this.x = x; this.y = y;
+        const angle = rand(0, Math.PI * 2); const speed = rand(2.5, 7);
+        this.vx = Math.cos(angle) * speed; this.vy = Math.sin(angle) * speed;
+        this.life = 1.0; this.decay = rand(0.025, 0.05);
+        this.color = color; this.size = rand(2, 5);
+    }
+    update() {
+        this.x += this.vx; this.y += this.vy;
+        this.vx *= 0.98; this.vy *= 0.98;
+        this.life -= this.decay;
+    }
+    draw() {
+        ctx.globalAlpha = Math.max(0, this.life);
+        ctx.fillStyle = this.color;
+        ctx.shadowBlur = 8; ctx.shadowColor = this.color;
+        ctx.fillRect(this.x, this.y, this.size, this.size);
+        ctx.shadowBlur = 0; ctx.globalAlpha = 1.0;
+    }
+}
+
+const blueShip = new Ship('#00f0ff', 0.06, 0.85);
+const orangeShip = new Ship('#ff8c00', 0.04, 0.90);
+let redStar; let particles = []; let isEngaged = false;
+
+function showText(text) {
+    const el = document.createElement('div');
+    el.className = 'drama-text'; el.innerText = text;
+    document.body.appendChild(el);
+    setTimeout(() => el.remove(), 1500);
+}
+
+function spawnExplosion(x, y, color) {
+    for(let i=0; i<25; i++) particles.push(new Particle(x, y, color));
+}
+
+function checkCollisions() {
+    if (!redStar) return;
+    let distBlue = Math.hypot(redStar.x - blueShip.x, redStar.y - blueShip.y);
+    let distOrange = Math.hypot(redStar.x - orangeShip.x, redStar.y - orangeShip.y);
+    if (distBlue < blueShip.radius + redStar.radius || distOrange < orangeShip.radius + redStar.radius) {
+        score += 10;
+        scoreDisplay.innerText = `SCORE: ${score}`;
+        spawnExplosion(redStar.x, redStar.y, '#ff0044');
+        redStar.respawn();
+        if (score === 50) showText("SOLAR");
+        if (score === 150) showText("PLANET");
+        if (score === 300) showText("CITIZENS");
+        if (score === 500) showText("SYSTEM");
+    }
+}
+
+function drawEngagedBeam() {
+    if (!isEngaged) return;
+    ctx.beginPath();
+    ctx.moveTo(blueShip.x, blueShip.y); ctx.lineTo(orangeShip.x, orangeShip.y);
+    ctx.strokeStyle = '#ffffff'; ctx.lineWidth = 6;
+    ctx.shadowBlur = 30; ctx.shadowColor = '#ffffff';
+    ctx.stroke(); ctx.shadowBlur = 0;
+}
+
+function drawStars() {
+    ctx.fillStyle = '#ffffff';
+    for(let i=0; i<80; i++) {
+        let x = (Math.sin(i * 123.45) * 0.5 + 0.5) * width;
+        let y = (Math.cos(i * 67.89) * 0.5 + 0.5) * height;
+        let size = (Math.sin(i) + 1) * 1.3;
+        ctx.globalAlpha = 0.15 + Math.sin(frameCount * 0.05 + i) * 0.15;
+        ctx.fillRect(x, y, size, size);
+    }
+    ctx.globalAlpha = 1.0;
+}
+
+function endRound() {
+    gameRunning = false;
+    stopMusic();
+    showText("TIME'S UP");
+    setTimeout(() => {
+        finalScoreDisplay.innerText = `FINAL SCORE: ${score}`;
+        gameOverScreen.style.display = 'flex';
+    }, 1500);
+}
+
+function resetGame() {
+    score = 0; frameCount = 0; timeLeft = ROUND_SECONDS;
+    lastTimeUpdate = Date.now(); particles = [];
+    scoreDisplay.innerText = `SCORE: 0`;
+    timeDisplay.innerText = `TIME: ${formatTime(ROUND_SECONDS)}`;
+    timeDisplay.classList.remove('warning');
+    blueShip.x = width/2; blueShip.y = height/2; blueShip.vx = 0; blueShip.vy = 0; blueShip.trail = [];
+    orangeShip.x = width/2; orangeShip.y = height/2; orangeShip.vx = 0; orangeShip.vy = 0; orangeShip.trail = [];
+    mouseX = width/2; mouseY = height/2;
+    redStar = new RedStar();
+}
+
+function formatTime(totalSeconds) {
+    const mins = Math.floor(totalSeconds / 60).toString().padStart(2, '0');
+    const secs = (totalSeconds % 60).toString().padStart(2, '0');
+    return `${mins}:${secs}`;
+}
+
+function updateTimer() {
+    if (isPaused) return;
+    let now = Date.now();
+    if (now - lastTimeUpdate >= 1000) {
+        lastTimeUpdate = now; timeLeft--;
+        if (timeLeft < 0) timeLeft = 0;
+        timeDisplay.innerText = `TIME: ${formatTime(timeLeft)}`;
+        if (timeLeft <= 15) timeDisplay.classList.add('warning');
+        if (timeLeft <= 0) endRound();
+    }
+}
+
+let loopToken = 0;
+
+function loop() {
+    if (!gameRunning) return;
+    const token = loopToken;
+    ctx.fillStyle = '#030305'; ctx.fillRect(0, 0, width, height);
+    drawStars();
+    blueShip.update(); orangeShip.update();
+    let distBetween = Math.hypot(blueShip.x - orangeShip.x, blueShip.y - orangeShip.y);
+    if (distBetween < 50 && !isEngaged) { isEngaged = true; showText("ENGAGED"); }
+    else if (distBetween >= 50 && isEngaged) isEngaged = false;
+    redStar.update();
+    drawEngagedBeam(); blueShip.draw(); orangeShip.draw(); redStar.draw();
+    for (let i = particles.length - 1; i >= 0; i--) {
+        particles[i].update(); particles[i].draw();
+        if (particles[i].life <= 0) particles.splice(i, 1);
+    }
+    checkCollisions(); updateTimer();
+    frameCount++;
+    if (token === loopToken) requestAnimationFrame(loop);
+}
+
+// --- PAUSE / AUTO-PAUSE ---
+
+function pauseGame() {
+    if (!gameRunning || isPaused) return;
+    isPaused = true;
+    gameRunning = false;
+    loopToken++;
+    stopMusic(true);
+    if (audioCtx && audioCtx.state === 'running') audioCtx.suspend();
+    pauseScreen.style.display = 'flex';
+}
+
+function resumeGame() {
+    if (!isPaused) return;
+    isPaused = false;
+    pauseScreen.style.display = 'none';
+    gameRunning = true;
+    loopToken++;
+    lastTimeUpdate = Date.now();
+    if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+    startMusic();
+    loop();
+}
+
+// Auto-pause whenever the tab/app is sent to the background
+document.addEventListener('visibilitychange', function () {
+    if (document.hidden) pauseGame();
+    else if (isPaused) resumeGame();
+});
+window.addEventListener('pagehide', pauseGame);
+
+// --- INITIALIZATION ---
+
+muteBtn.addEventListener('click', toggleMute);
+resumeBtn.addEventListener('click', resumeGame);
+
+function startGame() {
+    startScreen.style.display = 'none';
+    gameOverScreen.style.display = 'none';
+    pauseScreen.style.display = 'none';
+    isPaused = false;
+    loopToken++;
+    resetGame(); gameRunning = true;
+    showText("SYSTEM");
+
+    startMusic();
+
+    loop();
+}
+
+startBtn.addEventListener('click', startGame);
+restartBtn.addEventListener('click', startGame);
+
+ctx.fillStyle = '#030305';
+ctx.fillRect(0, 0, width, height);
+drawStars();
+    </script>
+</body>
+</html>
