@@ -611,7 +611,7 @@
     .invite-banner {
       display: grid; grid-template-columns: minmax(0, 1fr) auto;
       gap: 18px 28px; align-items: center;
-      margin-bottom: 26px; padding: 18px 20px;
+      margin-top: 26px; padding: 18px 20px;
       background: var(--surface);
       border: 1px solid var(--border); border-radius: 12px;
       box-shadow: var(--shadow-sm);
@@ -1696,22 +1696,6 @@
       <!-- ========== MAIN VIEW ========== -->
       <div id="forum-view" class="content-area">
         <div class="page-inner">
-          <div class="invite-banner" id="membership-banner">
-            <div>
-              <h2><i class="fas fa-ticket"></i> Invite-only space</h2>
-              <p>Redeem the single invite code to post across communities, unlock private circles and earn karma.</p>
-              <button class="banner-btn primary" onclick="openMembershipModal()">
-                <i class="fas fa-unlock"></i> Enter invite code
-              </button>
-            </div>
-            <div class="invite-perks">
-              <div class="invite-perk"><i class="fas fa-check-circle"></i> Post across all communities</div>
-              <div class="invite-perk"><i class="fas fa-check-circle"></i> Early-access coupons &amp; trials</div>
-              <div class="invite-perk"><i class="fas fa-check-circle"></i> Earn karma from engagement</div>
-              <div class="invite-perk"><i class="fas fa-check-circle"></i> Unlock private circles</div>
-            </div>
-          </div>
-
           <section>
             <h1 class="page-title">Featured posts</h1>
             <div class="featured-grid" id="featured-grid"></div>
@@ -1870,6 +1854,22 @@
                 </div>
               </div>
             </aside>
+          </div>
+
+          <div class="invite-banner" id="membership-banner">
+            <div>
+              <h2><i class="fas fa-ticket"></i> Invite-only space</h2>
+              <p>Redeem the single invite code to post across communities, unlock private circles and earn karma.</p>
+              <button class="banner-btn primary" onclick="openMembershipModal()">
+                <i class="fas fa-unlock"></i> Enter invite code
+              </button>
+            </div>
+            <div class="invite-perks">
+              <div class="invite-perk"><i class="fas fa-check-circle"></i> Post across all communities</div>
+              <div class="invite-perk"><i class="fas fa-check-circle"></i> Early-access coupons &amp; trials</div>
+              <div class="invite-perk"><i class="fas fa-check-circle"></i> Earn karma from engagement</div>
+              <div class="invite-perk"><i class="fas fa-check-circle"></i> Unlock private circles</div>
+            </div>
           </div>
         </div>
       </div>
