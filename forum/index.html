@@ -46,6 +46,9 @@
       --cat-hobbies: #84cc16;
       --cat-tech: #06b6d4;
       --cat-entertainment: #a855f7;
+      --cat-movies: #e11d48;
+      --cat-music: #7c3aed;
+      --cat-games: #16a34a;
       --font: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto, Helvetica, Arial, sans-serif;
     }
 
@@ -83,6 +86,9 @@
       --cat-hobbies: #a3e635;
       --cat-tech: #22d3ee;
       --cat-entertainment: #c084fc;
+      --cat-movies: #fb7185;
+      --cat-music: #a78bfa;
+      --cat-games: #4ade80;
     }
 
     html { -webkit-text-size-adjust: 100%; }
@@ -502,6 +508,9 @@
     .category-tile.cat-hobbies { --cat-color: var(--cat-hobbies); }
     .category-tile.cat-tech { --cat-color: var(--cat-tech); }
     .category-tile.cat-entertainment { --cat-color: var(--cat-entertainment); }
+    .category-tile.cat-movies { --cat-color: var(--cat-movies); }
+    .category-tile.cat-music { --cat-color: var(--cat-music); }
+    .category-tile.cat-games { --cat-color: var(--cat-games); }
 
     /* Additional categories (dots, avatars, chips, icons) */
     .side-dot.general { background: var(--cat-general); }
@@ -509,42 +518,63 @@
     .side-dot.hobbies { background: var(--cat-hobbies); }
     .side-dot.tech { background: var(--cat-tech); }
     .side-dot.entertainment { background: var(--cat-entertainment); }
+    .side-dot.movies { background: var(--cat-movies); }
+    .side-dot.music { background: var(--cat-music); }
+    .side-dot.games { background: var(--cat-games); }
 
     .avatar-dot.general { background: var(--cat-general); }
     .avatar-dot.review { background: var(--cat-review); }
     .avatar-dot.hobbies { background: var(--cat-hobbies); }
     .avatar-dot.tech { background: var(--cat-tech); }
     .avatar-dot.entertainment { background: var(--cat-entertainment); }
+    .avatar-dot.movies { background: var(--cat-movies); }
+    .avatar-dot.music { background: var(--cat-music); }
+    .avatar-dot.games { background: var(--cat-games); }
 
     .category-section.cat-general { --cat-color: var(--cat-general); }
     .category-section.cat-review { --cat-color: var(--cat-review); }
     .category-section.cat-hobbies { --cat-color: var(--cat-hobbies); }
     .category-section.cat-tech { --cat-color: var(--cat-tech); }
     .category-section.cat-entertainment { --cat-color: var(--cat-entertainment); }
+    .category-section.cat-movies { --cat-color: var(--cat-movies); }
+    .category-section.cat-music { --cat-color: var(--cat-music); }
+    .category-section.cat-games { --cat-color: var(--cat-games); }
 
     .cat-general .thread-avatar i { color: var(--cat-general); }
     .cat-review .thread-avatar i { color: var(--cat-review); }
     .cat-hobbies .thread-avatar i { color: var(--cat-hobbies); }
     .cat-tech .thread-avatar i { color: var(--cat-tech); }
     .cat-entertainment .thread-avatar i { color: var(--cat-entertainment); }
+    .cat-movies .thread-avatar i { color: var(--cat-movies); }
+    .cat-music .thread-avatar i { color: var(--cat-music); }
+    .cat-games .thread-avatar i { color: var(--cat-games); }
 
     .thread-cat.general { color: var(--cat-general); }
     .thread-cat.review { color: var(--cat-review); }
     .thread-cat.hobbies { color: var(--cat-hobbies); }
     .thread-cat.tech { color: var(--cat-tech); }
     .thread-cat.entertainment { color: var(--cat-entertainment); }
+    .thread-cat.movies { color: var(--cat-movies); }
+    .thread-cat.music { color: var(--cat-music); }
+    .thread-cat.games { color: var(--cat-games); }
 
     .latest-avatar.general { background: var(--cat-general); }
     .latest-avatar.review { background: var(--cat-review); }
     .latest-avatar.hobbies { background: var(--cat-hobbies); }
     .latest-avatar.tech { background: var(--cat-tech); }
     .latest-avatar.entertainment { background: var(--cat-entertainment); }
+    .latest-avatar.movies { background: var(--cat-movies); }
+    .latest-avatar.music { background: var(--cat-music); }
+    .latest-avatar.games { background: var(--cat-games); }
 
     .latest-cat.general { color: var(--cat-general); }
     .latest-cat.review { color: var(--cat-review); }
     .latest-cat.hobbies { color: var(--cat-hobbies); }
     .latest-cat.tech { color: var(--cat-tech); }
     .latest-cat.entertainment { color: var(--cat-entertainment); }
+    .latest-cat.movies { color: var(--cat-movies); }
+    .latest-cat.music { color: var(--cat-music); }
+    .latest-cat.games { color: var(--cat-games); }
 
     .category-feed-head {
       display: flex; align-items: center; justify-content: space-between;
@@ -1812,13 +1842,13 @@
           <div class="pinned-post" id="pinned-post">
             <div class="pinned-head">
               <span class="pinned-badge"><i class="fas fa-thumbtack"></i> Pinned</span>
-              <span class="pinned-title">How karma, revenue &amp; payout work</span>
+              <span class="pinned-title">Karma, Revenue &amp; Payout Information</span>
             </div>
             <ul class="pinned-rules">
-              <li><strong>Karma</strong> = views (lowest weight) + likes + engagement. Likes and replies count more than views.</li>
-              <li><strong>Revenue</strong> = karma × $0.022 — every 1,000 karma earns $22.</li>
-              <li><strong>Payout</strong> grows a little every day toward the <strong>$80 minimum</strong> and never quite reaches it — keep coming back.</li>
-              <li><strong>Posting limit</strong> = 3 new posts per day. Replies are unlimited.</li>
+              <li><strong>Karma</strong> = Views + Likes + Engagement by the user. Karma is based on user behaviour not just post performance.</li>
+              <li><strong>Revenue</strong> = karma × $0.022 — every 1,000 karma earns around $22. Based on Current rate</li>
+              <li><strong>Payout</strong> is $80 minimum.</li>
+              <li><strong>Posting limit</strong> = 3 new posts per day. Interactions are unlimited.</li>
             </ul>
           </div>
 
@@ -2051,6 +2081,9 @@
           <option value="hobbies">Hobbies</option>
           <option value="tech">Tech</option>
           <option value="entertainment">Entertainment</option>
+          <option value="movies">Movies</option>
+          <option value="music">Music</option>
+          <option value="games">Games</option>
         </select>
 
         <label class="field-label" for="compose-title">Title</label>
@@ -2969,6 +3002,78 @@
             { author: 'coffeeclub', time: '3h ago', badge: 'Active', text: 'Any album that flows like one long piece. I will take a few recommendations.' }
           ]
         }
+      ],
+      movies: [
+        {
+          id: 'mv1', icon: 'fa-clapperboard',
+          title: 'Movies you rewatch every year without fail',
+          tags: [],
+          author: 'cinephile_sam', views: '2.1k', time: '2h ago',
+          comments: 31, likes: 57, lastReply: 'filmfan', memberOnly: false,
+          body: `<p>Some films never get old. Mine are a comfort watch, a holiday classic, and one that gets better every time.</p>`,
+          replies: [
+            { author: 'filmfan', time: '45m ago', badge: 'Active', text: 'Comfort rewatches are the best kind. What makes one stick for you?' }
+          ]
+        },
+        {
+          id: 'mv2', icon: 'fa-film',
+          title: 'Best movie endings that actually stick the landing',
+          tags: [],
+          author: 'reel_talk', views: '1.4k', time: '9h ago',
+          comments: 18, likes: 39, lastReply: 'nightowl', memberOnly: false,
+          body: `<p>A great ending can rescue a whole film. Share the ones that stayed with you long after the credits.</p>`,
+          replies: [
+            { author: 'nightowl', time: '4h ago', badge: 'Active', text: 'I love an ending that makes you re-read the whole story. No spoilers though.' }
+          ]
+        }
+      ],
+      music: [
+        {
+          id: 'ms1', icon: 'fa-music',
+          title: 'Songs that instantly put you in a good mood',
+          tags: [],
+          author: 'melody_mia', views: '1.9k', time: '3h ago',
+          comments: 27, likes: 52, lastReply: 'coffeeclub', memberOnly: false,
+          body: `<p>You know the ones. One intro and your whole day shifts. Drop your instant mood boosters.</p>`,
+          replies: [
+            { author: 'coffeeclub', time: '1h ago', badge: 'Active', text: 'Anything with a bright bassline works for me. Building a playlist from this thread.' }
+          ]
+        },
+        {
+          id: 'ms2', icon: 'fa-headphones',
+          title: 'Underrated artists worth a proper listen',
+          tags: [],
+          author: 'lofi_lena', views: '1.3k', time: '11h ago',
+          comments: 16, likes: 34, lastReply: 'tea_time', memberOnly: false,
+          body: `<p>Not the chart regulars — the ones with a small catalog and a lot of soul. Who deserves more ears?</p>`,
+          replies: [
+            { author: 'tea_time', time: '5h ago', badge: 'Active', text: 'Great idea. I found two new favourites from a thread like this last month.' }
+          ]
+        }
+      ],
+      games: [
+        {
+          id: 'gm1', icon: 'fa-dice',
+          title: 'Games you keep coming back to years later',
+          tags: [],
+          author: 'player_one', views: '2.4k', time: '1h ago',
+          comments: 38, likes: 71, lastReply: 'pixelpioneer', memberOnly: false,
+          body: `<p>Not the newest release — the one installed on every machine you own. What keeps pulling you back?</p>`,
+          replies: [
+            { author: 'pixelpioneer', time: '25m ago', badge: 'Active', text: 'A game with a short loop and endless mastery. I still boot it up most weeks.' }
+          ]
+        },
+        {
+          id: 'gm2', icon: 'fa-gamepad',
+          title: 'Co-op games that are actually fun with friends',
+          tags: [],
+          author: 'coop_carl', views: '1.7k', time: '8h ago',
+          comments: 24, likes: 45, lastReply: 'maker_mike', memberOnly: false,
+          body: `<p>Looking for co-op that stays fun after the first hour. No rage, no dead weight — just good teamwork.</p>`,
+          replies: [
+            { author: 'maker_mike', time: '3h ago', badge: 'Active', text: 'Anything where everyone has a clear role tends to hold up best.' }
+          ]
+        }
       ]
     };
 
@@ -2983,7 +3088,10 @@
       review: 'Review',
       hobbies: 'Hobbies',
       tech: 'Tech',
-      entertainment: 'Entertainment'
+      entertainment: 'Entertainment',
+      movies: 'Movies',
+      music: 'Music',
+      games: 'Games'
     };
 
     const CATEGORY_ICONS = {
@@ -2996,7 +3104,10 @@
       review: 'fa-star',
       hobbies: 'fa-palette',
       tech: 'fa-microchip',
-      entertainment: 'fa-film'
+      entertainment: 'fa-film',
+      movies: 'fa-clapperboard',
+      music: 'fa-music',
+      games: 'fa-dice'
     };
 
     let feedMode = 'categories';
@@ -3072,7 +3183,7 @@
     function renderCategoryGrid() {
       const grid = document.getElementById('category-grid');
       if (!grid) return;
-      grid.innerHTML = ['journey', 'tools', 'coupons', 'testers', 'lounge', 'general', 'review', 'hobbies', 'tech', 'entertainment'].map(cat => `
+      grid.innerHTML = ['journey', 'tools', 'coupons', 'testers', 'lounge', 'general', 'review', 'hobbies', 'tech', 'entertainment', 'movies', 'music', 'games'].map(cat => `
         <button class="category-tile cat-${cat}${selectedCategory === cat ? ' active' : ''}" onclick="selectCategory('${cat}')">
           <span class="category-tile-icon"><i class="fas ${CATEGORY_ICONS[cat]}"></i></span>
           <span class="category-tile-name">${CAT_LABELS[cat]}</span>
@@ -3139,7 +3250,7 @@
 
     function collectThreads() {
       const all = [];
-      ['journey', 'tools', 'coupons', 'testers', 'lounge', 'general', 'review', 'hobbies', 'tech', 'entertainment'].forEach(cat => {
+      ['journey', 'tools', 'coupons', 'testers', 'lounge', 'general', 'review', 'hobbies', 'tech', 'entertainment', 'movies', 'music', 'games'].forEach(cat => {
         threads[cat].forEach(t => all.push({ cat, thread: t }));
       });
       return all;
@@ -3530,7 +3641,7 @@
     }
 
     function bumpRandomThread() {
-      const categories = ['journey', 'tools', 'coupons', 'testers', 'lounge', 'general', 'review', 'hobbies', 'tech', 'entertainment'];
+      const categories = ['journey', 'tools', 'coupons', 'testers', 'lounge', 'general', 'review', 'hobbies', 'tech', 'entertainment', 'movies', 'music', 'games'];
       const cat = categories[Math.floor(Math.random() * categories.length)];
       const me = hasIdentity() ? authorName().toLowerCase() : '';
       const list = (threads[cat] || []).filter(t => !me || (t.author || '').toLowerCase() !== me);
@@ -3554,9 +3665,9 @@
       }
     }
 
-    const categoryCounts = { journey: 132, tools: 87, coupons: 204, testers: 96, lounge: 330, general: 120, review: 74, hobbies: 98, tech: 156, entertainment: 142 };
+    const categoryCounts = { journey: 132, tools: 87, coupons: 204, testers: 96, lounge: 330, general: 120, review: 74, hobbies: 98, tech: 156, entertainment: 142, movies: 118, music: 96, games: 174 };
     function incrementCategoryCount() {
-      const cats = ['journey', 'tools', 'coupons', 'testers', 'lounge', 'general', 'review', 'hobbies', 'tech', 'entertainment'];
+      const cats = ['journey', 'tools', 'coupons', 'testers', 'lounge', 'general', 'review', 'hobbies', 'tech', 'entertainment', 'movies', 'music', 'games'];
       const cat = cats[Math.floor(Math.random() * cats.length)];
       categoryCounts[cat] += 1;
       const el = document.getElementById('count-' + cat);
@@ -4031,7 +4142,7 @@
     }
 
     function renderCategoryCounts() {
-      ['journey', 'tools', 'coupons', 'testers', 'lounge', 'general', 'review', 'hobbies', 'tech', 'entertainment'].forEach(cat => {
+      ['journey', 'tools', 'coupons', 'testers', 'lounge', 'general', 'review', 'hobbies', 'tech', 'entertainment', 'movies', 'music', 'games'].forEach(cat => {
         const el = document.getElementById('count-' + cat);
         if (el) el.textContent = categoryCounts[cat] + ' posts';
       });
@@ -4091,7 +4202,7 @@
 
     // ==================== COLLAPSIBLE TOPICS ====================
     const COLLAPSE_KEY = 'circles_collapsed_cats';
-    const ALL_CATS = ['journey', 'tools', 'coupons', 'testers', 'lounge', 'general', 'review', 'hobbies', 'tech', 'entertainment'];
+    const ALL_CATS = ['journey', 'tools', 'coupons', 'testers', 'lounge', 'general', 'review', 'hobbies', 'tech', 'entertainment', 'movies', 'music', 'games'];
     // Topics start collapsed so the feed opens as a tidy list of communities.
     let collapsedCats = new Set(ALL_CATS);
     try {
