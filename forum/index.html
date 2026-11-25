@@ -1667,6 +1667,11 @@
       <!-- ========== MAIN VIEW ========== -->
       <div id="forum-view" class="content-area">
         <div class="page-inner">
+          <section>
+            <h1 class="page-title">Featured posts</h1>
+            <div class="featured-grid" id="featured-grid"></div>
+          </section>
+
           <div class="filter-row">
             <div class="feed-tabs">
               <button class="feed-tab active" data-mode="categories" onclick="setFeedMode('categories')">All categories</button>
@@ -1801,11 +1806,6 @@
             </section>
 
             <aside class="rail">
-              <div class="rail-section">
-                <div class="rail-head"><span>Latest</span><span>replies</span></div>
-                <div id="latest-list"></div>
-              </div>
-
               <div class="rail-section">
                 <div class="rail-head"><span>Forum stats</span><span class="live-dot" title="Live"></span></div>
                 <div class="stat-row"><span>Members</span><strong id="stat-members">28,451</strong></div>
@@ -2892,7 +2892,7 @@
       document.getElementById('coupons-threads').innerHTML = threads.coupons.map(t => renderThreadItem(t, 'coupons')).join('');
       document.getElementById('testers-threads').innerHTML = threads.testers.map(t => renderThreadItem(t, 'testers')).join('');
       document.getElementById('lounge-threads').innerHTML = threads.lounge.map(t => renderThreadItem(t, 'lounge')).join('');
-      renderLatest();
+      renderFeatured();
       if (feedMode !== 'categories') renderFlat(feedMode);
       if (searchTerm) filterThreads(searchTerm);
     }
