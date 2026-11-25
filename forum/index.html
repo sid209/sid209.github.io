@@ -440,6 +440,64 @@
     .category-section.collapsed .cat-body { grid-template-rows: 0fr; }
     .category-section.search-open .cat-body { grid-template-rows: 1fr; }
 
+    /* Category tiles */
+    .category-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+      max-width: 560px;
+      margin-bottom: 18px;
+    }
+
+    .category-tile {
+      aspect-ratio: 1 / 1;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: 8px; padding: 12px 8px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      text-align: center;
+      cursor: pointer;
+      transition: transform 0.12s, border-color 0.15s, background 0.15s;
+    }
+
+    .category-tile:hover { border-color: var(--cat-color); background: var(--surface-2); }
+    .category-tile:active { transform: scale(0.97); }
+    .category-tile.active {
+      border-color: var(--cat-color);
+      box-shadow: 0 0 0 2px var(--cat-color) inset;
+    }
+
+    .category-tile-icon {
+      width: 44px; height: 44px; border-radius: 12px;
+      display: grid; place-items: center;
+      background: var(--surface-2);
+      color: var(--cat-color); font-size: 18px;
+    }
+
+    .category-tile-name {
+      font-size: 12.5px; font-weight: 650; line-height: 1.2; color: var(--text);
+    }
+
+    .category-tile-count { font-size: 11px; color: var(--text-3); }
+
+    .category-tile.cat-journey { --cat-color: var(--cat-journey); }
+    .category-tile.cat-tools { --cat-color: var(--cat-tools); }
+    .category-tile.cat-coupons { --cat-color: var(--cat-coupons); }
+    .category-tile.cat-testers { --cat-color: var(--cat-testers); }
+    .category-tile.cat-lounge { --cat-color: var(--cat-lounge); }
+
+    .category-feed-head {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 2px 2px 10px;
+    }
+    .category-feed-head h2 { font-size: 14px; font-weight: 650; }
+    .category-feed-clear {
+      font-size: 12px; font-weight: 600; color: var(--accent);
+    }
+    .category-feed-clear:hover { color: var(--accent-hover); }
+
     /* Thread rows */
     .thread-list { display: block; }
 
@@ -1621,97 +1679,14 @@
 
           <div class="content-grid">
             <section class="feed-col">
-              <div class="col-head"><span>Community</span><span>Topics</span></div>
+              <div id="category-grid" class="category-grid"></div>
 
-              <div id="forum-feed">
-                <section class="category-section cat-journey collapsed" data-cat="journey">
-                  <div class="category-header" role="button" tabindex="0" aria-expanded="false" onclick="toggleCategory(this)" onkeydown="if((event.key==='Enter'||event.key===' ')&&event.target===event.currentTarget){event.preventDefault();toggleCategory(this);}">
-                    <span class="cat-square"></span>
-                    <div class="cat-main">
-                      <div class="cat-title-row">
-                        <h2 class="cat-title">Journeys</h2>
-                        <span class="badge-count" id="count-journey">132 posts</span>
-                      </div>
-                      <p class="cat-desc">Progress logs, personal challenges and lessons from people building something.</p>
-                    </div>
-                    <span class="cat-toggle" aria-hidden="true"><i class="fas fa-chevron-down"></i></span>
-                  </div>
-                  <div class="cat-body"><div class="cat-body-inner">
-                    <div class="thread-list" id="journey-threads"></div>
-                  </div></div>
-                </section>
-
-                <section class="category-section cat-tools collapsed" data-cat="tools">
-                  <div class="category-header" role="button" tabindex="0" aria-expanded="false" onclick="toggleCategory(this)" onkeydown="if((event.key==='Enter'||event.key===' ')&&event.target===event.currentTarget){event.preventDefault();toggleCategory(this);}">
-                    <span class="cat-square"></span>
-                    <div class="cat-main">
-                      <div class="cat-title-row">
-                        <h2 class="cat-title">Verified Tools &amp; Services</h2>
-                        <span class="badge-count" id="count-tools">87 posts</span>
-                      </div>
-                      <p class="cat-desc">Hands-on reviews of apps, gear and services the community has actually tested.</p>
-                    </div>
-                    <span class="cat-toggle" aria-hidden="true"><i class="fas fa-chevron-down"></i></span>
-                  </div>
-                  <div class="cat-body"><div class="cat-body-inner">
-                    <div class="thread-list" id="tools-threads"></div>
-                  </div></div>
-                </section>
-
-                <section class="category-section cat-coupons collapsed" data-cat="coupons">
-                  <div class="category-header" role="button" tabindex="0" aria-expanded="false" onclick="toggleCategory(this)" onkeydown="if((event.key==='Enter'||event.key===' ')&&event.target===event.currentTarget){event.preventDefault();toggleCategory(this);}">
-                    <span class="cat-square"></span>
-                    <div class="cat-main">
-                      <div class="cat-title-row">
-                        <h2 class="cat-title">Coupons, Early Access &amp; Free Trials</h2>
-                        <span class="badge-count" id="count-coupons">204 posts</span>
-                      </div>
-                      <p class="cat-desc">Discount codes, early access drops and free trials worth claiming.</p>
-                    </div>
-                    <span class="cat-toggle" aria-hidden="true"><i class="fas fa-chevron-down"></i></span>
-                  </div>
-                  <div class="cat-body"><div class="cat-body-inner">
-                    <div class="thread-list" id="coupons-threads"></div>
-                  </div></div>
-                </section>
-
-                <section class="category-section cat-testers collapsed" data-cat="testers">
-                  <div class="category-header" role="button" tabindex="0" aria-expanded="false" onclick="toggleCategory(this)" onkeydown="if((event.key==='Enter'||event.key===' ')&&event.target===event.currentTarget){event.preventDefault();toggleCategory(this);}">
-                    <span class="cat-square"></span>
-                    <div class="cat-main">
-                      <div class="cat-title-row">
-                        <h2 class="cat-title">Apps &amp; Game Testers</h2>
-                        <span class="badge-count" id="count-testers">96 posts</span>
-                      </div>
-                      <p class="cat-desc">Playtests and beta programs looking for honest feedback from real users.</p>
-                    </div>
-                    <span class="cat-toggle" aria-hidden="true"><i class="fas fa-chevron-down"></i></span>
-                  </div>
-                  <div class="cat-body"><div class="cat-body-inner">
-                    <div class="thread-list" id="testers-threads"></div>
-                  </div></div>
-                </section>
-
-                <section class="category-section cat-lounge collapsed" data-cat="lounge">
-                  <div class="category-header" role="button" tabindex="0" aria-expanded="false" onclick="toggleCategory(this)" onkeydown="if((event.key==='Enter'||event.key===' ')&&event.target===event.currentTarget){event.preventDefault();toggleCategory(this);}">
-                    <span class="cat-square"></span>
-                    <div class="cat-main">
-                      <div class="cat-title-row">
-                        <h2 class="cat-title">The Lounge</h2>
-                        <span class="badge-count" id="count-lounge">330 posts</span>
-                      </div>
-                      <p class="cat-desc">Movies, music, sports, TV and everything else worth talking about.</p>
-                    </div>
-                    <span class="cat-toggle" aria-hidden="true"><i class="fas fa-chevron-down"></i></span>
-                  </div>
-                  <div class="cat-body"><div class="cat-body-inner">
-                    <div class="thread-list" id="lounge-threads"></div>
-                    <div class="lounge-message">
-                      <i class="fas fa-mug-hot"></i>
-                      <span>Welcome to the Lounge — grab a virtual coffee, relax and chat across any topic. No self-promo, just good vibes.</span>
-                    </div>
-                  </div></div>
-                </section>
+              <div id="category-feed" class="category-feed" hidden>
+                <div class="category-feed-head">
+                  <h2 id="category-feed-title"></h2>
+                  <button class="category-feed-clear" onclick="resetFeedFilters()">All categories</button>
+                </div>
+                <div class="thread-list" id="category-threads"></div>
               </div>
 
               <div id="flat-feed" hidden>
@@ -2718,8 +2693,17 @@
       lounge: 'Lounge'
     };
 
+    const CATEGORY_ICONS = {
+      journey: 'fa-seedling',
+      tools: 'fa-screwdriver-wrench',
+      coupons: 'fa-ticket',
+      testers: 'fa-gamepad',
+      lounge: 'fa-comment-dots'
+    };
+
     let feedMode = 'categories';
     let searchTerm = '';
+    let selectedCategory = null;
 
     function initials(name) {
       const clean = (name || '').replace(/[^a-z0-9]/gi, '');
@@ -2779,14 +2763,57 @@
     }
 
     function renderForum() {
-      document.getElementById('journey-threads').innerHTML = threads.journey.map(t => renderThreadItem(t, 'journey')).join('');
-      document.getElementById('tools-threads').innerHTML = threads.tools.map(t => renderThreadItem(t, 'tools')).join('');
-      document.getElementById('coupons-threads').innerHTML = threads.coupons.map(t => renderThreadItem(t, 'coupons')).join('');
-      document.getElementById('testers-threads').innerHTML = threads.testers.map(t => renderThreadItem(t, 'testers')).join('');
-      document.getElementById('lounge-threads').innerHTML = threads.lounge.map(t => renderThreadItem(t, 'lounge')).join('');
+      renderCategoryGrid();
       renderFeatured();
       if (feedMode !== 'categories') renderFlat(feedMode);
+      else if (selectedCategory) renderCategoryThreads(selectedCategory);
       if (searchTerm) filterThreads(searchTerm);
+    }
+
+    function renderCategoryGrid() {
+      const grid = document.getElementById('category-grid');
+      if (!grid) return;
+      grid.innerHTML = ['journey', 'tools', 'coupons', 'testers', 'lounge'].map(cat => `
+        <button class="category-tile cat-${cat}${selectedCategory === cat ? ' active' : ''}" onclick="selectCategory('${cat}')">
+          <span class="category-tile-icon"><i class="fas ${CATEGORY_ICONS[cat]}"></i></span>
+          <span class="category-tile-name">${CAT_LABELS[cat]}</span>
+          <span class="category-tile-count">${categoryCounts[cat]} posts</span>
+        </button>`).join('');
+    }
+
+    function renderCategoryThreads(cat) {
+      const feed = document.getElementById('category-feed');
+      const list = document.getElementById('category-threads');
+      const title = document.getElementById('category-feed-title');
+      if (!feed || !list) return;
+      if (!cat) { feed.hidden = true; return; }
+      feed.hidden = false;
+      if (title) title.textContent = CAT_LABELS[cat] || cat;
+      list.innerHTML = (threads[cat] || []).map(t => renderThreadItem(t, cat)).join('');
+    }
+
+    function selectCategory(cat) {
+      if (selectedCategory === cat) { clearCategorySelection(); return; }
+      searchTerm = '';
+      const box = document.getElementById('search-input');
+      if (box) box.value = '';
+      const mob = document.getElementById('search-input-mobile');
+      if (mob) mob.value = '';
+      selectedCategory = cat;
+      renderCategoryGrid();
+      renderCategoryThreads(cat);
+      const empty = document.getElementById('empty-state');
+      if (empty) empty.hidden = true;
+      scrollToAnchor(document.getElementById('category-feed'));
+    }
+
+    function clearCategorySelection() {
+      selectedCategory = null;
+      renderCategoryGrid();
+      const feed = document.getElementById('category-feed');
+      if (feed) feed.hidden = true;
+      const empty = document.getElementById('empty-state');
+      if (empty) empty.hidden = true;
     }
 
     function renderFeatured() {
@@ -2864,8 +2891,12 @@
       document.querySelectorAll('.feed-tab').forEach(btn => {
         btn.classList.toggle('active', btn.dataset.mode === mode);
       });
-      document.getElementById('forum-feed').hidden = mode !== 'categories';
-      document.getElementById('flat-feed').hidden = mode === 'categories';
+      const grid = document.getElementById('category-grid');
+      const catFeed = document.getElementById('category-feed');
+      const flat = document.getElementById('flat-feed');
+      if (grid) grid.hidden = mode !== 'categories';
+      if (catFeed) catFeed.hidden = mode !== 'categories' || !selectedCategory;
+      if (flat) flat.hidden = mode === 'categories';
     }
 
     // Height of the bars pinned to the top of the viewport (header, mobile
@@ -2896,78 +2927,77 @@
 
     function setFeedMode(mode) {
       ensureForumView();
+      if (mode === 'categories') { selectedCategory = null; renderCategoryGrid(); }
       setFeedModeSilent(mode);
       if (mode !== 'categories') renderFlat(mode);
       if (!searchTerm) document.getElementById('empty-state').hidden = true;
       const target = mode === 'categories'
-        ? document.getElementById('forum-feed')
+        ? document.getElementById('category-grid')
         : document.getElementById('flat-feed');
       scrollToAnchor(target);
     }
 
-    function filterCategory(cat, el) {
+    function filterCategory(cat) {
       ensureForumView();
       setFeedModeSilent('categories');
-      document.querySelectorAll('.category-section').forEach(sec => {
-        sec.style.display = (cat === 'all' || sec.dataset.cat === cat) ? '' : 'none';
-      });
-      document.querySelectorAll('.side-link').forEach(link => link.classList.remove('active'));
-      document.querySelectorAll('[data-cat-link]').forEach(link => {
-        link.classList.toggle('active', link.dataset.catLink === cat);
-      });
-      // Jumping straight to a community should reveal its posts, even if the
-      // section was collapsed earlier.
-      if (cat !== 'all') {
-        const sec = document.querySelector(`.category-section[data-cat="${cat}"]`);
-        if (sec && sec.classList.contains('collapsed')) {
-          sec.classList.remove('collapsed');
-          collapsedCats.delete(cat);
-          const header = sec.querySelector('.category-header');
-          if (header) header.setAttribute('aria-expanded', 'true');
-          try { localStorage.setItem(COLLAPSE_KEY, JSON.stringify([...collapsedCats])); } catch (e) {}
-        }
-      }
-      const target = cat === 'all'
-        ? document.getElementById('forum-feed')
-        : document.querySelector(`.category-section[data-cat="${cat}"]`);
-      scrollToAnchor(target);
+      if (cat === 'all') clearCategorySelection();
+      else selectCategory(cat);
     }
 
     function filterThreads(query) {
       searchTerm = (query || '').trim().toLowerCase();
-      if (searchTerm && feedMode !== 'categories') setFeedModeSilent('categories');
-
-      let visible = 0;
-      document.querySelectorAll('.thread-item').forEach(item => {
-        const match = !searchTerm || (item.dataset.search || '').includes(searchTerm);
-        item.style.display = match ? '' : 'none';
-        if (match) visible += 1;
-      });
-
-      document.querySelectorAll('.category-section').forEach(sec => {
-        const any = Array.from(sec.querySelectorAll('.thread-item')).some(item => item.style.display !== 'none');
-        sec.style.display = any ? '' : 'none';
-        sec.classList.toggle('search-open', !!searchTerm && any);
-      });
-
       const empty = document.getElementById('empty-state');
-      if (empty) empty.hidden = !(searchTerm && visible === 0);
+      const grid = document.getElementById('category-grid');
+      const catFeed = document.getElementById('category-feed');
+      const flat = document.getElementById('flat-feed');
+      const title = document.getElementById('category-feed-title');
+      const list = document.getElementById('category-threads');
+
+      if (!searchTerm) {
+        if (feedMode === 'categories') {
+          renderCategoryGrid();
+          renderCategoryThreads(selectedCategory);
+          if (grid) grid.hidden = false;
+          if (catFeed) catFeed.hidden = !selectedCategory;
+          if (flat) flat.hidden = true;
+        } else {
+          renderFlat(feedMode);
+          if (grid) grid.hidden = true;
+          if (catFeed) catFeed.hidden = true;
+          if (flat) flat.hidden = false;
+        }
+        if (empty) empty.hidden = true;
+        return;
+      }
+
+      // Search runs across every category and shows a flat result list.
+      const all = collectThreads().filter(({ cat, thread }) => {
+        const hay = `${thread.title} ${thread.author} ${CAT_LABELS[cat] || ''}`.toLowerCase();
+        return hay.includes(searchTerm);
+      });
+      if (grid) grid.hidden = true;
+      if (flat) flat.hidden = true;
+      if (catFeed) catFeed.hidden = false;
+      if (title) title.textContent = 'Search results';
+      if (list) list.innerHTML = all.map(x => renderThreadItem(x.thread, x.cat, true)).join('');
+      if (empty) empty.hidden = all.length !== 0;
     }
 
     function resetFeedFilters() {
       searchTerm = '';
+      selectedCategory = null;
       const box = document.getElementById('search-input');
       if (box) box.value = '';
-      document.querySelectorAll('.thread-item').forEach(item => { item.style.display = ''; });
-      document.querySelectorAll('.category-section').forEach(sec => { sec.style.display = ''; sec.classList.remove('search-open'); });
-      const empty = document.getElementById('empty-state');
-      if (empty) empty.hidden = true;
       const mob = document.getElementById('search-input-mobile');
       if (mob) mob.value = '';
       setFeedModeSilent('categories');
-      document.querySelectorAll('.side-link').forEach(link => link.classList.remove('active'));
-      const home = document.querySelector('.side-link');
-      if (home) home.classList.add('active');
+      renderCategoryGrid();
+      const grid = document.getElementById('category-grid');
+      const feed = document.getElementById('category-feed');
+      if (grid) grid.hidden = false;
+      if (feed) feed.hidden = true;
+      const empty = document.getElementById('empty-state');
+      if (empty) empty.hidden = true;
     }
 
     function renderReply(reply) {
@@ -3202,16 +3232,11 @@
       thread.lastReply = sampleUsernames[Math.floor(Math.random() * sampleUsernames.length)];
       thread.time = 'just now';
 
-      if (cat === 'journey') {
-        document.getElementById('journey-threads').innerHTML = threads.journey.map(t => renderThreadItem(t, 'journey')).join('');
-      } else if (cat === 'tools') {
-        document.getElementById('tools-threads').innerHTML = threads.tools.map(t => renderThreadItem(t, 'tools')).join('');
-      } else if (cat === 'coupons') {
-        document.getElementById('coupons-threads').innerHTML = threads.coupons.map(t => renderThreadItem(t, 'coupons')).join('');
-      } else if (cat === 'testers') {
-        document.getElementById('testers-threads').innerHTML = threads.testers.map(t => renderThreadItem(t, 'testers')).join('');
+      // Refresh whichever feed is currently visible.
+      if (feedMode === 'categories') {
+        if (selectedCategory === cat) renderCategoryThreads(cat);
       } else {
-        document.getElementById('lounge-threads').innerHTML = threads.lounge.map(t => renderThreadItem(t, 'lounge')).join('');
+        renderFlat(feedMode);
       }
 
       const el = document.querySelector(`[data-thread-id="${thread.id}"]`);
@@ -3231,6 +3256,7 @@
         el.textContent = categoryCounts[cat] + ' posts';
         pulseEl(el);
       }
+      renderCategoryGrid();
     }
 
     function startLiveStats() {
