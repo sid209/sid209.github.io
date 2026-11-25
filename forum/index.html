@@ -2596,6 +2596,15 @@
       return amount.toLocaleString('en-US');
     }
 
+    function formatViews(value) {
+      const n = parseCount(value);
+      if (n >= 1000) {
+        const k = n / 1000;
+        return (k >= 10 ? Math.round(k) : k.toFixed(1).replace(/\.0$/, '')) + 'k';
+      }
+      return Math.round(n).toLocaleString('en-US');
+    }
+
     function calculateRevenue(thread) {
       return calculateKarma(thread) * REVENUE_PER_KARMA;
     }
@@ -3149,7 +3158,7 @@
             <div class="thread-meta">
               ${catChip}
               <span><i class="fas fa-user"></i> ${thread.author}</span>
-              <span><i class="fas fa-eye"></i> ${thread.views} views</span>
+              <span><i class="fas fa-eye"></i> ${formatViews(thread.views)} views</span>
               <span><i class="fas fa-clock"></i> ${thread.time}</span>
             </div>
             ${lockedHtml}
@@ -3509,7 +3518,7 @@
           </div>
           <div class="post-meta-row">
             <span><i class="fas fa-user"></i> <span class="author">@${thread.author}</span></span>
-            <span><i class="fas fa-eye"></i> ${thread.views} views</span>
+            <span><i class="fas fa-eye"></i> ${formatViews(thread.views)} views</span>
             <span><i class="fas fa-clock"></i> Posted ${thread.time}</span>
             <span><i class="fas fa-comment"></i> ${thread.replies.length} responses</span>
             <span><i class="fas fa-heart"></i> ${thread.likes} likes</span>
@@ -3825,36 +3834,59 @@
       const mine = myThreads();
       const postKarma = mine.reduce((sum, x) => sum + calculateKarma(x.thread), 0);
       const interactionKarma = (userActions.replies || 0) * 10
-        + (userActions.likes || 0) * 2
-        + mine.length * 5;
+        + (userActions.likes || 0) * 2;
       return postKarma + interactionKarma;
     }
 
-    // Payout balance grows a little each day and approaches, but never reaches,
-    // the $80 minimum payout.
-    const PAYOUT_KEY = 'circles_payout_v1';
-    const PAYOUT_TARGET = 80;
+    // Revenue earned by the user's own posts on this device.
+    function postRevenue() {
+      return myThreads().reduce((sum, x) => sum + displayRevenue(x.thread), 0);
+    }
 
-    function accrueDailyRevenue() {
-      const today = new Date().toDateString();
-      let data = { balance: 0, last: '' };
-      try { data = JSON.parse(localStorage.getItem(PAYOUT_KEY)) || data; } catch (e) {}
-      const karma = userKarma();
-      const dailyRate = 0.025 + Math.min(0.02, karma / 100000);
-      if (!data.last) {
-        data.balance = 0.5;
-        data.last = today;
-      } else if (data.last !== today) {
-        const elapsed = Math.round((Date.now() - new Date(data.last).getTime()) / 86400000);
-        const days = Math.max(1, Math.min(30, elapsed || 1));
-        for (let i = 0; i < days; i++) {
-          data.balance = data.balance + (PAYOUT_TARGET - data.balance) * dailyRate;
-        }
-        data.last = today;
+    // Payout approaches the $80 minimum but never reaches it.
+    const PAYOUT_TARGET = 80;
+    const ENGAGEMENT_KEY = 'circles_engagement_v1';
+    // About $4 of karma/revenue per day (1000 karma = $22).
+    const DAILY_KARMA_GAIN = 4 / REVENUE_PER_KARMA;
+
+    // Views accrue continuously through the day so the user's post karma (and
+    // therefore revenue) rises by roughly $4/day. The gain shrinks as the
+    // balance nears $80, so the payout target is never reached.
+    function accruePostEngagement() {
+      if (!hasIdentity()) return;
+      const mine = myThreads();
+      if (!mine.length) return;
+
+      const now = Date.now();
+      let data = { last: now };
+      try { data = JSON.parse(localStorage.getItem(ENGAGEMENT_KEY)) || data; } catch (e) {}
+      if (!data.last) data.last = now;
+
+      const elapsedDays = Math.max(0, (now - data.last) / 86400000);
+      if (elapsedDays < 0.0005) return; // under ~45s, wait for a visible tick
+
+      let earned = postRevenue();
+      let remaining = Math.min(elapsedDays, 30);
+      let gained = 0;
+      while (remaining > 0) {
+        const step = Math.min(remaining, 1);
+        const room = Math.max(0, 1 - earned / PAYOUT_TARGET);
+        const karma = DAILY_KARMA_GAIN * step * room;
+        gained += karma;
+        earned += karma * REVENUE_PER_KARMA;
+        remaining -= step;
       }
-      data.balance = Math.min(79.99, Math.max(0, data.balance));
-      try { localStorage.setItem(PAYOUT_KEY, JSON.stringify(data)); } catch (e) {}
-      return data.balance;
+
+      if (gained > 0) {
+        const share = gained / mine.length;
+        mine.forEach(({ thread }) => {
+          thread.views = parseCount(thread.views) + share;
+        });
+        saveState();
+      }
+
+      data.last = now;
+      try { localStorage.setItem(ENGAGEMENT_KEY, JSON.stringify(data)); } catch (e) {}
     }
 
     // Daily new-post limit (replies are unlimited).
@@ -3896,24 +3928,26 @@
     function renderActivityCard() {
       const card = document.getElementById('activity-card');
       if (!card) return;
+      accruePostEngagement();
       const mine = myThreads();
       const posts = mine.length;
       const responses = mine.reduce((sum, x) => sum + ((x.thread.replies || []).length), 0);
       const karma = userKarma();
-      const balance = accrueDailyRevenue();
+      const earned = postRevenue();
+      const payout = Math.min(earned, PAYOUT_TARGET - 0.01);
       const streak = updateStreak();
 
       const set = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
       set('my-posts', posts);
       set('my-responses', responses);
       set('my-karma', formatKarma(karma));
-      set('my-revenue', formatRevenue(balance));
+      set('my-revenue', formatRevenue(earned));
       set('activity-streak', `🔥 ${streak}-day streak`);
 
       const fill = document.getElementById('payout-fill');
       const payoutText = document.getElementById('payout-text');
-      if (fill) fill.style.width = Math.min(99, (balance / PAYOUT_TARGET) * 100).toFixed(1) + '%';
-      if (payoutText) payoutText.textContent = `${formatRevenue(balance)} of $${PAYOUT_TARGET} payout`;
+      if (fill) fill.style.width = Math.min(99, (payout / PAYOUT_TARGET) * 100).toFixed(1) + '%';
+      if (payoutText) payoutText.textContent = `${formatRevenue(payout)} of $${PAYOUT_TARGET} payout`;
 
       const title = card.querySelector('.activity-title');
       const actions = card.querySelector('.activity-actions');
@@ -4344,13 +4378,17 @@
       if (hasIdentity() && myThreads().length) {
         const mine = myThreads();
         const responses = mine.reduce((s, x) => s + ((x.thread.replies || []).length), 0);
-        const balance = accrueDailyRevenue();
-        showToast(`🔥 ${updateStreak()}-day streak · ${responses} responses · ${formatRevenue(balance)} of $80`);
+        const earned = postRevenue();
+        showToast(`🔥 ${updateStreak()}-day streak · ${responses} responses · ${formatRevenue(earned)} of $80`);
       }
       if (document.fonts && document.fonts.ready) {
         document.fonts.ready.then(syncBottomChrome).catch(() => {});
       }
       startLiveStats();
+      // Keep daily karma/revenue ticking while the app stays open.
+      setInterval(() => {
+        if (hasIdentity()) renderActivityCard();
+      }, 60000);
       document.addEventListener('keydown', e => {
         if (e.key === 'Escape') { closeSidebar(); closeGame(); }
       });
