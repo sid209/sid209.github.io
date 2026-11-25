@@ -2413,6 +2413,19 @@
       return '$' + amount.toFixed(2);
     }
 
+    // Regular posts are shown with revenue above $50; featured cards use their
+    // own higher multiplier.
+    const REVENUE_DISPLAY_FACTOR = 11;
+    const REVENUE_DISPLAY_MIN = 55;
+
+    function displayRevenue(thread) {
+      return Math.max(REVENUE_DISPLAY_MIN, calculateRevenue(thread) * REVENUE_DISPLAY_FACTOR);
+    }
+
+    function displayRevenueFromKarma(karma) {
+      return Math.max(REVENUE_DISPLAY_MIN, karma * REVENUE_PER_KARMA * REVENUE_DISPLAY_FACTOR);
+    }
+
     // ==================== LIVE STATS STATE ====================
     const liveStats = {
       members: 28451,
@@ -2725,7 +2738,7 @@
     function renderThreadItem(thread, category, showCategory) {
       const lockedHtml = '';
       const karma = calculateKarma(thread);
-      const revenue = calculateRevenue(thread);
+      const revenue = displayRevenue(thread);
       const searchText = `${thread.title} ${thread.author} ${CAT_LABELS[category] || ''}`.toLowerCase();
       const catChip = showCategory
         ? `<span class="thread-cat ${category}">${CAT_LABELS[category] || category}</span>`
@@ -3084,7 +3097,7 @@
           </div>
           <div class="karma-revenue">
             <span><i class="fas fa-dollar-sign"></i> Revenue earned</span>
-            <strong>${formatRevenue(totalKarma * REVENUE_PER_KARMA)}</strong>
+            <strong>${formatRevenue(displayRevenueFromKarma(totalKarma))}</strong>
           </div>
         </div>
       `;
