@@ -791,6 +791,48 @@
     .stats-strip .live-dot { margin-left: 2px; }
     .stats-strip .last-activity { margin: 0; padding: 0; border: 0; }
 
+    /* ====== YOUR ACTIVITY ====== */
+    .activity-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 14px 16px;
+      margin-bottom: 18px;
+    }
+    .activity-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+    .activity-title { font-size: 13px; font-weight: 650; display: inline-flex; align-items: center; gap: 7px; }
+    .activity-title i { color: var(--accent); }
+    .activity-streak {
+      font-size: 11.5px; font-weight: 650; color: var(--accent);
+      background: var(--accent-soft); border: 1px solid var(--accent-border);
+      padding: 3px 9px; border-radius: 999px; white-space: nowrap;
+    }
+    .activity-stats {
+      display: grid; grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 8px; margin: 12px 0;
+    }
+    .activity-stat { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
+    .activity-stat strong { font-size: 16px; font-weight: 700; font-variant-numeric: tabular-nums; white-space: nowrap; }
+    .activity-stat span { font-size: 10px; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.04em; }
+    .activity-stat.activity-revenue strong { color: var(--revenue); }
+    .activity-actions { display: flex; align-items: center; gap: 10px; }
+    .activity-cta {
+      flex: 1; height: 36px; border-radius: 9px;
+      background: var(--accent); color: #fff;
+      font-size: 12.5px; font-weight: 650;
+      display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+    }
+    .activity-cta:hover { background: var(--accent-hover); }
+    .activity-link { font-size: 12px; font-weight: 600; color: var(--text-2); padding: 0 4px; white-space: nowrap; }
+    .activity-link:hover { color: var(--accent); }
+
+    .tab-badge {
+      position: absolute; top: 2px; right: calc(50% - 18px);
+      min-width: 16px; height: 16px; padding: 0 4px;
+      border-radius: 999px; background: var(--accent); color: #fff;
+      font-size: 9.5px; font-weight: 700; line-height: 16px; text-align: center;
+    }
+
     /* ====== TOOLS PAGE ====== */
     .tools-hero {
       background: var(--surface);
@@ -1462,6 +1504,7 @@
       color: var(--text-3);
       transition: color 0.15s, background 0.15s;
       -webkit-tap-highlight-color: transparent;
+      position: relative;
     }
 
     .tab-item i { font-size: 17px; line-height: 1; }
@@ -1678,15 +1721,11 @@
         <input type="search" id="search-input" placeholder="Search posts, people, communities" autocomplete="off" oninput="filterThreads(this.value)" aria-label="Search">
       </div>
       <div class="topbar-actions">
-        <span class="pill-note"><i class="fas fa-user-secret"></i> Anonymous</span>
         <button class="compose-btn tools-open-btn" onclick="openTools()" title="Open spy tools">
           <i class="fas fa-wand-magic-sparkles"></i> <span>Tools</span>
         </button>
         <button class="icon-btn games-topbar-btn" onclick="showGamesView()" aria-label="Arcade" title="Arcade">
           <i class="fas fa-gamepad"></i>
-        </button>
-        <button class="icon-btn search-btn" onclick="focusMobileSearch()" aria-label="Search">
-          <i class="fas fa-magnifying-glass"></i>
         </button>
         <button class="compose-btn" onclick="openComposeModal()">
           <i class="fas fa-pen"></i> <span>Post</span>
@@ -1722,18 +1761,27 @@
             </div>
           </div>
 
+          <div class="activity-card" id="activity-card">
+            <div class="activity-head">
+              <span class="activity-title"><i class="fas fa-user-astronaut"></i> Your activity</span>
+              <span class="activity-streak" id="activity-streak">🔥 1-day streak</span>
+            </div>
+            <div class="activity-stats">
+              <div class="activity-stat"><strong id="my-posts">0</strong><span>posts</span></div>
+              <div class="activity-stat"><strong id="my-responses">0</strong><span>responses</span></div>
+              <div class="activity-stat"><strong id="my-karma">0</strong><span>karma</span></div>
+              <div class="activity-stat activity-revenue"><strong id="my-revenue">$0</strong><span>earned</span></div>
+            </div>
+            <div class="activity-actions">
+              <button class="activity-cta" onclick="openComposeModal()"><i class="fas fa-pen"></i> New post</button>
+              <button class="activity-link" onclick="showMyPosts()">My posts</button>
+            </div>
+          </div>
+
           <section>
             <h1 class="page-title">Featured posts</h1>
             <div class="featured-grid" id="featured-grid"></div>
           </section>
-
-          <div class="filter-row">
-            <div class="feed-tabs">
-              <button class="feed-tab active" data-mode="categories" onclick="setFeedMode('categories')">All categories</button>
-              <button class="feed-tab" data-mode="hot" onclick="setFeedMode('hot')">Hot</button>
-              <button class="feed-tab" data-mode="latest" onclick="setFeedMode('latest')">Latest</button>
-            </div>
-          </div>
 
           <div class="content-grid">
             <section class="feed-col">
@@ -1879,9 +1927,10 @@
   <nav class="app-tabbar" aria-label="App navigation">
     <button class="tab-item active" data-tab="home" onclick="appTab('home')">
       <i class="fas fa-house"></i><span>Home</span>
+      <span class="tab-badge" id="home-badge" hidden>0</span>
     </button>
-    <button class="tab-item" data-tab="topics" onclick="appTab('topics')">
-      <i class="fas fa-layer-group"></i><span>Topics</span>
+    <button class="tab-item" data-tab="hot" onclick="appTab('hot')">
+      <i class="fas fa-fire"></i><span>Hot</span>
     </button>
     <button class="tab-item tab-primary" data-tab="post" onclick="appTab('post')" aria-label="New post">
       <i class="fas fa-plus"></i><span>Post</span>
@@ -2971,6 +3020,7 @@
     function renderForum() {
       renderCategoryGrid();
       renderFeatured();
+      renderActivityCard();
       if (feedMode !== 'categories') renderFlat(feedMode);
       else if (selectedCategory) renderCategoryThreads(selectedCategory);
       if (searchTerm) filterThreads(searchTerm);
@@ -3090,8 +3140,10 @@
       document.body.classList.remove('games-open');
       closeSidebar();
       const tab = document.querySelector('.app-tabbar .tab-item.active');
-      if (tab && ['topics', 'tools', 'games'].includes(tab.dataset.tab)) {
+      if (tab && ['tools', 'games'].includes(tab.dataset.tab)) {
         setActiveTab('home');
+      } else if (!tab) {
+        setActiveTab(feedMode === 'hot' ? 'hot' : 'home');
       }
     }
 
@@ -3421,6 +3473,10 @@
         bumpRandomThread();
       }
 
+      if (hasIdentity() && Math.random() > 0.9) {
+        simulateReplyToMyPost();
+      }
+
       if (events.length) {
         updateActivityText(events.join(' • '));
       } else {
@@ -3584,10 +3640,130 @@
           btn.onclick = () => openIdentityModal();
         }
       });
+      renderActivityCard();
     }
 
     // Kept as an alias so older call sites keep working.
     function applyMemberUI() { applyIdentityUI(); }
+
+    // ==================== ACTIVITY / RETENTION ====================
+    const VISIT_KEY = 'circles_visit_v1';
+    const SEEN_RESPONSES_KEY = 'circles_seen_responses_v1';
+
+    function myThreads() {
+      if (!hasIdentity()) return [];
+      const name = authorName().toLowerCase();
+      const all = [];
+      Object.keys(threads).forEach(cat => {
+        threads[cat].forEach(t => {
+          if ((t.author || '').toLowerCase() === name) all.push({ cat, thread: t });
+        });
+      });
+      return all;
+    }
+
+    function totalMyResponses() {
+      return myThreads().reduce((sum, x) => sum + ((x.thread.replies || []).length), 0);
+    }
+
+    function updateStreak() {
+      const today = new Date().toDateString();
+      let data = { last: '', streak: 0 };
+      try { data = JSON.parse(localStorage.getItem(VISIT_KEY)) || data; } catch (e) {}
+      if (data.last !== today) {
+        const yesterday = new Date(Date.now() - 86400000).toDateString();
+        data.streak = (data.last === yesterday) ? (data.streak || 0) + 1 : 1;
+        data.last = today;
+        try { localStorage.setItem(VISIT_KEY, JSON.stringify(data)); } catch (e) {}
+      }
+      return data.streak || 1;
+    }
+
+    function renderActivityCard() {
+      const card = document.getElementById('activity-card');
+      if (!card) return;
+      const mine = myThreads();
+      const posts = mine.length;
+      const responses = mine.reduce((sum, x) => sum + ((x.thread.replies || []).length), 0);
+      const karma = mine.reduce((sum, x) => sum + calculateKarma(x.thread), 0);
+      const revenue = mine.reduce((sum, x) => sum + displayRevenue(x.thread), 0);
+      const streak = updateStreak();
+
+      const set = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
+      set('my-posts', posts);
+      set('my-responses', responses);
+      set('my-karma', formatKarma(karma));
+      set('my-revenue', formatRevenue(revenue));
+      set('activity-streak', `🔥 ${streak}-day streak`);
+
+      const title = card.querySelector('.activity-title');
+      const actions = card.querySelector('.activity-actions');
+      if (!hasIdentity()) {
+        if (title) title.innerHTML = '<i class="fas fa-user-plus"></i> Start earning';
+        if (actions) actions.innerHTML = `<button class="activity-cta" onclick="openIdentityModal()"><i class="fas fa-user-plus"></i> Set username to post</button>`;
+      } else {
+        if (title) title.innerHTML = '<i class="fas fa-user-astronaut"></i> Your activity';
+        if (actions) actions.innerHTML = `<button class="activity-cta" onclick="openComposeModal()"><i class="fas fa-pen"></i> New post</button>
+          <button class="activity-link" onclick="showMyPosts()">My posts</button>`;
+      }
+
+      let seen = 0;
+      try { seen = parseInt(localStorage.getItem(SEEN_RESPONSES_KEY) || '0', 10) || 0; } catch (e) {}
+      const badge = document.getElementById('home-badge');
+      const homeTab = document.querySelector('.app-tabbar .tab-item[data-tab="home"]');
+      const onHome = homeTab && homeTab.classList.contains('active');
+      if (badge) {
+        const unseen = Math.max(0, responses - seen);
+        badge.hidden = onHome || unseen === 0;
+        badge.textContent = unseen > 99 ? '99+' : unseen;
+      }
+      if (onHome) {
+        try { localStorage.setItem(SEEN_RESPONSES_KEY, String(responses)); } catch (e) {}
+      }
+    }
+
+    function showMyPosts() {
+      if (!hasIdentity()) { openIdentityModal(); return; }
+      ensureForumView();
+      setFeedModeSilent('categories');
+      const grid = document.getElementById('category-grid');
+      const catFeed = document.getElementById('category-feed');
+      const flat = document.getElementById('flat-feed');
+      const title = document.getElementById('category-feed-title');
+      const list = document.getElementById('category-threads');
+      const mine = myThreads();
+      if (grid) grid.hidden = true;
+      if (flat) flat.hidden = true;
+      if (catFeed) catFeed.hidden = false;
+      if (title) title.textContent = 'Your posts';
+      if (list) {
+        list.className = 'thread-list';
+        list.innerHTML = mine.length
+          ? mine.map(x => renderThreadItem(x.thread, x.cat, true)).join('')
+          : '<div class="empty-state">You have not posted yet. Tap "New post" to start earning.</div>';
+      }
+      scrollToAnchor(catFeed);
+    }
+
+    function simulateReplyToMyPost() {
+      if (!hasIdentity()) return false;
+      const mine = myThreads();
+      if (!mine.length) return false;
+      const pick = mine[Math.floor(Math.random() * mine.length)];
+      const thread = pick.thread;
+      const author = sampleUsernames[Math.floor(Math.random() * sampleUsernames.length)];
+      thread.replies = thread.replies || [];
+      thread.replies.push({ author, time: 'just now', badge: '', text: 'Great post — thanks for sharing this.' });
+      thread.comments += 1;
+      thread.time = 'just now';
+      thread.lastReply = author;
+      liveStats.posts += 1;
+      updateStatDisplay('posts', liveStats.posts);
+      renderForum();
+      saveState();
+      showToast(`New response from @${author} on your post`);
+      return true;
+    }
 
     // ==================== COMPOSE NEW POST ====================
     function openComposeModal() {
@@ -3643,10 +3819,10 @@
         title: title,
         tags: [],
         author: authorName(),
-        views: '0',
+        views: '12',
         time: 'just now',
         comments: 0,
-        likes: 0,
+        likes: 3,
         lastReply: authorName(),
         memberOnly: false,
         body: bodyToHtml(body),
@@ -3907,18 +4083,15 @@
           resetFeedFilters();
           showForum();
           setActiveTab('home');
+          renderActivityCard();
           scrollTop();
-          break;
-        case 'topics':
-          filterCategory('all');
-          setActiveTab('topics');
-          break;
-        case 'post':
-          openComposeModal();
           break;
         case 'hot':
           setFeedMode('hot');
           setActiveTab('hot');
+          break;
+        case 'post':
+          openComposeModal();
           break;
         case 'games':
           showGamesView();
@@ -3950,6 +4123,12 @@
       renderForum();
       applyCollapsedCats();
       syncBottomChrome();
+      if (hasIdentity() && myThreads().length) {
+        const mine = myThreads();
+        const responses = mine.reduce((s, x) => s + ((x.thread.replies || []).length), 0);
+        const revenue = mine.reduce((s, x) => s + displayRevenue(x.thread), 0);
+        showToast(`🔥 ${updateStreak()}-day streak · ${responses} responses · ${formatRevenue(revenue)} earned`);
+      }
       if (document.fonts && document.fonts.ready) {
         document.fonts.ready.then(syncBottomChrome).catch(() => {});
       }
