@@ -1474,6 +1474,8 @@
       .col-head { display: none; }
       .category-section { border-radius: 12px; }
       .category-header { padding: 14px; }
+      .category-header .cat-desc,
+      .category-header .cat-chips { display: none; }
       .thread-item { padding: 14px; }
       .rail { gap: 14px; }
 
@@ -1566,7 +1568,7 @@
         <input type="search" id="search-input" placeholder="Search posts, people, communities" autocomplete="off" oninput="filterThreads(this.value)" aria-label="Search">
       </div>
       <div class="topbar-actions">
-        <span class="pill-note"><i class="fas fa-lock"></i> Invite only</span>
+        <span class="pill-note"><i class="fas fa-user-secret"></i> Anonymous</span>
         <button class="compose-btn tools-open-btn" onclick="openTools()" title="Open spy tools">
           <i class="fas fa-wand-magic-sparkles"></i> <span>Tools</span>
         </button>
@@ -1579,8 +1581,8 @@
         <button class="icon-btn" id="theme-btn" onclick="toggleTheme()" aria-label="Toggle dark mode" title="Toggle dark mode">
           <i class="fas fa-moon"></i>
         </button>
-        <button class="join-btn" onclick="openMembershipModal()">
-          <i class="fas fa-ticket-alt"></i> <span>Join with invite</span>
+        <button class="join-btn" onclick="openIdentityModal()">
+          <i class="fas fa-user-plus"></i> <span>Set username</span>
         </button>
         <div class="user-badge">
           <span class="user-avatar"><i class="fas fa-user"></i></span>
@@ -1616,8 +1618,8 @@
           <a class="side-link" data-view-link="games" onclick="showGamesView()">
             <i class="fas fa-gamepad"></i> Games
           </a>
-          <a class="side-link" onclick="openMembershipModal()">
-            <i class="fas fa-user-plus"></i> Invite &amp; join
+          <a class="side-link" onclick="openIdentityModal()">
+            <i class="fas fa-user-plus"></i> Set username
           </a>
           <a class="side-link" onclick="showToast('Karma = views + likes + replies. Karma converts to revenue on every post.')">
             <i class="fas fa-star"></i> Karma
@@ -1656,7 +1658,7 @@
 
         <div class="side-group">
           <div class="side-label">About</div>
-          <a class="side-link" onclick="showToast('Dot Circles is a small, invite-only space for conversations across five communities.')">
+          <a class="side-link" onclick="showToast('Dot Circles is a small, anonymous space for conversations across five communities. Pick a unique username to post.')">
             <i class="fas fa-circle-info"></i> About Dot Circles
           </a>
         </div>
@@ -1665,16 +1667,7 @@
       <!-- ========== MAIN VIEW ========== -->
       <div id="forum-view" class="content-area">
         <div class="page-inner">
-          <section>
-            <h1 class="page-title">Featured posts</h1>
-            <div class="featured-grid" id="featured-grid"></div>
-          </section>
-
           <div class="filter-row">
-            <div class="crumb-chips">
-              <span class="crumb">communities <i class="fas fa-chevron-right"></i></span>
-              <span class="crumb">tags <i class="fas fa-chevron-right"></i></span>
-            </div>
             <div class="feed-tabs">
               <button class="feed-tab active" data-mode="categories" onclick="setFeedMode('categories')">All categories</button>
               <button class="feed-tab" data-mode="hot" onclick="setFeedMode('hot')">Hot</button>
@@ -1824,22 +1817,6 @@
               </div>
             </aside>
           </div>
-
-          <div class="invite-banner" id="membership-banner">
-            <div>
-              <h2><i class="fas fa-ticket"></i> Invite-only space</h2>
-              <p>Redeem the single invite code to post across communities, unlock private circles and earn karma.</p>
-              <button class="banner-btn primary" onclick="openMembershipModal()">
-                <i class="fas fa-unlock"></i> Enter invite code
-              </button>
-            </div>
-            <div class="invite-perks">
-              <div class="invite-perk"><i class="fas fa-check-circle"></i> Post across all communities</div>
-              <div class="invite-perk"><i class="fas fa-check-circle"></i> Early-access coupons &amp; trials</div>
-              <div class="invite-perk"><i class="fas fa-check-circle"></i> Earn karma from engagement</div>
-              <div class="invite-perk"><i class="fas fa-check-circle"></i> Unlock private circles</div>
-            </div>
-          </div>
         </div>
       </div>
 
@@ -1849,7 +1826,7 @@
           <div class="tools-hero">
             <div>
               <h1 class="tools-title"><i class="fas fa-wand-magic-sparkles"></i> MONKEYE SPY INTELLIGENCE TOOL</h1>
-              <p class="tools-sub">Two research tools, one search. Paste an Offer Vault link and both engines read it together — organic signals and paid arbitrage/affiliate revenue in one report.</p>
+              <p class="tools-sub">Paste an Offer Vault link to scan ad formats, bids, daily revenue and RPM in one report.</p>
             </div>
           </div>
 
@@ -1951,8 +1928,8 @@
             <button class="compose-btn" onclick="openComposeModal()">
               <i class="fas fa-pen"></i> <span>Post</span>
             </button>
-            <button class="join-btn" onclick="openMembershipModal()">
-              <i class="fas fa-ticket-alt"></i> <span>Join with invite</span>
+            <button class="join-btn" onclick="openIdentityModal()">
+              <i class="fas fa-user-plus"></i> <span>Set username</span>
             </button>
           </div>
           <div class="post-container" id="post-container"></div>
@@ -2003,32 +1980,21 @@
     <i class="fas fa-pen"></i>
   </button>
 
-  <!-- ========== MEMBERSHIP MODAL ========== -->
-  <div class="modal-overlay" id="membership-modal" onclick="if(event.target===this) closeMembershipModal()">
+  <!-- ========== IDENTITY MODAL ========== -->
+  <div class="modal-overlay" id="identity-modal" onclick="if(event.target===this) closeIdentityModal()">
     <div class="modal">
       <div class="modal-header">
         <div>
-          <h2><i class="fas fa-users"></i> Join Dot Circles</h2>
-          <p>Dot Circles is invite-only — enter your invitation code to join</p>
+          <h2><i class="fas fa-user-astronaut"></i> Choose a username</h2>
+          <p>No invite needed — pick a unique name to post anonymously.</p>
         </div>
-        <button class="modal-close" onclick="closeMembershipModal()"><i class="fas fa-times"></i></button>
+        <button class="modal-close" onclick="closeIdentityModal()"><i class="fas fa-times"></i></button>
       </div>
       <div class="modal-body">
-        <div class="modal-perks">
-          <h4><i class="fas fa-gift"></i> What you unlock</h4>
-          <div class="modal-perk-list">
-            <div class="modal-perk-item"><i class="fas fa-check-circle"></i> Post across all communities</div>
-            <div class="modal-perk-item"><i class="fas fa-check-circle"></i> Early-access coupons &amp; trials</div>
-            <div class="modal-perk-item"><i class="fas fa-check-circle"></i> Earn karma from engagement</div>
-            <div class="modal-perk-item"><i class="fas fa-check-circle"></i> Unlock private circles</div>
-          </div>
-        </div>
-        <label class="field-label" for="invite-code">Invitation code</label>
-        <input type="text" class="field-input" id="invite-code" placeholder="Enter your invitation code" autocomplete="off">
-        <label class="field-label" for="invite-name">Username</label>
-        <input type="text" class="field-input" id="invite-name" placeholder="Pick a username" autocomplete="off">
-        <button class="modal-submit" onclick="submitInvite()">
-          <i class="fas fa-unlock"></i> Redeem invitation
+        <label class="field-label" for="identity-name">Username</label>
+        <input type="text" class="field-input" id="identity-name" placeholder="e.g. nightowl" autocomplete="off" maxlength="20">
+        <button class="modal-submit" onclick="submitIdentity()">
+          <i class="fas fa-arrow-right"></i> Continue
         </button>
       </div>
     </div>
@@ -2081,8 +2047,9 @@
     // ==================== MEMBERSHIP STATE ====================
     let isMember = false;
     let memberName = 'guest_viewer';
-    const INVITE_CODE = 'SIDDHARTHKK2010';
-    let inviteCodeUsed = false;
+    let displayName = '';
+    let claimedNames = [];
+    let pendingIdentityAction = null;
 
     // ==================== TOOLS ====================
     const TOOLS_SEARCH_LIMIT = 3;
@@ -2879,9 +2846,7 @@
 
     function renderThreadItem(thread, category, showCategory) {
       const tagsHtml = thread.tags.map(t => `<span class="tag ${t.cls}">${t.label}</span>`).join('');
-      const lockedHtml = (thread.memberOnly && !isMember)
-        ? `<div class="locked-notice"><i class="fas fa-lock"></i> Private Circle post — join to read</div>`
-        : '';
+      const lockedHtml = '';
       const karma = calculateKarma(thread);
       const revenue = calculateRevenue(thread);
       const searchText = `${thread.title} ${thread.author} ${CAT_LABELS[category] || ''} ${thread.tags.map(t => t.label).join(' ')}`.toLowerCase();
@@ -2927,7 +2892,6 @@
       document.getElementById('coupons-threads').innerHTML = threads.coupons.map(t => renderThreadItem(t, 'coupons')).join('');
       document.getElementById('testers-threads').innerHTML = threads.testers.map(t => renderThreadItem(t, 'testers')).join('');
       document.getElementById('lounge-threads').innerHTML = threads.lounge.map(t => renderThreadItem(t, 'lounge')).join('');
-      renderFeatured();
       renderLatest();
       if (feedMode !== 'categories') renderFlat(feedMode);
       if (searchTerm) filterThreads(searchTerm);
@@ -3161,46 +3125,23 @@
       const repliesHtml = thread.replies.map(r => renderReply(r)).join('');
 
       let bodyHtml, replyFormHtml, repliesHeaderHtml;
-      if (thread.memberOnly && !isMember) {
-        bodyHtml = `
-          <div style="text-align:center; padding: 2rem 1rem;">
-            <div style="font-size: 2.25rem; color:var(--accent); margin-bottom: 1rem;"><i class="fas fa-lock"></i></div>
-            <h3 style="color:var(--text); margin-bottom:0.5rem; font-size:1rem;">Private Circle post</h3>
-            <p style="color:var(--text-2); font-size:0.85rem; max-width:420px; margin: 0 auto 1.5rem auto;">This conversation lives in a private Circle. Join with an invitation code to unlock it — plus early-access perks and post boosts.</p>
-            <button class="submit-btn" style="margin: 0 auto;" onclick="openMembershipModal()">
-              <i class="fas fa-users"></i> Join to read
+      bodyHtml = thread.body;
+      replyFormHtml = `
+        <div class="reply-form">
+          <h4><i class="fas fa-comment-dots"></i> Join the conversation</h4>
+          <textarea id="reply-input" placeholder="Add your voice..."></textarea>
+          <div class="reply-submit-row">
+            <span class="hint"><i class="fas fa-info-circle"></i> Be kind and constructive</span>
+            <button class="submit-btn" onclick="submitReply('${category}', '${id}')">
+              <i class="fas fa-paper-plane"></i> Respond
             </button>
-          </div>`;
-        replyFormHtml = `
-          <div class="reply-form">
-            <div class="locked-notice" style="margin-top: 0;">
-              <i class="fas fa-lock"></i> You must be a member to respond in this Circle.
-            </div>
-          </div>`;
-        repliesHeaderHtml = `
-          <div class="replies-header">
-            <i class="fas fa-lock"></i> Responses
-            <span class="reply-count">locked</span>
-          </div>`;
-      } else {
-        bodyHtml = thread.body;
-        replyFormHtml = `
-          <div class="reply-form">
-            <h4><i class="fas fa-comment-dots"></i> Join the conversation</h4>
-            <textarea id="reply-input" placeholder="Add your voice..."></textarea>
-            <div class="reply-submit-row">
-              <span class="hint"><i class="fas fa-info-circle"></i> Be kind and constructive</span>
-              <button class="submit-btn" onclick="submitReply('${category}', '${id}')">
-                <i class="fas fa-paper-plane"></i> Respond
-              </button>
-            </div>
-          </div>`;
-        repliesHeaderHtml = `
-          <div class="replies-header">
-            <i class="fas fa-comments"></i> Responses
-            <span class="reply-count">${thread.replies.length}</span>
-          </div>`;
-      }
+          </div>
+        </div>`;
+      repliesHeaderHtml = `
+        <div class="replies-header">
+          <i class="fas fa-comments"></i> Responses
+          <span class="reply-count">${thread.replies.length}</span>
+        </div>`;
 
       const memberPill = isMember
         ? `<span class="member-pill"><i class="fas fa-circle-check"></i> Member</span>`
@@ -3261,7 +3202,7 @@
         <div class="post-body">${bodyHtml}</div>
         <div class="post-replies">
           ${repliesHeaderHtml}
-          ${(thread.memberOnly && !isMember) ? '' : repliesHtml}
+          ${repliesHtml}
         </div>
         ${replyFormHtml}
       `;
@@ -3287,8 +3228,9 @@
     }
 
     function submitReply(category, threadId) {
-      if (!isMember) {
-        openMembershipModal();
+      if (!hasIdentity()) {
+        pendingIdentityAction = () => submitReply(category, threadId);
+        openIdentityModal();
         return;
       }
       const input = document.getElementById('reply-input');
@@ -3301,10 +3243,10 @@
       }
       const thread = threads[category].find(t => t.id === threadId);
       if (!thread) return;
-      thread.replies.push({ author: memberName, time: 'just now', badge: 'You', text: text });
+      thread.replies.push({ author: authorName(), time: 'just now', badge: 'You', text: text });
       thread.comments += 1;
       thread.time = 'just now';
-      thread.lastReply = memberName;
+      thread.lastReply = authorName();
 
       liveStats.posts += 1;
       updateStatDisplay('posts', liveStats.posts);
@@ -3441,89 +3383,108 @@
     }
 
     // ==================== MEMBERSHIP MODAL ====================
-    function openMembershipModal() {
-      const modal = document.getElementById('membership-modal');
-      modal.classList.add('active');
+    // ==================== IDENTITY (ANONYMOUS POSTING) ====================
+    const RESERVED_NAMES = ['guest_viewer', 'anonymous', 'admin', 'moderator'];
+
+    function authorName() {
+      return isMember ? memberName : (displayName || 'anonymous');
+    }
+
+    function hasIdentity() {
+      return isMember || !!displayName;
+    }
+
+    function openIdentityModal() {
+      const input = document.getElementById('identity-name');
+      if (input) input.value = displayName || '';
+      document.getElementById('identity-modal').classList.add('active');
       document.body.style.overflow = 'hidden';
+      if (input) setTimeout(() => input.focus(), 60);
     }
 
-    function closeMembershipModal() {
-      document.getElementById('membership-modal').classList.remove('active');
+    function closeIdentityModal() {
+      document.getElementById('identity-modal').classList.remove('active');
       document.body.style.overflow = '';
+      pendingIdentityAction = null;
     }
 
-    function submitInvite() {
-      const input = document.getElementById('invite-code');
-      const nameInput = document.getElementById('invite-name');
-      const code = input.value.trim().toUpperCase();
-
-      if (inviteCodeUsed) {
-        showToast('This invitation code has already been used. No further joins are possible.', true);
-        return;
-      }
-      if (!code) {
-        input.style.borderColor = '#d93025';
-        setTimeout(() => input.style.borderColor = '', 800);
-        showToast('Enter the invitation code to continue', true);
-        return;
-      }
-      if (code === INVITE_CODE) {
-        inviteCodeUsed = true;
-        becomeMember('invite', (nameInput && nameInput.value.trim()) || 'member');
-      } else {
-        input.style.borderColor = '#d93025';
-        setTimeout(() => input.style.borderColor = '', 800);
-        showToast('Invalid invitation code.', true);
-      }
+    function isNameTaken(name) {
+      const lower = name.toLowerCase();
+      if (displayName && lower === displayName.toLowerCase()) return false;
+      if (claimedNames.some(n => n.toLowerCase() === lower)) return true;
+      let taken = false;
+      Object.keys(threads).forEach(cat => {
+        threads[cat].forEach(t => {
+          if (t.author && t.author.toLowerCase() === lower) taken = true;
+          (t.replies || []).forEach(r => {
+            if (r.author && r.author.toLowerCase() === lower) taken = true;
+          });
+        });
+      });
+      return taken;
     }
 
-    function applyMemberUI() {
+    function submitIdentity() {
+      const input = document.getElementById('identity-name');
+      const raw = (input.value || '').trim().replace(/^@/, '');
+
+      if (!/^[A-Za-z0-9_]{3,20}$/.test(raw)) {
+        showToast('Username must be 3–20 letters, numbers or underscores.', true);
+        input.focus();
+        return;
+      }
+      if (RESERVED_NAMES.includes(raw.toLowerCase())) {
+        showToast('That username is reserved — pick another.', true);
+        input.focus();
+        return;
+      }
+      if (isNameTaken(raw)) {
+        showToast('That username is already taken — pick a unique one.', true);
+        input.focus();
+        return;
+      }
+
+      displayName = raw;
+      if (!claimedNames.some(n => n.toLowerCase() === raw.toLowerCase())) {
+        claimedNames.push(raw);
+      }
+      saveState();
+      applyIdentityUI();
+      const action = pendingIdentityAction;
+      pendingIdentityAction = null;
+      closeIdentityModal();
+      showToast(`You're posting as @${raw}`);
+      if (typeof action === 'function') action();
+    }
+
+    function applyIdentityUI() {
+      const name = authorName();
       const userName = document.querySelector('.user-badge .user-name');
-      if (userName) userName.textContent = '@' + memberName;
+      if (userName) userName.textContent = '@' + (hasIdentity() ? name : 'guest_viewer');
 
       document.querySelectorAll('.join-btn').forEach(btn => {
-        btn.innerHTML = `<i class="fas fa-circle-check"></i> <span>Verified Member</span>`;
-        btn.classList.add('is-member');
-        btn.onclick = () => showToast('You\'re already in the conversation 🎉');
+        btn.classList.toggle('is-member', isMember);
+        if (isMember) {
+          btn.innerHTML = `<i class="fas fa-circle-check"></i> <span>Verified Member</span>`;
+          btn.onclick = () => showToast('You\'re already in the conversation 🎉');
+        } else if (displayName) {
+          btn.innerHTML = `<i class="fas fa-user-check"></i> <span>@${displayName}</span>`;
+          btn.onclick = () => openIdentityModal();
+        } else {
+          btn.innerHTML = `<i class="fas fa-user-plus"></i> <span>Set username</span>`;
+          btn.onclick = () => openIdentityModal();
+        }
       });
-
-      const banner = document.getElementById('membership-banner');
-      if (banner) {
-        banner.classList.add('is-member');
-        banner.innerHTML = `
-          <div>
-            <h2><i class="fas fa-circle-check"></i> Verified member</h2>
-            <p>You're in, @${memberName}. Every feature below is unlocked across all five communities.</p>
-          </div>
-          <div class="invite-perks">
-            <div class="invite-perk"><i class="fas fa-check-circle"></i> Post across all communities</div>
-            <div class="invite-perk"><i class="fas fa-check-circle"></i> Early-access coupons &amp; trials</div>
-            <div class="invite-perk"><i class="fas fa-check-circle"></i> Earn karma from engagement</div>
-            <div class="invite-perk"><i class="fas fa-check-circle"></i> Unlock private circles</div>
-          </div>`;
-      }
     }
 
-    function becomeMember(method, name) {
-      isMember = true;
-      memberName = name || 'member';
-
-      applyMemberUI();
-
-      liveStats.members += 1;
-      updateStatDisplay('members', liveStats.members);
-
-      closeMembershipModal();
-      renderForum();
-      saveState();
-      showToast('Invitation accepted — welcome to Dot Circles! 🎉');
-    }
+    // Kept as an alias so older call sites keep working.
+    function applyMemberUI() { applyIdentityUI(); }
 
     // ==================== COMPOSE NEW POST ====================
     function openComposeModal() {
-      if (!isMember) {
-        showToast('Join with an invite to start a conversation', true);
-        openMembershipModal();
+      if (!hasIdentity()) {
+        pendingIdentityAction = openComposeModal;
+        openIdentityModal();
         return;
       }
       document.getElementById('compose-modal').classList.add('active');
@@ -3547,9 +3508,9 @@
     }
 
     function submitCompose() {
-      if (!isMember) {
-        showToast('Join with an invite to start a conversation', true);
-        openMembershipModal();
+      if (!hasIdentity()) {
+        pendingIdentityAction = submitCompose;
+        openIdentityModal();
         return;
       }
       const circleEl = document.getElementById('compose-circle');
@@ -3580,12 +3541,12 @@
         icon: iconMap[circle],
         title: title,
         tags: tagMap[tag],
-        author: memberName,
+        author: authorName(),
         views: '0',
         time: 'just now',
         comments: 0,
         likes: 0,
-        lastReply: memberName,
+        lastReply: authorName(),
         memberOnly: false,
         body: bodyToHtml(body),
         replies: []
@@ -3626,7 +3587,7 @@
     }
 
     document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') { closeMembershipModal(); closeComposeModal(); }
+      if (e.key === 'Escape') { closeIdentityModal(); closeComposeModal(); }
     });
 
     // ==================== LOCAL PERSISTENCE ====================
@@ -3642,7 +3603,8 @@
           threads,
           isMember,
           memberName,
-          inviteCodeUsed,
+          displayName,
+          claimedNames,
           categoryCounts,
           liveStats
         };
@@ -3677,7 +3639,8 @@
       }
       if (saved.categoryCounts) Object.assign(categoryCounts, saved.categoryCounts);
       if (saved.liveStats) Object.assign(liveStats, saved.liveStats);
-      inviteCodeUsed = !!saved.inviteCodeUsed;
+      displayName = saved.displayName || '';
+      if (Array.isArray(saved.claimedNames)) claimedNames = saved.claimedNames;
       if (saved.isMember) {
         isMember = true;
         memberName = saved.memberName || 'member';
@@ -3870,12 +3833,12 @@
           showGamesView();
           break;
         case 'profile':
-          if (!isMember) { openMembershipModal(); setActiveTab('home'); }
+          if (!hasIdentity()) { openIdentityModal(); setActiveTab('home'); }
           else {
-            applyMemberUI();
+            applyIdentityUI();
             showForum();
             setActiveTab('home');
-            showToast(`Signed in as @${memberName} — tap "Join with invite" to review your perks.`);
+            showToast(`Posting as @${authorName()} — tap "Set username" to change it.`);
           }
           break;
         case 'tools':
@@ -3891,7 +3854,7 @@
       loadToolsUsage();
       renderToolUsage();
       syncThemeIcon();
-      if (isMember) applyMemberUI();
+      applyIdentityUI();
       renderCategoryCounts();
       renderForum();
       applyCollapsedCats();

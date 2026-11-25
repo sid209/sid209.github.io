@@ -19,14 +19,13 @@ body, html {
     top: 0;
     left: 0;
     width: 100%;
-    height: calc(100% - 90px); /* reserve space for banner ad */
+    height: 100%;
 }
 #ui-layer {
     position: absolute; top: 0; left: 0; width: 100%; height: 100%;
     pointer-events: none; display: flex; flex-direction: column;
     justify-content: space-between;
     padding: 20px;
-    padding-bottom: 100px; /* reserve space for banner ad */
     box-sizing: border-box;
 }
 .top-bar { display: flex; justify-content: space-between; align-items: flex-start; width: 100%; }
@@ -89,7 +88,6 @@ body, html {
     background: rgba(0, 0, 0, 0.75); display: flex; flex-direction: column;
     align-items: center; justify-content: center; z-index: 20;
     pointer-events: auto; backdrop-filter: blur(12px);
-    padding-bottom: 90px; /* keep buttons above ad */
 }
 .screen h1 {
     font-size: 5.5vw; margin: 0 0 15px 0; letter-spacing: 6px;
@@ -129,10 +127,7 @@ body, html {
     #score-display, #time-display { font-size: 18px; padding: 6px 12px; }
     .screen h1 { font-size: 8vw; } .screen p { font-size: 4.5vw; }
     .drama-text { font-size: 10vw; letter-spacing: 4px; } #instructions { font-size: 12px; }
-    /* Push mute button above the ad banner */
-    #mute-btn { top: auto; bottom: 110px; right: 20px; font-size: 12px; padding: 8px 14px; }
-    /* Make sure instructions stay above ad */
-    #instructions { margin-bottom: 90px; }
+    #mute-btn { top: auto; bottom: 20px; right: 20px; font-size: 12px; padding: 8px 14px; }
 }
     </style>
 </head>
@@ -366,8 +361,7 @@ let lastTimeUpdate = 0;
 
 function resize() {
     width = canvas.width = window.innerWidth;
-    // Reserve ~90px at the bottom for the banner ad
-    height = canvas.height = window.innerHeight - 90;
+    height = canvas.height = window.innerHeight;
     mouseX = width / 2; mouseY = height / 2;
 }
 window.addEventListener('resize', resize);
