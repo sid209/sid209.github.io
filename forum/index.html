@@ -407,18 +407,6 @@
 
     .cat-desc { font-size: 13px; color: var(--text-2); margin-top: 3px; max-width: 60ch; }
 
-    .cat-chips { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 8px; }
-
-    .cat-chip {
-      display: inline-flex; align-items: center; gap: 5px;
-      font-size: 11.5px; color: var(--text-2);
-    }
-
-    .cat-chip::before {
-      content: ""; width: 5px; height: 5px; border-radius: 1px;
-      background: var(--cat-color); opacity: 0.9;
-    }
-
     /* Collapsible topic sections */
     .category-header {
       cursor: pointer; user-select: none;
@@ -1487,8 +1475,7 @@
       .col-head { display: none; }
       .category-section { border-radius: 12px; }
       .category-header { padding: 14px; }
-      .category-header .cat-desc,
-      .category-header .cat-chips { display: none; }
+      .category-header .cat-desc { display: none; }
       .thread-item { padding: 14px; }
       .rail { gap: 14px; }
 
@@ -1708,10 +1695,6 @@
                         <span class="badge-count" id="count-journey">132 posts</span>
                       </div>
                       <p class="cat-desc">Progress logs, personal challenges and lessons from people building something.</p>
-                      <div class="cat-chips">
-                        <span class="cat-chip">Progress logs</span>
-                        <span class="cat-chip">Lessons learned</span>
-                      </div>
                     </div>
                     <span class="cat-toggle" aria-hidden="true"><i class="fas fa-chevron-down"></i></span>
                   </div>
@@ -1729,11 +1712,6 @@
                         <span class="badge-count" id="count-tools">87 posts</span>
                       </div>
                       <p class="cat-desc">Hands-on reviews of apps, gear and services the community has actually tested.</p>
-                      <div class="cat-chips">
-                        <span class="cat-chip">Reviews</span>
-                        <span class="cat-chip">Comparisons</span>
-                        <span class="cat-chip tool-link" role="button" tabindex="0" onclick="event.stopPropagation(); openTools()"><i class="fas fa-wand-magic-sparkles"></i> Open spy tools</span>
-                      </div>
                     </div>
                     <span class="cat-toggle" aria-hidden="true"><i class="fas fa-chevron-down"></i></span>
                   </div>
@@ -1751,10 +1729,6 @@
                         <span class="badge-count" id="count-coupons">204 posts</span>
                       </div>
                       <p class="cat-desc">Discount codes, early access drops and free trials worth claiming.</p>
-                      <div class="cat-chips">
-                        <span class="cat-chip">Deals</span>
-                        <span class="cat-chip">Trials</span>
-                      </div>
                     </div>
                     <span class="cat-toggle" aria-hidden="true"><i class="fas fa-chevron-down"></i></span>
                   </div>
@@ -1772,10 +1746,6 @@
                         <span class="badge-count" id="count-testers">96 posts</span>
                       </div>
                       <p class="cat-desc">Playtests and beta programs looking for honest feedback from real users.</p>
-                      <div class="cat-chips">
-                        <span class="cat-chip">Beta builds</span>
-                        <span class="cat-chip">Playtests</span>
-                      </div>
                     </div>
                     <span class="cat-toggle" aria-hidden="true"><i class="fas fa-chevron-down"></i></span>
                   </div>
@@ -1793,12 +1763,6 @@
                         <span class="badge-count" id="count-lounge">330 posts</span>
                       </div>
                       <p class="cat-desc">Movies, music, sports, TV and everything else worth talking about.</p>
-                      <div class="cat-chips">
-                        <span class="cat-chip">Movies</span>
-                        <span class="cat-chip">Music</span>
-                        <span class="cat-chip">Sports</span>
-                        <span class="cat-chip">Weekly threads</span>
-                      </div>
                     </div>
                     <span class="cat-toggle" aria-hidden="true"><i class="fas fa-chevron-down"></i></span>
                   </div>
@@ -2024,14 +1988,6 @@
 
         <label class="field-label" for="compose-title">Title</label>
         <input type="text" class="field-input" id="compose-title" placeholder="Give your conversation a title" maxlength="120" autocomplete="off">
-
-        <label class="field-label" for="compose-tag">Tag (optional)</label>
-        <select class="field-input field-select" id="compose-tag">
-          <option value="none">No tag</option>
-          <option value="hot">HOT</option>
-          <option value="verified">VERIFIED</option>
-          <option value="member">MEMBER</option>
-        </select>
 
         <label class="field-label" for="compose-body">What's on your mind?</label>
         <textarea class="field-input field-textarea" id="compose-body" placeholder="Write your post... Leave a blank line to start a new paragraph."></textarea>
@@ -2847,21 +2803,19 @@
     }
 
     function renderThreadItem(thread, category, showCategory) {
-      const tagsHtml = thread.tags.map(t => `<span class="tag ${t.cls}">${t.label}</span>`).join('');
       const lockedHtml = '';
       const karma = calculateKarma(thread);
       const revenue = calculateRevenue(thread);
-      const searchText = `${thread.title} ${thread.author} ${CAT_LABELS[category] || ''} ${thread.tags.map(t => t.label).join(' ')}`.toLowerCase();
+      const searchText = `${thread.title} ${thread.author} ${CAT_LABELS[category] || ''}`.toLowerCase();
       const catChip = showCategory
         ? `<span class="thread-cat ${category}">${CAT_LABELS[category] || category}</span>`
         : '';
       return `
-        <div class="thread-item" data-thread-id="${thread.id}" data-tags="${thread.tags.map(t => t.label).join(' ')}" data-search="${searchText.replace(/"/g, '&quot;')}" onclick="openPost('${category}', '${thread.id}')">
+        <div class="thread-item" data-thread-id="${thread.id}" data-search="${searchText.replace(/"/g, '&quot;')}" onclick="openPost('${category}', '${thread.id}')">
           <div class="thread-avatar"><i class="fas ${thread.icon}"></i></div>
           <div class="thread-info">
             <div class="thread-title">
               <a href="javascript:void(0)">${thread.title}</a>
-              ${tagsHtml}
             </div>
             <div class="thread-meta">
               ${catChip}
@@ -3080,22 +3034,6 @@
       if (home) home.classList.add('active');
     }
 
-    function filterTag(tag) {
-      ensureForumView();
-      setFeedModeSilent('categories');
-      document.querySelectorAll('.category-section').forEach(sec => { sec.style.display = ''; });
-      document.querySelectorAll('.thread-item').forEach(item => {
-        const tags = (item.dataset.tags || '').toUpperCase();
-        item.style.display = (!tag || tags.includes(tag.toUpperCase())) ? '' : 'none';
-      });
-      document.querySelectorAll('.category-section').forEach(sec => {
-        const any = Array.from(sec.querySelectorAll('.thread-item')).some(item => item.style.display !== 'none');
-        sec.style.display = any ? '' : 'none';
-        sec.classList.toggle('search-open', !!tag && any);
-      });
-      scrollToAnchor(document.getElementById('forum-feed'));
-    }
-
     function renderReply(reply) {
       const badgeHtml = reply.badge ? `<span class="reply-badge">${reply.badge}</span>` : '';
       const avatarIcon = reply.badge === 'OP' ? 'fa-user-tie' : (reply.badge === 'You' ? 'fa-user-astronaut' : 'fa-user');
@@ -3123,7 +3061,6 @@
       const thread = threads[category].find(t => t.id === id);
       if (!thread) return;
 
-      const tagsHtml = thread.tags.map(t => `<span class="tag ${t.cls}">${t.label}</span>`).join('');
       const repliesHtml = thread.replies.map(r => renderReply(r)).join('');
 
       let bodyHtml, replyFormHtml, repliesHeaderHtml;
@@ -3189,7 +3126,6 @@
         <div class="post-header">
           <div class="post-title-row">
             <h1 class="post-title">${thread.title}</h1>
-            ${tagsHtml}
             ${memberPill}
           </div>
           <div class="post-meta-row">
@@ -3517,32 +3453,24 @@
       }
       const circleEl = document.getElementById('compose-circle');
       const titleEl  = document.getElementById('compose-title');
-      const tagEl    = document.getElementById('compose-tag');
       const bodyEl   = document.getElementById('compose-body');
 
       const circle = circleEl.value;
       const title  = titleEl.value.trim();
       const body   = bodyEl.value.trim();
-      const tag    = tagEl.value;
 
       let ok = true;
       if (!title) { titleEl.style.borderColor = '#d93025'; setTimeout(() => titleEl.style.borderColor = '', 800); ok = false; }
       if (!body)  { bodyEl.style.borderColor  = '#d93025'; setTimeout(() => bodyEl.style.borderColor  = '', 800); ok = false; }
       if (!ok) { showToast('Add a title and some content to post', true); return; }
 
-      const tagMap = {
-        none: [],
-        hot: [{ label: 'HOT', cls: 'hot' }],
-        verified: [{ label: 'VERIFIED', cls: 'verified' }],
-        member: [{ label: 'MEMBER', cls: 'member' }]
-      };
       const iconMap = { journey: 'fa-seedling', tools: 'fa-screwdriver-wrench', coupons: 'fa-ticket', testers: 'fa-gamepad', lounge: 'fa-comment-dots' };
 
       const newThread = {
         id: 'u' + Date.now(),
         icon: iconMap[circle],
         title: title,
-        tags: tagMap[tag],
+        tags: [],
         author: authorName(),
         views: '0',
         time: 'just now',
@@ -3564,7 +3492,6 @@
 
       titleEl.value = '';
       bodyEl.value = '';
-      tagEl.value = 'none';
 
       closeComposeModal();
       renderForum();
