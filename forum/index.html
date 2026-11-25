@@ -2484,15 +2484,16 @@
     }
 
     // ==================== KARMA MODEL ====================
-    // Karma = Views + Likes + Comments, weighted to reward real engagement.
+    // Karma = weighted views + likes + engagement. Views count the least,
+    // engagement (comments/replies) counts the most.
     const KARMA_WEIGHTS = {
       views:    1,
-      likes:    1,
-      comments: 1
+      likes:    5,
+      comments: 10
     };
 
-    // Revenue is derived from karma: each karma point earns a small amount.
-    const REVENUE_PER_KARMA = 0.004; // $0.004 per karma
+    // Revenue is strictly proportional to karma: 1000 karma = $22.
+    const REVENUE_PER_KARMA = 22 / 1000;
 
     function parseCount(str) {
       if (typeof str === 'number') return str;
@@ -2525,17 +2526,13 @@
       return '$' + amount.toFixed(2);
     }
 
-    // Regular posts are shown with revenue above $50; featured cards use their
-    // own higher multiplier.
-    const REVENUE_DISPLAY_FACTOR = 11;
-    const REVENUE_DISPLAY_MIN = 55;
-
+    // Revenue is always exactly karma * $0.022 (1000 karma = $22).
     function displayRevenue(thread) {
-      return Math.max(REVENUE_DISPLAY_MIN, calculateRevenue(thread) * REVENUE_DISPLAY_FACTOR);
+      return calculateRevenue(thread);
     }
 
     function displayRevenueFromKarma(karma) {
-      return Math.max(REVENUE_DISPLAY_MIN, karma * REVENUE_PER_KARMA * REVENUE_DISPLAY_FACTOR);
+      return karma * REVENUE_PER_KARMA;
     }
 
     // ==================== LIVE STATS STATE ====================
@@ -3075,8 +3072,6 @@
 
     function renderFeatured() {
       const picks = [['journey', 'j1'], ['tools', 't1'], ['coupons', 'c1']];
-      // Featured cards show an amplified revenue figure, never below $305.
-      const featuredRevenue = t => Math.max(305, calculateRevenue(t) * 25);
       document.getElementById('featured-grid').innerHTML = picks.map(([cat, id]) => {
         const t = threads[cat].find(x => x.id === id);
         if (!t) return '';
@@ -3089,7 +3084,7 @@
                 ${t.author}
               </span>
               <span class="featured-revenue" title="Revenue earned from this post's karma">
-                <i class="fas fa-dollar-sign"></i>${formatRevenue(featuredRevenue(t))}
+                <i class="fas fa-dollar-sign"></i>${formatRevenue(calculateRevenue(t))}
               </span>
             </span>
           </button>`;
