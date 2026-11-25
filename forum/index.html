@@ -815,6 +815,10 @@
     .activity-stat strong { font-size: 16px; font-weight: 700; font-variant-numeric: tabular-nums; white-space: nowrap; }
     .activity-stat span { font-size: 10px; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.04em; }
     .activity-stat.activity-revenue strong { color: var(--revenue); }
+    .payout-progress { display: flex; align-items: center; gap: 10px; margin: 0 0 12px; }
+    .payout-track { flex: 1; height: 6px; border-radius: 999px; background: var(--surface-2); overflow: hidden; }
+    .payout-track span { display: block; height: 100%; width: 0%; background: var(--revenue); border-radius: 999px; transition: width 0.4s ease; }
+    .payout-label { font-size: 10.5px; color: var(--text-3); white-space: nowrap; }
     .activity-actions { display: flex; align-items: center; gap: 10px; }
     .activity-cta {
       flex: 1; height: 36px; border-radius: 9px;
@@ -1772,6 +1776,10 @@
               <div class="activity-stat"><strong id="my-karma">0</strong><span>karma</span></div>
               <div class="activity-stat activity-revenue"><strong id="my-revenue">$0</strong><span>earned</span></div>
             </div>
+            <div class="payout-progress" aria-label="Payout progress">
+              <div class="payout-track"><span id="payout-fill"></span></div>
+              <span class="payout-label" id="payout-text">$0.00 of $80 payout</span>
+            </div>
             <div class="activity-actions">
               <button class="activity-cta" onclick="openComposeModal()"><i class="fas fa-pen"></i> New post</button>
               <button class="activity-link" onclick="showMyPosts()">My posts</button>
@@ -2031,6 +2039,7 @@
     let displayName = '';
     let claimedNames = [];
     let pendingIdentityAction = null;
+    let userActions = { replies: 0, likes: 0 };
 
     // ==================== TOOLS ====================
     const TOOLS_SEARCH_LIMIT = 3;
@@ -3405,6 +3414,7 @@
       if (!thread) return;
       thread.replies.push({ author: authorName(), time: 'just now', badge: 'You', text: text });
       thread.comments += 1;
+      userActions.replies += 1;
       thread.time = 'just now';
       thread.lastReply = authorName();
 
@@ -3421,6 +3431,9 @@
       if (el.classList.contains('liked')) return;
       el.classList.add('liked');
       el.style.color = 'var(--accent)';
+      userActions.likes += 1;
+      saveState();
+      renderActivityCard();
     }
 
         // ==================== LIVE STATS ENGINE ====================
@@ -3468,10 +3481,6 @@
         bumpRandomThread();
       }
 
-      if (hasIdentity() && Math.random() > 0.9) {
-        simulateReplyToMyPost();
-      }
-
       if (events.length) {
         updateActivityText(events.join(' • '));
       } else {
@@ -3486,7 +3495,9 @@
     function bumpRandomThread() {
       const categories = ['journey', 'tools', 'coupons', 'testers', 'lounge', 'general', 'review', 'hobbies', 'tech', 'entertainment'];
       const cat = categories[Math.floor(Math.random() * categories.length)];
-      const list = threads[cat];
+      const me = hasIdentity() ? authorName().toLowerCase() : '';
+      const list = (threads[cat] || []).filter(t => !me || (t.author || '').toLowerCase() !== me);
+      if (!list.length) return;
       const thread = list[Math.floor(Math.random() * list.length)];
       thread.comments += 1;
       thread.lastReply = sampleUsernames[Math.floor(Math.random() * sampleUsernames.length)];
@@ -3661,6 +3672,43 @@
       return myThreads().reduce((sum, x) => sum + ((x.thread.replies || []).length), 0);
     }
 
+    // User karma = karma from their posts + karma from community interactions.
+    function userKarma() {
+      const mine = myThreads();
+      const postKarma = mine.reduce((sum, x) => sum + calculateKarma(x.thread), 0);
+      const interactionKarma = (userActions.replies || 0) * 10
+        + (userActions.likes || 0) * 2
+        + mine.length * 5;
+      return postKarma + interactionKarma;
+    }
+
+    // Payout balance grows a little each day and approaches, but never reaches,
+    // the $80 minimum payout.
+    const PAYOUT_KEY = 'circles_payout_v1';
+    const PAYOUT_TARGET = 80;
+
+    function accrueDailyRevenue() {
+      const today = new Date().toDateString();
+      let data = { balance: 0, last: '' };
+      try { data = JSON.parse(localStorage.getItem(PAYOUT_KEY)) || data; } catch (e) {}
+      const karma = userKarma();
+      const dailyRate = 0.025 + Math.min(0.02, karma / 100000);
+      if (!data.last) {
+        data.balance = 0.5;
+        data.last = today;
+      } else if (data.last !== today) {
+        const elapsed = Math.round((Date.now() - new Date(data.last).getTime()) / 86400000);
+        const days = Math.max(1, Math.min(30, elapsed || 1));
+        for (let i = 0; i < days; i++) {
+          data.balance = data.balance + (PAYOUT_TARGET - data.balance) * dailyRate;
+        }
+        data.last = today;
+      }
+      data.balance = Math.min(79.99, Math.max(0, data.balance));
+      try { localStorage.setItem(PAYOUT_KEY, JSON.stringify(data)); } catch (e) {}
+      return data.balance;
+    }
+
     function updateStreak() {
       const today = new Date().toDateString();
       let data = { last: '', streak: 0 };
@@ -3680,16 +3728,21 @@
       const mine = myThreads();
       const posts = mine.length;
       const responses = mine.reduce((sum, x) => sum + ((x.thread.replies || []).length), 0);
-      const karma = mine.reduce((sum, x) => sum + calculateKarma(x.thread), 0);
-      const revenue = mine.reduce((sum, x) => sum + displayRevenue(x.thread), 0);
+      const karma = userKarma();
+      const balance = accrueDailyRevenue();
       const streak = updateStreak();
 
       const set = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
       set('my-posts', posts);
       set('my-responses', responses);
       set('my-karma', formatKarma(karma));
-      set('my-revenue', formatRevenue(revenue));
+      set('my-revenue', formatRevenue(balance));
       set('activity-streak', `🔥 ${streak}-day streak`);
+
+      const fill = document.getElementById('payout-fill');
+      const payoutText = document.getElementById('payout-text');
+      if (fill) fill.style.width = Math.min(99, (balance / PAYOUT_TARGET) * 100).toFixed(1) + '%';
+      if (payoutText) payoutText.textContent = `${formatRevenue(balance)} of $${PAYOUT_TARGET} payout`;
 
       const title = card.querySelector('.activity-title');
       const actions = card.querySelector('.activity-actions');
@@ -3738,26 +3791,6 @@
           : '<div class="empty-state">You have not posted yet. Tap "New post" to start earning.</div>';
       }
       scrollToAnchor(catFeed);
-    }
-
-    function simulateReplyToMyPost() {
-      if (!hasIdentity()) return false;
-      const mine = myThreads();
-      if (!mine.length) return false;
-      const pick = mine[Math.floor(Math.random() * mine.length)];
-      const thread = pick.thread;
-      const author = sampleUsernames[Math.floor(Math.random() * sampleUsernames.length)];
-      thread.replies = thread.replies || [];
-      thread.replies.push({ author, time: 'just now', badge: '', text: 'Great post — thanks for sharing this.' });
-      thread.comments += 1;
-      thread.time = 'just now';
-      thread.lastReply = author;
-      liveStats.posts += 1;
-      updateStatDisplay('posts', liveStats.posts);
-      renderForum();
-      saveState();
-      showToast(`New response from @${author} on your post`);
-      return true;
     }
 
     // ==================== COMPOSE NEW POST ====================
@@ -3876,6 +3909,7 @@
           memberName,
           displayName,
           claimedNames,
+          userActions,
           categoryCounts,
           liveStats
         };
@@ -3912,6 +3946,9 @@
       if (saved.liveStats) Object.assign(liveStats, saved.liveStats);
       displayName = saved.displayName || '';
       if (Array.isArray(saved.claimedNames)) claimedNames = saved.claimedNames;
+      if (saved.userActions) {
+        userActions = { replies: saved.userActions.replies || 0, likes: saved.userActions.likes || 0 };
+      }
       if (saved.isMember) {
         isMember = true;
         memberName = saved.memberName || 'member';
@@ -4121,8 +4158,8 @@
       if (hasIdentity() && myThreads().length) {
         const mine = myThreads();
         const responses = mine.reduce((s, x) => s + ((x.thread.replies || []).length), 0);
-        const revenue = mine.reduce((s, x) => s + displayRevenue(x.thread), 0);
-        showToast(`🔥 ${updateStreak()}-day streak · ${responses} responses · ${formatRevenue(revenue)} earned`);
+        const balance = accrueDailyRevenue();
+        showToast(`🔥 ${updateStreak()}-day streak · ${responses} responses · ${formatRevenue(balance)} of $80`);
       }
       if (document.fonts && document.fonts.ready) {
         document.fonts.ready.then(syncBottomChrome).catch(() => {});
