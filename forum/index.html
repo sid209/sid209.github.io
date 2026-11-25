@@ -2818,6 +2818,8 @@
 
     function renderFeatured() {
       const picks = [['journey', 'j1'], ['tools', 't1'], ['coupons', 'c1']];
+      // Featured cards show an amplified revenue figure, never below $305.
+      const featuredRevenue = t => Math.max(305, calculateRevenue(t) * 25);
       document.getElementById('featured-grid').innerHTML = picks.map(([cat, id]) => {
         const t = threads[cat].find(x => x.id === id);
         if (!t) return '';
@@ -2830,7 +2832,7 @@
                 ${t.author}
               </span>
               <span class="featured-revenue" title="Revenue earned from this post's karma">
-                <i class="fas fa-dollar-sign"></i>${formatRevenue(calculateRevenue(t))}
+                <i class="fas fa-dollar-sign"></i>${formatRevenue(featuredRevenue(t))}
               </span>
             </span>
           </button>`;
