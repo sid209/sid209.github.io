@@ -830,6 +830,26 @@
     .activity-link { font-size: 12px; font-weight: 600; color: var(--text-2); padding: 0 4px; white-space: nowrap; }
     .activity-link:hover { color: var(--accent); }
 
+    .pinned-post {
+      background: var(--surface);
+      border: 1px solid var(--accent-border);
+      border-left: 3px solid var(--accent);
+      border-radius: 14px;
+      padding: 14px 16px;
+      margin-bottom: 18px;
+    }
+    .pinned-head { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .pinned-badge {
+      font-size: 10px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase;
+      color: var(--accent); background: var(--accent-soft); border: 1px solid var(--accent-border);
+      padding: 2px 8px; border-radius: 999px;
+      display: inline-flex; align-items: center; gap: 4px;
+    }
+    .pinned-title { font-size: 14px; font-weight: 650; }
+    .pinned-rules { margin: 10px 0 0; padding-left: 18px; display: grid; gap: 6px; }
+    .pinned-rules li { font-size: 12.5px; color: var(--text-2); line-height: 1.5; }
+    .pinned-rules strong { color: var(--text); }
+
     .tab-badge {
       position: absolute; top: 2px; right: calc(50% - 18px);
       min-width: 16px; height: 16px; padding: 0 4px;
@@ -1400,6 +1420,9 @@
 
     .modal-submit:hover { background: var(--accent-hover); }
 
+    .compose-limit { font-size: 11.5px; color: var(--text-3); text-align: center; margin-bottom: 8px; }
+    .compose-limit.limit-hit { color: var(--accent); font-weight: 600; }
+
     /* ====== TOAST ====== */
     .toast {
       position: fixed; left: 50%; bottom: 26px; z-index: 200;
@@ -1786,6 +1809,19 @@
             </div>
           </div>
 
+          <div class="pinned-post" id="pinned-post">
+            <div class="pinned-head">
+              <span class="pinned-badge"><i class="fas fa-thumbtack"></i> Pinned</span>
+              <span class="pinned-title">How karma, revenue &amp; payout work</span>
+            </div>
+            <ul class="pinned-rules">
+              <li><strong>Karma</strong> = views (lowest weight) + likes + engagement. Likes and replies count more than views.</li>
+              <li><strong>Revenue</strong> = karma × $0.022 — every 1,000 karma earns $22.</li>
+              <li><strong>Payout</strong> grows a little every day toward the <strong>$80 minimum</strong> and never quite reaches it — keep coming back.</li>
+              <li><strong>Posting limit</strong> = 3 new posts per day. Replies are unlimited.</li>
+            </ul>
+          </div>
+
           <section>
             <h1 class="page-title">Featured posts</h1>
             <div class="featured-grid" id="featured-grid"></div>
@@ -2023,6 +2059,7 @@
         <label class="field-label" for="compose-body">What's on your mind?</label>
         <textarea class="field-input field-textarea" id="compose-body" placeholder="Write your post... Leave a blank line to start a new paragraph."></textarea>
 
+        <p class="compose-limit" id="compose-limit">3 of 3 posts left today</p>
         <button class="modal-submit" onclick="submitCompose()">
           <i class="fas fa-paper-plane"></i> Post to Dot Circles
         </button>
@@ -3709,6 +3746,29 @@
       return data.balance;
     }
 
+    // Daily new-post limit (replies are unlimited).
+    const POST_LIMIT_KEY = 'circles_post_limit_v1';
+    const POST_DAILY_LIMIT = 3;
+
+    function postUsageToday() {
+      const today = new Date().toDateString();
+      let data = { date: '', count: 0 };
+      try { data = JSON.parse(localStorage.getItem(POST_LIMIT_KEY)) || data; } catch (e) {}
+      if (data.date !== today) return { date: today, count: 0 };
+      return { date: today, count: data.count || 0 };
+    }
+
+    function postsLeftToday() {
+      return Math.max(0, POST_DAILY_LIMIT - postUsageToday().count);
+    }
+
+    function recordPostToday() {
+      const usage = postUsageToday();
+      try {
+        localStorage.setItem(POST_LIMIT_KEY, JSON.stringify({ date: usage.date, count: usage.count + 1 }));
+      } catch (e) {}
+    }
+
     function updateStreak() {
       const today = new Date().toDateString();
       let data = { last: '', streak: 0 };
@@ -3800,6 +3860,16 @@
         openIdentityModal();
         return;
       }
+      const left = postsLeftToday();
+      const note = document.getElementById('compose-limit');
+      if (note) {
+        note.textContent = left > 0
+          ? `${left} of ${POST_DAILY_LIMIT} posts left today`
+          : 'Daily post limit reached — resets at midnight';
+        note.classList.toggle('limit-hit', left <= 0);
+      }
+      const submitBtn = document.querySelector('#compose-modal .modal-submit');
+      if (submitBtn) submitBtn.disabled = left <= 0;
       document.getElementById('compose-modal').classList.add('active');
       document.body.style.overflow = 'hidden';
     }
@@ -3824,6 +3894,10 @@
       if (!hasIdentity()) {
         pendingIdentityAction = submitCompose;
         openIdentityModal();
+        return;
+      }
+      if (postsLeftToday() <= 0) {
+        showToast('Daily limit reached — you can publish 3 new posts per day. Resets at midnight.', true);
         return;
       }
       const circleEl = document.getElementById('compose-circle');
@@ -3858,6 +3932,7 @@
       };
 
       threads[circle].unshift(newThread);
+      recordPostToday();
       categoryCounts[circle] += 1;
       const countEl = document.getElementById('count-' + circle);
       if (countEl) { countEl.textContent = categoryCounts[circle] + ' posts'; pulseEl(countEl); }
