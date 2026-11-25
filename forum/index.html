@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -173,6 +173,7 @@
 
     .sidebar-toggle { display: none; }
     .menu-btn, .search-btn { display: none; }
+    .games-topbar-btn { display: none; }
     .sidebar-scrim {
       position: fixed; inset: 0; z-index: 110;
       background: rgba(10, 10, 12, 0.45);
@@ -211,10 +212,10 @@
       background: var(--surface-3); color: var(--text-2); font-size: 11px;
     }
 
-    /* ====== SHELL / SIDEBAR ====== */
+    /* ====== SHELL ====== */
     .shell {
       display: grid;
-      grid-template-columns: var(--sidebar-w) minmax(0, 1fr);
+      grid-template-columns: minmax(0, 1fr);
       align-items: start;
     }
 
@@ -1369,7 +1370,7 @@
 
     .toast { bottom: calc(26px + var(--ad-h)); }
 
-    @media (min-width: 769px) { .compose-fab { display: none; } }
+    @media (min-width: 769px) { .compose-fab { display: none; } .games-topbar-btn { display: grid; } }
     .compose-fab {
       position: fixed; right: 18px; z-index: 80;
       bottom: calc(78px + var(--ad-h) + env(safe-area-inset-bottom));
@@ -1543,8 +1544,7 @@
   <script>
     (function () {
       try {
-        var t = localStorage.getItem('circles_theme');
-        if (!t) t = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        var t = localStorage.getItem('circles_theme') || 'light';
         document.documentElement.setAttribute('data-theme', t);
       } catch (e) { document.documentElement.setAttribute('data-theme', 'light'); }
     })();
@@ -1553,12 +1553,6 @@
 <body>
   <div class="forum-wrapper">
     <header class="topbar">
-      <button class="icon-btn sidebar-toggle" onclick="toggleSidebar()" aria-label="Toggle navigation">
-        <i class="fas fa-bars"></i>
-      </button>
-      <button class="icon-btn menu-btn" onclick="toggleSidebar()" aria-label="Open menu">
-        <i class="fas fa-bars"></i>
-      </button>
       <div class="brand" onclick="resetFeedFilters(); showForum(); window.scrollTo({ top: 0, behavior: 'smooth' })">
         <span class="brand-mark" aria-hidden="true"><span class="brand-dot d1"></span><span class="brand-dot d2"></span><span class="brand-dot d3"></span></span>
         <span class="brand-name">Dot Circles</span>
@@ -1571,6 +1565,9 @@
         <span class="pill-note"><i class="fas fa-user-secret"></i> Anonymous</span>
         <button class="compose-btn tools-open-btn" onclick="openTools()" title="Open spy tools">
           <i class="fas fa-wand-magic-sparkles"></i> <span>Tools</span>
+        </button>
+        <button class="icon-btn games-topbar-btn" onclick="showGamesView()" aria-label="Arcade" title="Arcade">
+          <i class="fas fa-gamepad"></i>
         </button>
         <button class="icon-btn search-btn" onclick="focusMobileSearch()" aria-label="Search">
           <i class="fas fa-magnifying-glass"></i>
@@ -1597,65 +1594,6 @@
     </div>
 
     <div class="shell">
-      <aside class="sidebar" id="sidebar">
-        <div class="side-group">
-          <div class="side-label">Browse</div>
-          <a class="side-link active" onclick="resetFeedFilters(); showForum(); window.scrollTo({ top: 0, behavior: 'smooth' })">
-            <i class="fas fa-house"></i> Home
-          </a>
-          <a class="side-link" onclick="showForum(); setFeedMode('categories')">
-            <i class="fas fa-layer-group"></i> Topics
-          </a>
-          <a class="side-link" onclick="setFeedMode('latest')">
-            <i class="fas fa-clock"></i> Latest
-          </a>
-          <a class="side-link" onclick="setFeedMode('hot')">
-            <i class="fas fa-fire"></i> Hot
-          </a>
-          <a class="side-link" onclick="openTools()">
-            <i class="fas fa-wand-magic-sparkles"></i> Tools
-          </a>
-          <a class="side-link" data-view-link="games" onclick="showGamesView()">
-            <i class="fas fa-gamepad"></i> Games
-          </a>
-          <a class="side-link" onclick="openIdentityModal()">
-            <i class="fas fa-user-plus"></i> Set username
-          </a>
-          <a class="side-link" onclick="showToast('Karma = views + likes + replies. Karma converts to revenue on every post.')">
-            <i class="fas fa-star"></i> Karma
-          </a>
-        </div>
-
-        <div class="side-group">
-          <div class="side-label">Communities</div>
-          <a class="side-link" data-cat-link="journey" onclick="filterCategory('journey', this)">
-            <span class="side-dot journey"></span> Journeys
-          </a>
-          <a class="side-link" data-cat-link="tools" onclick="filterCategory('tools', this)">
-            <span class="side-dot tools"></span> Verified Tools
-          </a>
-          <a class="side-link" data-cat-link="coupons" onclick="filterCategory('coupons', this)">
-            <span class="side-dot coupons"></span> Coupons &amp; Trials
-          </a>
-          <a class="side-link" data-cat-link="testers" onclick="filterCategory('testers', this)">
-            <span class="side-dot testers"></span> App &amp; Game Testers
-          </a>
-          <a class="side-link" data-cat-link="lounge" onclick="filterCategory('lounge', this)">
-            <span class="side-dot lounge"></span> Lounge
-          </a>
-          <a class="side-link" data-cat-link="all" onclick="filterCategory('all', this)">
-            <i class="fas fa-list"></i> All communities
-          </a>
-        </div>
-
-        <div class="side-group">
-          <div class="side-label">About</div>
-          <a class="side-link" onclick="showToast('Dot Circles is a small, anonymous space for conversations across five communities. Pick a unique username to post.')">
-            <i class="fas fa-circle-info"></i> About Dot Circles
-          </a>
-        </div>
-      </aside>
-
       <!-- ========== MAIN VIEW ========== -->
       <div id="forum-view" class="content-area">
         <div class="page-inner">
@@ -1903,8 +1841,6 @@
       </div>
     </div>
   </div>
-
-  <div class="sidebar-scrim" id="sidebar-scrim" onclick="closeSidebar()"></div>
 
   <!-- ========== MOBILE APP TAB BAR ========== -->
   <nav class="app-tabbar" aria-label="App navigation">
@@ -3618,18 +3554,9 @@
       syncThemeIcon();
     }
 
-    function toggleSidebar() {
-      const sidebar = document.getElementById('sidebar');
-      const open = sidebar.classList.toggle('open');
-      const scrim = document.getElementById('sidebar-scrim');
-      if (scrim) scrim.classList.toggle('show', open);
-    }
-
-    function closeSidebar() {
-      document.getElementById('sidebar').classList.remove('open');
-      const scrim = document.getElementById('sidebar-scrim');
-      if (scrim) scrim.classList.remove('show');
-    }
+    // Sidebar removed — keep these as safe no-ops for existing call sites.
+    function toggleSidebar() {}
+    function closeSidebar() {}
 
     function focusMobileSearch() {
       const box = document.getElementById('search-input-mobile');
@@ -3792,9 +3719,6 @@
         document.fonts.ready.then(syncBottomChrome).catch(() => {});
       }
       startLiveStats();
-      document.getElementById('sidebar').addEventListener('click', () => {
-        if (window.innerWidth <= 900) closeSidebar();
-      });
       document.addEventListener('keydown', e => {
         if (e.key === 'Escape') { closeSidebar(); closeGame(); }
       });
