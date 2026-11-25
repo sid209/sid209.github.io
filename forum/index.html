@@ -1360,37 +1360,10 @@
     }
     .tab-item.tab-primary span { display: none; }
 
-    /* ====== SMART BANNER AD SLOT ====== */
+    /* ====== BOTTOM CHROME ====== */
     :root {
-      --ad-w: 728px;
-      --ad-slot-h: 90px;
-      --ad-h: 98px;            /* slot height + bar padding + border */
+      --ad-h: 0px;             /* no bottom ad banner */
       --tabbar-h: 0px;
-    }
-
-    body { padding-bottom: var(--ad-h); }
-
-    .ad-banner {
-      position: fixed; left: 0; right: 0; bottom: 0; z-index: 86;
-      display: flex; align-items: center; justify-content: center;
-      padding: 4px 0;
-      background: var(--surface);
-      border-top: 1px solid var(--border);
-    }
-
-    .ad-slot {
-      width: 100%; max-width: var(--ad-w); height: var(--ad-slot-h);
-      display: flex; align-items: center; justify-content: center;
-      background: var(--surface-2);
-      border: 1px dashed var(--border-strong);
-      overflow: hidden;
-    }
-
-    .ad-slot:empty::after {
-      content: "Advertisement · 728 × 90";
-      font-size: 9.5px; font-weight: 600; letter-spacing: 0.08em;
-      text-transform: uppercase; color: var(--text-3);
-      text-align: center; padding: 0 10px;
     }
 
     .toast { bottom: calc(26px + var(--ad-h)); }
@@ -1410,18 +1383,10 @@
     @media (max-width: 768px) {
       :root {
         --topbar-h: 56px;
-        --ad-w: 320px;
-        --ad-slot-h: 100px;
-        --ad-h: 109px;
+        --ad-h: 0px;
         --tabbar-h: 67px;
       }
 
-      /* Ad banner owns the very bottom edge; the app tab bar sits above it. */
-      .ad-banner {
-        bottom: 0; z-index: 92;
-        padding-bottom: calc(4px + env(safe-area-inset-bottom));
-      }
-      .ad-slot:empty::after { content: "Advertisement · 320 × 100"; }
       .toast { bottom: calc(78px + var(--ad-h) + env(safe-area-inset-bottom)); }
 
       body { overscroll-behavior-y: none; }
@@ -1997,16 +1962,6 @@
   </div>
 
   <div class="sidebar-scrim" id="sidebar-scrim" onclick="closeSidebar()"></div>
-
-  <!-- ========== SMART BANNER AD SLOT ========== -->
-  <!-- AdMob banners are native SDK views (Android AdView / iOS GADBannerView),
-       not HTML. This slot reserves the smart-banner space so a WebView wrapper
-       can mount the native banner here without covering page content. If you
-       are serving this as a website, use Google AdSense (responsive/anchored)
-       and paste its ad unit markup inside #admob-smart-banner instead. -->
-  <div class="ad-banner" id="ad-banner" role="complementary" aria-label="Advertisement">
-    <div class="ad-slot" id="admob-smart-banner" data-ad-format="smart-banner"></div>
-  </div>
 
   <!-- ========== MOBILE APP TAB BAR ========== -->
   <nav class="app-tabbar" aria-label="App navigation">
@@ -3875,8 +3830,7 @@
 
     // ==================== MOBILE APP TAB BAR ====================
     // Track the mobile tab bar's real height (it changes with font loading and
-    // safe-area insets) so bottom chrome stays in sync. The ad banner now owns
-    // the very bottom edge, with the tab bar stacked directly above it.
+    // safe-area insets) so bottom chrome stays in sync.
     function syncBottomChrome() {
       const bar = document.querySelector('.app-tabbar');
       const visible = bar && getComputedStyle(bar).display !== 'none';
