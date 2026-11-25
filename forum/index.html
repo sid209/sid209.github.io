@@ -359,7 +359,7 @@
     /* Content grid */
     .content-grid {
       display: grid;
-      grid-template-columns: minmax(0, 1fr) var(--rail-w);
+      grid-template-columns: minmax(0, 1fr);
       gap: 30px; align-items: start;
     }
 
@@ -672,6 +672,19 @@
     }
 
     .last-activity i { color: var(--accent); margin-right: 4px; }
+
+    /* Forum stats strip (sits just under the search bar) */
+    .stats-strip {
+      display: flex; flex-wrap: wrap; align-items: center;
+      gap: 8px 22px;
+      padding: 12px 16px; margin-bottom: 18px;
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 12px;
+    }
+    .stats-strip .stat-row { padding: 0; justify-content: flex-start; gap: 6px; }
+    .stats-strip .stat-row span { color: var(--text-3); }
+    .stats-strip .live-dot { margin-left: 2px; }
+    .stats-strip .last-activity { margin: 0; padding: 0; border: 0; }
 
     /* ====== TOOLS PAGE ====== */
     .tools-hero {
@@ -1649,14 +1662,6 @@
         </div>
 
         <div class="side-group">
-          <div class="side-label">Tags</div>
-          <a class="side-link" onclick="filterTag('HOT')"><span class="side-dot hot"></span> hot</a>
-          <a class="side-link" onclick="filterTag('VERIFIED')"><span class="side-dot verified"></span> verified</a>
-          <a class="side-link" onclick="filterTag('MEMBER')"><span class="side-dot member"></span> member</a>
-          <a class="side-link" onclick="filterTag('')"><i class="fas fa-list"></i> All tags</a>
-        </div>
-
-        <div class="side-group">
           <div class="side-label">About</div>
           <a class="side-link" onclick="showToast('Dot Circles is a small, anonymous space for conversations across five communities. Pick a unique username to post.')">
             <i class="fas fa-circle-info"></i> About Dot Circles
@@ -1667,6 +1672,15 @@
       <!-- ========== MAIN VIEW ========== -->
       <div id="forum-view" class="content-area">
         <div class="page-inner">
+          <div class="stats-strip" aria-label="Forum stats">
+            <div class="stat-row"><span>Members</span><strong id="stat-members">28,451</strong></div>
+            <div class="stat-row"><span>Posts</span><strong id="stat-posts">142,893</strong></div>
+            <div class="stat-row"><span>Online now</span><strong id="stat-online">189</strong><span class="live-dot" title="Live"></span></div>
+            <div class="last-activity" id="last-activity">
+              <i class="fas fa-bolt"></i> <span id="activity-text">Activity: just now</span>
+            </div>
+          </div>
+
           <section>
             <h1 class="page-title">Featured posts</h1>
             <div class="featured-grid" id="featured-grid"></div>
@@ -1804,18 +1818,6 @@
 
               <div class="empty-state" id="empty-state" hidden>No posts match your search.</div>
             </section>
-
-            <aside class="rail">
-              <div class="rail-section">
-                <div class="rail-head"><span>Forum stats</span><span class="live-dot" title="Live"></span></div>
-                <div class="stat-row"><span>Members</span><strong id="stat-members">28,451</strong></div>
-                <div class="stat-row"><span>Posts</span><strong id="stat-posts">142,893</strong></div>
-                <div class="stat-row"><span>Online now</span><strong id="stat-online">189</strong></div>
-                <div class="last-activity" id="last-activity">
-                  <i class="fas fa-bolt"></i> <span id="activity-text">Activity: just now</span>
-                </div>
-              </div>
-            </aside>
           </div>
         </div>
       </div>
