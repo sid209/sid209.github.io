@@ -41,6 +41,11 @@
       --cat-coupons: #1e88e5;
       --cat-testers: #0d9488;
       --cat-lounge: #ec4899;
+      --cat-general: #64748b;
+      --cat-review: #f59e0b;
+      --cat-hobbies: #84cc16;
+      --cat-tech: #06b6d4;
+      --cat-entertainment: #a855f7;
       --font: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto, Helvetica, Arial, sans-serif;
     }
 
@@ -73,6 +78,11 @@
       --cat-coupons: #5aa9f5;
       --cat-testers: #2dd4bf;
       --cat-lounge: #f472b6;
+      --cat-general: #94a3b8;
+      --cat-review: #fbbf24;
+      --cat-hobbies: #a3e635;
+      --cat-tech: #22d3ee;
+      --cat-entertainment: #c084fc;
     }
 
     html { -webkit-text-size-adjust: 100%; }
@@ -487,6 +497,54 @@
     .category-tile.cat-coupons { --cat-color: var(--cat-coupons); }
     .category-tile.cat-testers { --cat-color: var(--cat-testers); }
     .category-tile.cat-lounge { --cat-color: var(--cat-lounge); }
+    .category-tile.cat-general { --cat-color: var(--cat-general); }
+    .category-tile.cat-review { --cat-color: var(--cat-review); }
+    .category-tile.cat-hobbies { --cat-color: var(--cat-hobbies); }
+    .category-tile.cat-tech { --cat-color: var(--cat-tech); }
+    .category-tile.cat-entertainment { --cat-color: var(--cat-entertainment); }
+
+    /* Additional categories (dots, avatars, chips, icons) */
+    .side-dot.general { background: var(--cat-general); }
+    .side-dot.review { background: var(--cat-review); }
+    .side-dot.hobbies { background: var(--cat-hobbies); }
+    .side-dot.tech { background: var(--cat-tech); }
+    .side-dot.entertainment { background: var(--cat-entertainment); }
+
+    .avatar-dot.general { background: var(--cat-general); }
+    .avatar-dot.review { background: var(--cat-review); }
+    .avatar-dot.hobbies { background: var(--cat-hobbies); }
+    .avatar-dot.tech { background: var(--cat-tech); }
+    .avatar-dot.entertainment { background: var(--cat-entertainment); }
+
+    .category-section.cat-general { --cat-color: var(--cat-general); }
+    .category-section.cat-review { --cat-color: var(--cat-review); }
+    .category-section.cat-hobbies { --cat-color: var(--cat-hobbies); }
+    .category-section.cat-tech { --cat-color: var(--cat-tech); }
+    .category-section.cat-entertainment { --cat-color: var(--cat-entertainment); }
+
+    .cat-general .thread-avatar i { color: var(--cat-general); }
+    .cat-review .thread-avatar i { color: var(--cat-review); }
+    .cat-hobbies .thread-avatar i { color: var(--cat-hobbies); }
+    .cat-tech .thread-avatar i { color: var(--cat-tech); }
+    .cat-entertainment .thread-avatar i { color: var(--cat-entertainment); }
+
+    .thread-cat.general { color: var(--cat-general); }
+    .thread-cat.review { color: var(--cat-review); }
+    .thread-cat.hobbies { color: var(--cat-hobbies); }
+    .thread-cat.tech { color: var(--cat-tech); }
+    .thread-cat.entertainment { color: var(--cat-entertainment); }
+
+    .latest-avatar.general { background: var(--cat-general); }
+    .latest-avatar.review { background: var(--cat-review); }
+    .latest-avatar.hobbies { background: var(--cat-hobbies); }
+    .latest-avatar.tech { background: var(--cat-tech); }
+    .latest-avatar.entertainment { background: var(--cat-entertainment); }
+
+    .latest-cat.general { color: var(--cat-general); }
+    .latest-cat.review { color: var(--cat-review); }
+    .latest-cat.hobbies { color: var(--cat-hobbies); }
+    .latest-cat.tech { color: var(--cat-tech); }
+    .latest-cat.entertainment { color: var(--cat-entertainment); }
 
     .category-feed-head {
       display: flex; align-items: center; justify-content: space-between;
@@ -1895,6 +1953,11 @@
           <option value="coupons">Coupons, Early Access &amp; Free Trials</option>
           <option value="testers">Apps &amp; Game Testers</option>
           <option value="lounge">The Lounge</option>
+          <option value="general">General</option>
+          <option value="review">Review</option>
+          <option value="hobbies">Hobbies</option>
+          <option value="tech">Tech</option>
+          <option value="entertainment">Entertainment</option>
         </select>
 
         <label class="field-label" for="compose-title">Title</label>
@@ -2694,6 +2757,126 @@
             { author: 'coffeeclub', time: '2h ago', badge: 'OP', text: '@tea_time that is exactly the nudge I needed. Ordering one tonight.' }
           ]
         }
+      ],
+      general: [
+        {
+          id: 'n1', icon: 'fa-comments',
+          title: 'What is one small habit that improved your day?',
+          tags: [],
+          author: 'quietstorm', views: '1.9k', time: '1h ago',
+          comments: 27, likes: 54, lastReply: 'trailrunner', memberOnly: false,
+          body: `<p>Looking for tiny, sustainable habits rather than big overhauls. Mine is a ten-minute walk before opening my laptop.</p>`,
+          replies: [
+            { author: 'trailrunner', time: '40m ago', badge: 'Active', text: 'Making the bed. Sounds trivial, but it starts the day with one finished thing.' }
+          ]
+        },
+        {
+          id: 'n2', icon: 'fa-lightbulb',
+          title: 'Introduce yourself and what you are working on',
+          tags: [],
+          author: 'maker_mike', views: '1.2k', time: '5h ago',
+          comments: 18, likes: 33, lastReply: 'bookworm', memberOnly: false,
+          body: `<p>New here? Drop a line about what you do, what you are building, or what brought you in.</p>`,
+          replies: [
+            { author: 'bookworm', time: '2h ago', badge: 'Active', text: 'Reader, occasional writer, trying to finish a first draft this year.' }
+          ]
+        }
+      ],
+      review: [
+        {
+          id: 'r1', icon: 'fa-star',
+          title: 'Reviewed: the budget mechanical keyboard everyone recommends',
+          tags: [],
+          author: 'pixelpioneer', views: '2.4k', time: '3h ago',
+          comments: 31, likes: 67, lastReply: 'maker_mike', memberOnly: false,
+          body: `<p>Three weeks in: solid switches, decent keycaps, and a case that flexes more than I would like. Worth it at the price, with caveats.</p>`,
+          replies: [
+            { author: 'maker_mike', time: '1h ago', badge: 'Active', text: 'Did you mod the stabilizers? That was the biggest improvement for mine.' }
+          ]
+        },
+        {
+          id: 'r2', icon: 'fa-clipboard-check',
+          title: 'How I rate products without getting swayed by hype',
+          tags: [],
+          author: 'bookworm', views: '1.5k', time: '8h ago',
+          comments: 21, likes: 45, lastReply: 'tea_time', memberOnly: false,
+          body: `<p>My checklist: real usage time, a clear price-to-value ratio, and at least one thing I would change. Hype is not a feature.</p>`,
+          replies: [
+            { author: 'tea_time', time: '4h ago', badge: 'Active', text: 'The "one thing I would change" rule is a great filter.' }
+          ]
+        }
+      ],
+      hobbies: [
+        {
+          id: 'h1', icon: 'fa-palette',
+          title: 'What hobby did you pick up this year?',
+          tags: [],
+          author: 'diy_dana', views: '2.1k', time: '2h ago',
+          comments: 38, likes: 72, lastReply: 'plantparent', memberOnly: false,
+          body: `<p>I started watercolor painting and it has been the best low-stakes creative outlet. Show me what you have been making.</p>`,
+          replies: [
+            { author: 'plantparent', time: '1h ago', badge: 'Active', text: 'Propagating houseplants. Technically gardening, mostly an excuse to buy more jars.' }
+          ]
+        },
+        {
+          id: 'h2', icon: 'fa-puzzle-piece',
+          title: 'Board games for people who usually do not play board games',
+          tags: [],
+          author: 'boardgamer', views: '1.4k', time: '9h ago',
+          comments: 24, likes: 41, lastReply: 'quietstorm', memberOnly: false,
+          body: `<p>Looking for easy-to-teach games that still have some depth. Nothing that needs a forty-minute rules explanation.</p>`,
+          replies: [
+            { author: 'quietstorm', time: '5h ago', badge: 'Active', text: 'Codenames and Just One are my go-to gateway games.' }
+          ]
+        }
+      ],
+      tech: [
+        {
+          id: 'x1', icon: 'fa-microchip',
+          title: 'The one tech upgrade that actually changed your workflow',
+          tags: [],
+          author: 'pixelpioneer', views: '2.8k', time: '4h ago',
+          comments: 42, likes: 81, lastReply: 'maker_mike', memberOnly: false,
+          body: `<p>Not the flashiest purchase, just the one that made your day-to-day noticeably better. For me it was a second monitor, then a good chair.</p>`,
+          replies: [
+            { author: 'maker_mike', time: '2h ago', badge: 'Active', text: 'A proper keyboard shortcut setup. Cheap, and it compounds every day.' }
+          ]
+        },
+        {
+          id: 'x2', icon: 'fa-shield-halved',
+          title: 'Simple privacy setup for a normal person',
+          tags: [],
+          author: 'nightowl', views: '1.7k', time: '11h ago',
+          comments: 19, likes: 36, lastReply: 'bookworm', memberOnly: false,
+          body: `<p>I am not trying to disappear from the internet, just reduce the obvious leaks. Password manager, two-factor, and fewer random accounts.</p>`,
+          replies: [
+            { author: 'bookworm', time: '6h ago', badge: 'Active', text: 'Password manager is the single biggest win. Everything else is a bonus.' }
+          ]
+        }
+      ],
+      entertainment: [
+        {
+          id: 'e1', icon: 'fa-film',
+          title: 'What did you watch this week that was actually good?',
+          tags: [],
+          author: 'filmfan', views: '2.3k', time: '1h ago',
+          comments: 35, likes: 64, lastReply: 'nightowl', memberOnly: false,
+          body: `<p>No spoilers, just recommendations. I finally watched a slow-burn thriller that lived up to the hype.</p>`,
+          replies: [
+            { author: 'nightowl', time: '30m ago', badge: 'Active', text: 'Rewatched a comfort sitcom, but I would love a thriller recommendation.' }
+          ]
+        },
+        {
+          id: 'e2', icon: 'fa-headphones',
+          title: 'Albums you can listen to start to finish',
+          tags: [],
+          author: 'tea_time', views: '1.6k', time: '7h ago',
+          comments: 22, likes: 48, lastReply: 'coffeeclub', memberOnly: false,
+          body: `<p>Some albums just work as a whole. Share the ones you never skip a track on.</p>`,
+          replies: [
+            { author: 'coffeeclub', time: '3h ago', badge: 'Active', text: 'Any album that flows like one long piece. I will take a few recommendations.' }
+          ]
+        }
       ]
     };
 
@@ -2703,7 +2886,12 @@
       tools: 'Verified Tools',
       coupons: 'Coupons & Trials',
       testers: 'Testers',
-      lounge: 'Lounge'
+      lounge: 'Lounge',
+      general: 'General',
+      review: 'Review',
+      hobbies: 'Hobbies',
+      tech: 'Tech',
+      entertainment: 'Entertainment'
     };
 
     const CATEGORY_ICONS = {
@@ -2711,7 +2899,12 @@
       tools: 'fa-screwdriver-wrench',
       coupons: 'fa-ticket',
       testers: 'fa-gamepad',
-      lounge: 'fa-comment-dots'
+      lounge: 'fa-comment-dots',
+      general: 'fa-comments',
+      review: 'fa-star',
+      hobbies: 'fa-palette',
+      tech: 'fa-microchip',
+      entertainment: 'fa-film'
     };
 
     let feedMode = 'categories';
@@ -2786,7 +2979,7 @@
     function renderCategoryGrid() {
       const grid = document.getElementById('category-grid');
       if (!grid) return;
-      grid.innerHTML = ['journey', 'tools', 'coupons', 'testers', 'lounge'].map(cat => `
+      grid.innerHTML = ['journey', 'tools', 'coupons', 'testers', 'lounge', 'general', 'review', 'hobbies', 'tech', 'entertainment'].map(cat => `
         <button class="category-tile cat-${cat}${selectedCategory === cat ? ' active' : ''}" onclick="selectCategory('${cat}')">
           <span class="category-tile-icon"><i class="fas ${CATEGORY_ICONS[cat]}"></i></span>
           <span class="category-tile-name">${CAT_LABELS[cat]}</span>
@@ -2802,6 +2995,7 @@
       if (!cat) { feed.hidden = true; return; }
       feed.hidden = false;
       if (title) title.textContent = CAT_LABELS[cat] || cat;
+      list.className = 'thread-list cat-' + cat;
       list.innerHTML = (threads[cat] || []).map(t => renderThreadItem(t, cat)).join('');
     }
 
@@ -2854,7 +3048,7 @@
 
     function collectThreads() {
       const all = [];
-      ['journey', 'tools', 'coupons', 'testers', 'lounge'].forEach(cat => {
+      ['journey', 'tools', 'coupons', 'testers', 'lounge', 'general', 'review', 'hobbies', 'tech', 'entertainment'].forEach(cat => {
         threads[cat].forEach(t => all.push({ cat, thread: t }));
       });
       return all;
@@ -2994,7 +3188,7 @@
       if (flat) flat.hidden = true;
       if (catFeed) catFeed.hidden = false;
       if (title) title.textContent = 'Search results';
-      if (list) list.innerHTML = all.map(x => renderThreadItem(x.thread, x.cat, true)).join('');
+      if (list) { list.className = 'thread-list'; list.innerHTML = all.map(x => renderThreadItem(x.thread, x.cat, true)).join(''); }
       if (empty) empty.hidden = all.length !== 0;
     }
 
@@ -3239,7 +3433,7 @@
     }
 
     function bumpRandomThread() {
-      const categories = ['journey', 'tools', 'coupons', 'testers', 'lounge'];
+      const categories = ['journey', 'tools', 'coupons', 'testers', 'lounge', 'general', 'review', 'hobbies', 'tech', 'entertainment'];
       const cat = categories[Math.floor(Math.random() * categories.length)];
       const list = threads[cat];
       const thread = list[Math.floor(Math.random() * list.length)];
@@ -3261,9 +3455,9 @@
       }
     }
 
-    const categoryCounts = { journey: 132, tools: 87, coupons: 204, testers: 96, lounge: 330 };
+    const categoryCounts = { journey: 132, tools: 87, coupons: 204, testers: 96, lounge: 330, general: 120, review: 74, hobbies: 98, tech: 156, entertainment: 142 };
     function incrementCategoryCount() {
-      const cats = ['journey', 'tools', 'coupons', 'testers', 'lounge'];
+      const cats = ['journey', 'tools', 'coupons', 'testers', 'lounge', 'general', 'review', 'hobbies', 'tech', 'entertainment'];
       const cat = cats[Math.floor(Math.random() * cats.length)];
       categoryCounts[cat] += 1;
       const el = document.getElementById('count-' + cat);
@@ -3441,7 +3635,7 @@
       if (!body)  { bodyEl.style.borderColor  = '#d93025'; setTimeout(() => bodyEl.style.borderColor  = '', 800); ok = false; }
       if (!ok) { showToast('Add a title and some content to post', true); return; }
 
-      const iconMap = { journey: 'fa-seedling', tools: 'fa-screwdriver-wrench', coupons: 'fa-ticket', testers: 'fa-gamepad', lounge: 'fa-comment-dots' };
+      const iconMap = CATEGORY_ICONS;
 
       const newThread = {
         id: 'u' + Date.now(),
@@ -3554,7 +3748,7 @@
     }
 
     function renderCategoryCounts() {
-      ['journey', 'tools', 'coupons', 'testers', 'lounge'].forEach(cat => {
+      ['journey', 'tools', 'coupons', 'testers', 'lounge', 'general', 'review', 'hobbies', 'tech', 'entertainment'].forEach(cat => {
         const el = document.getElementById('count-' + cat);
         if (el) el.textContent = categoryCounts[cat] + ' posts';
       });
@@ -3614,7 +3808,7 @@
 
     // ==================== COLLAPSIBLE TOPICS ====================
     const COLLAPSE_KEY = 'circles_collapsed_cats';
-    const ALL_CATS = ['journey', 'tools', 'coupons', 'testers', 'lounge'];
+    const ALL_CATS = ['journey', 'tools', 'coupons', 'testers', 'lounge', 'general', 'review', 'hobbies', 'tech', 'entertainment'];
     // Topics start collapsed so the feed opens as a tidy list of communities.
     let collapsedCats = new Set(ALL_CATS);
     try {
