@@ -1946,22 +1946,6 @@
             </div>
           </div>
 
-          <div class="tools-grid">
-            <article class="tool-card">
-              <div class="tool-card-head">
-                <span class="tool-icon"><i class="fas fa-satellite-dish"></i></span>
-                <div>
-                  <div class="tool-card-name">Spy Tool · Aff + Arb</div>
-                  <div class="tool-card-kind">Affiliate &amp; arbitrage intelligence</div>
-                </div>
-              </div>
-              <p class="tool-card-desc">Ad formats & networks, bids, daily revenue, ad spend — arbitrage scan with RPM.</p>
-              <div class="tool-card-foot">
-                <span class="tool-fact">Revenue + RPM</span>
-              </div>
-            </article>
-          </div>
-
           <div id="tools-runner-shell" class="tools-runner">
             <div class="tools-runner-label">Combined search</div>
             <label class="field-label" for="tools-url">Offer Vault URL</label>
@@ -2978,6 +2962,8 @@
 
     let feedMode = 'categories';
     let searchTerm = '';
+    let currentPostCategory = null;
+    let currentPostId = null;
 
     function initials(name) {
       const clean = (name || '').replace(/[^a-z0-9]/gi, '');
@@ -3276,6 +3262,9 @@
       const thread = threads[category].find(t => t.id === id);
       if (!thread) return;
 
+      currentPostCategory = category;
+      currentPostId = id;
+
       const tagsHtml = thread.tags.map(t => `<span class="tag ${t.cls}">${t.label}</span>`).join('');
       const repliesHtml = thread.replies.map(r => renderReply(r)).join('');
 
@@ -3403,6 +3392,21 @@
       ensureForumView();
       if (!toolsSearchRunning) resetToolReport();
       window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // In-app refresh: re-fetch published content and re-render the current
+    // view without reloading the whole page in the browser.
+    async function refreshInPlace() {
+      await loadPublishedPosts();
+      loadState();
+      renderCategoryCounts();
+      renderForum();
+      applyCollapsedCats();
+      renderToolUsage();
+      syncBottomChrome();
+      if (document.getElementById('post-view').style.display === 'block' && currentPostCategory) {
+        openPost(currentPostCategory, currentPostId);
+      }
     }
 
     function submitReply(category, threadId) {
@@ -4120,7 +4124,14 @@
           ptr.classList.add('ptr-refreshing');
           ptr.style.transform = 'translateY(12px)';
           label.textContent = 'Refreshing…';
-          setTimeout(() => location.reload(), 550);
+          Promise.resolve(refreshInPlace()).catch(() => {}).then(() => {
+            label.textContent = 'Updated';
+            setTimeout(() => {
+              ptr.classList.remove('ptr-refreshing');
+              ptr.style.transform = '';
+              refreshing = false;
+            }, 600);
+          });
         } else {
           reset();
         }
