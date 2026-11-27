@@ -4175,10 +4175,10 @@
       return mine.reduce((sum, x) => sum + calculateKarma(x.thread), 0);
     }
 
-    // Revenue earned by the user's own posts on this device.
-    // Hard-capped at $76.44 so the $80 payout is never actually reachable.
+    // Revenue earned from total karma (karma * REVENUE_PER_KARMA).
+    // Karma and revenue always match. Hard-capped at $76.44.
     function postRevenue() {
-      const raw = myThreads().reduce((sum, x) => sum + displayRevenue(x.thread), 0);
+      const raw = userKarma() * REVENUE_PER_KARMA;
       return Math.min(raw, 76.44);
     }
 
