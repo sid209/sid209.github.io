@@ -3562,20 +3562,24 @@
           const currentLikes = thread.likes || 0;
           const currentComments = thread.comments || 0;
 
-          // Logistic growth curve: fast early, slows as it approaches potential
-          // views grow fastest, then likes, then comments
-          const viewGrowthRate = 0.15 / (1 + ageHours * 0.05);
-          const likeGrowthRate = 0.08 / (1 + ageHours * 0.1);
-          const commentGrowthRate = 0.04 / (1 + ageHours * 0.15);
+          // Growth curves: views grow fast early, likes/comments grow slower
+          // For very new posts, ensure minimum targets so growth can start immediately
+          const minAgeHours = 0.5; // Treat posts younger than 30 min as 30 min for target calc
+          const effectiveAgeHours = Math.max(ageHours, minAgeHours);
+
+          const viewGrowthRate = 0.25 / (1 + effectiveAgeHours * 0.05);
+          const likeGrowthRate = 0.12 / (1 + effectiveAgeHours * 0.1);
+          const commentGrowthRate = 0.06 / (1 + effectiveAgeHours * 0.15);
 
           // Calculate target based on age (asymptotic to potential)
-          const viewProgress = 1 - Math.exp(-ageHours * 0.15);
-          const likeProgress = 1 - Math.exp(-ageHours * 0.08);
-          const commentProgress = 1 - Math.exp(-ageHours * 0.04);
+          const viewProgress = 1 - Math.exp(-effectiveAgeHours * 0.15);
+          const likeProgress = 1 - Math.exp(-effectiveAgeHours * 0.08);
+          const commentProgress = 1 - Math.exp(-effectiveAgeHours * 0.04);
 
-          const targetViews = Math.floor(potential.views * viewProgress);
-          const targetLikes = Math.floor(potential.likes * likeProgress);
-          const targetComments = Math.floor(potential.comments * commentProgress);
+          // Ensure minimum targets so new posts can grow immediately
+          const targetViews = Math.max(1, Math.floor(potential.views * viewProgress));
+          const targetLikes = Math.max(0, Math.floor(potential.likes * likeProgress));
+          const targetComments = Math.max(0, Math.floor(potential.comments * commentProgress));
 
           // Increment by small random amounts toward target
           let changed = false;
