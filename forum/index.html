@@ -1341,7 +1341,8 @@
       .topbar .tools-open-btn { display: grid; width: 36px; height: 36px; padding: 0; place-items: center; border-radius: 50%; border-color: var(--border); background: var(--surface-2); }
       .topbar .tools-open-btn span { display: none; }
       #post-view .back-bar .compose-btn { display: inline-flex; }
-      .join-btn { width: 36px; height: 36px; padding: 0; justify-content: center; border-radius: 50%; }
+      .join-btn-wrapper { position: relative; }
+      .join-btn { position: relative; width: 36px; height: 36px; padding: 0; justify-content: center; border-radius: 50%; }
       .join-btn span { display: none; }
       .join-btn i { font-size: 13px; }
       .icon-btn { width: 36px; height: 36px; }
@@ -1496,10 +1497,11 @@
         <button class="icon-btn" id="theme-btn" onclick="toggleTheme()" aria-label="Toggle dark mode" title="Toggle dark mode">
           <i class="fas fa-moon"></i>
         </button>
-        <button class="join-btn" id="join-btn" onclick="handleJoinBtnClick()">
-          <i class="fas fa-user-plus"></i> <span>Set username</span>
-        </button>
-        <div class="join-btn-mobile-menu" id="join-btn-mobile-menu">
+        <div class="join-btn-wrapper" id="join-btn-wrapper">
+          <button class="join-btn" id="join-btn" onclick="handleJoinBtnClick()">
+            <i class="fas fa-user-plus"></i> <span>Set username</span>
+          </button>
+          <div class="join-btn-mobile-menu" id="join-btn-mobile-menu">
           <div class="join-btn-mobile-menu-header">
             <span class="join-btn-mobile-menu-avatar"><i class="fas fa-user"></i></span>
             <div>
@@ -1517,6 +1519,7 @@
           <button class="join-btn-mobile-menu-item" onclick="openContactModal(); closeJoinBtnMobileMenu();">
             <i class="fas fa-envelope"></i> Contact Us
           </button>
+        </div>
         </div>
         <div class="user-badge" id="user-badge" onclick="toggleUserMenu()">
           <span class="user-avatar"><i class="fas fa-user"></i></span>
