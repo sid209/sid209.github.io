@@ -4089,8 +4089,9 @@
     // Every calendar day earns a different amount: it averages about $0.55 but
     // swings between roughly $0.30 and $0.80. The rate is seeded from the date,
     // so it holds steady while the page is open and only changes at midnight.
-    // At this rate, reaching the $76.44 cap takes ~100+ days with daily Karma Booster,
-    // or ~190 days without it.
+    // At this rate, reaching the $76.44 cap takes ~190 days with daily Karma Booster
+    // (passive ~$0.55/day + booster $0.22/day, throttled by room factor near cap),
+    // or ~460 days without it.
     const DAILY_REVENUE_MIN = 0.30;
     const DAILY_REVENUE_MAX = 0.80;
     const MAX_CATCHUP_DAYS = 30;
