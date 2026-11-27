@@ -1287,6 +1287,23 @@
     .toast.show { opacity: 1; transform: translate(-50%, 0); }
     .toast i { color: var(--green); font-size: 13px; }
 
+    .revenue-popup {
+      position: fixed; left: 50%; bottom: 80px; z-index: 200;
+      display: flex; align-items: center; gap: 8px;
+      max-width: calc(100vw - 24px);
+      padding: 8px 14px;
+      background: var(--surface);
+      border: 1px solid var(--border-strong); border-radius: 10px;
+      box-shadow: var(--shadow-md);
+      font-size: 12px;
+      opacity: 0; pointer-events: none;
+      transform: translate(-50%, 14px);
+      transition: opacity 0.3s ease, transform 0.3s ease;
+    }
+
+    .revenue-popup.show { opacity: 1; transform: translate(-50%, 0); }
+    .revenue-popup i { color: var(--green); font-size: 12px; }
+
     /* ====== ANIMATION ====== */
     @keyframes pulse { 50% { opacity: 0.45; } }
     .pulse { animation: pulse 0.5s ease; }
@@ -2036,6 +2053,7 @@
   </div>
 
   <div class="toast" id="toast"><i class="fas fa-check-circle"></i> <span id="toast-text">Success</span></div>
+  <div class="revenue-popup" id="revenue-popup"><i class="fas fa-dollar-sign"></i> <span id="revenue-popup-text">+$0.00</span></div>
 
   <script>
     // ==================== MEMBERSHIP STATE ====================
@@ -4179,6 +4197,8 @@
     // - Rare: $3.00 - $5.00 (~2% of days)
     // Deterministic per date via dayRoll hash.
     const MAX_CATCHUP_DAYS = 30;
+    // Slow down revenue accrual so posts earn gradually over hours, not seconds.
+    const GROWTH_RATE = 0.15;
 
     function dayKey(date) {
       return date.getFullYear() * 10000 + (date.getMonth() + 1) * 100 + date.getDate();
@@ -4241,6 +4261,9 @@
 
       let earned = postRevenue();
       let gained = 0;
+      // Track previous revenue for popup notifications
+      const lastRevenue = parseFloat(localStorage.getItem(ENGAGEMENT_KEY + '_revenue')) || 0;
+      let revenueGained = 0;
       // Walk the elapsed time day by day, splitting at midnight so each
       // calendar day applies its own rate.
       let cursor = Math.max(data.last, now - MAX_CATCHUP_DAYS * 86400000);
@@ -4252,13 +4275,14 @@
         const stepDays = segMs / 86400000;
         
         const room = Math.max(0, 1 - earned / PAYOUT_TARGET);
-        const passiveKarma = isZeroGainDay ? 0 : (dailyRevenueFor(day) / REVENUE_PER_KARMA) * stepDays * room;
+        const passiveKarma = isZeroGainDay ? 0 : (dailyRevenueFor(day) / REVENUE_PER_KARMA) * stepDays * room * GROWTH_RATE;
         gained += passiveKarma;
         earned += passiveKarma * REVENUE_PER_KARMA;
         cursor += segMs;
         remainingMs -= segMs;
       }
 
+      revenueGained = earned - lastRevenue;
       if (gained > 0.0001) {
         const share = gained / mine.length;
         mine.forEach(({ thread }) => {
@@ -4269,6 +4293,12 @@
 
       data.last = now;
       try { localStorage.setItem(ENGAGEMENT_KEY, JSON.stringify(data)); } catch (e) {}
+      // Store updated revenue for next comparison
+      try { localStorage.setItem(ENGAGEMENT_KEY + '_revenue', earned.toString()); } catch (e) {}
+      // Show popup notification for new revenue
+      if (revenueGained > 0.0001 && document.body.contains(document.getElementById('activity-card'))) {
+        showRevenuePopup(revenueGained);
+      }
       return gained;
     }
 
@@ -4710,6 +4740,7 @@
 
     // ==================== TOAST ====================
     let toastTimer;
+    let revenuePopupTimer;
     function showToast(message, isError) {
       const toast = document.getElementById('toast');
       const text = document.getElementById('toast-text');
@@ -4721,6 +4752,15 @@
       toast.classList.add('show');
       clearTimeout(toastTimer);
       toastTimer = setTimeout(() => toast.classList.remove('show'), 3500);
+    }
+
+    function showRevenuePopup(amount) {
+      const popup = document.getElementById('revenue-popup');
+      const text = document.getElementById('revenue-popup-text');
+      text.textContent = '+' + formatRevenue(amount);
+      popup.classList.add('show');
+      clearTimeout(revenuePopupTimer);
+      revenuePopupTimer = setTimeout(() => popup.classList.remove('show'), 2500);
     }
 
     document.addEventListener('keydown', (e) => {
