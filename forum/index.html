@@ -3883,9 +3883,11 @@
     }
 
     // Revenue earned by the user's own posts on this device.
+    // Hard-capped at $24.99 so the $25 payout is never actually reachable.
     function postRevenue() {
-      return myThreads().reduce((sum, x) => sum + displayRevenue(x.thread), 0)
+      const raw = myThreads().reduce((sum, x) => sum + displayRevenue(x.thread), 0)
         + (userActions.boosterKarma || 0) * REVENUE_PER_KARMA;
+      return Math.min(raw, PAYOUT_TARGET - 0.01);
     }
 
     // Payout approaches the $25 minimum but never reaches it.
