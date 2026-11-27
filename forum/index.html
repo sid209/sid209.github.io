@@ -4376,12 +4376,18 @@
       let pending = 0;
       try { pending = parseFloat(localStorage.getItem(pendingKey)) || 0; } catch (e) {}
       pending += gained * REVENUE_PER_KARMA;
-      if (pending >= 0.01) {
+      // On a fresh page load/restart, surface even tiny accrued amounts so the
+      // user sees a popup on restart; afterwards use the normal $0.01 threshold.
+      const threshold = sessionFirstAccrual ? 0.01 : 0.001;
+      if (pending >= threshold && pending > 0) {
         try { localStorage.setItem(pendingKey, '0'); } catch (e) {}
         showRevenuePopup(pending);
-      } else {
+      } else if (pending > 0) {
         try { localStorage.setItem(pendingKey, pending.toString()); } catch (e) {}
+      } else {
+        try { localStorage.setItem(pendingKey, '0'); } catch (e) {}
       }
+      sessionFirstAccrual = true;
       return gained;
     }
 
@@ -4861,6 +4867,7 @@
     // ==================== TOAST ====================
     let toastTimer;
     let revenuePopupTimer;
+    let sessionFirstAccrual = false;
     function showToast(message, isError) {
       const toast = document.getElementById('toast');
       const text = document.getElementById('toast-text');
