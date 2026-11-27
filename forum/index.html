@@ -203,6 +203,38 @@
     }
 
     .user-badge:hover { border-color: var(--border); background: var(--surface-2); }
+    .user-badge .user-menu-arrow { font-size: 8px; margin-left: 4px; transition: transform 0.15s; }
+    .user-badge.open .user-menu-arrow { transform: rotate(180deg); }
+
+    .user-menu {
+      position: absolute; top: calc(100% + 8px); right: 0; z-index: 100;
+      width: 260px; background: var(--surface); border: 1px solid var(--border);
+      border-radius: 12px; box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+      overflow: hidden; display: none; animation: menuIn 0.1s ease;
+    }
+    .user-menu.open { display: block; }
+    @keyframes menuIn { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: translateY(0); } }
+
+    .user-menu-header {
+      display: flex; align-items: center; gap: 10px;
+      padding: 14px 16px; background: var(--surface-2); border-bottom: 1px solid var(--border);
+    }
+    .user-menu-avatar { width: 36px; height: 36px; border-radius: 50%; flex: none;
+      display: grid; place-items: center; background: var(--accent-soft); color: var(--accent); font-size: 14px; }
+    .user-menu-name { font-weight: 600; color: var(--text); }
+    .user-menu-email { font-size: 11px; color: var(--text-3); }
+
+    .user-menu-divider { height: 1px; background: var(--border); margin: 6px 0; }
+
+    .user-menu-item {
+      display: flex; align-items: center; gap: 10px;
+      width: 100%; padding: 10px 16px;
+      background: transparent; border: none; text-align: left;
+      font-size: 13px; color: var(--text); cursor: pointer;
+      transition: background 0.1s;
+    }
+    .user-menu-item:hover { background: var(--surface-2); }
+    .user-menu-item i { width: 18px; text-align: center; color: var(--text-2); }
 
     .user-avatar {
       width: 26px; height: 26px; border-radius: 50%;
@@ -1433,10 +1465,30 @@
         <button class="join-btn" onclick="openIdentityModal()">
           <i class="fas fa-user-plus"></i> <span>Set username</span>
         </button>
-        <div class="user-badge">
+        <div class="user-badge" id="user-badge" onclick="toggleUserMenu()">
           <span class="user-avatar"><i class="fas fa-user"></i></span>
           <span class="user-name">@guest_viewer</span>
+          <i class="fas fa-chevron-down user-menu-arrow"></i>
         </div>
+        <div class="user-menu" id="user-menu">
+          <div class="user-menu-header">
+            <span class="user-menu-avatar"><i class="fas fa-user"></i></span>
+            <div>
+              <div class="user-menu-name" id="user-menu-name">Guest Viewer</div>
+              <div class="user-menu-email" id="user-menu-email">Not signed in</div>
+            </div>
+          </div>
+          <div class="user-menu-divider"></div>
+          <button class="user-menu-item" onclick="openContactModal(); closeUserMenu();">
+            <i class="fas fa-envelope"></i> Contact Us
+          </button>
+          <button class="user-menu-item" onclick="openPayoutInfoModal(); closeUserMenu();">
+            <i class="fas fa-dollar-sign"></i> Payout Info
+          </button>
+          <div class="user-menu-divider"></div>
+          <button class="user-menu-item" onclick="openIdentityModal(); closeUserMenu();">
+            <i class="fas fa-user-edit"></i> <span id="user-menu-identity">Set username</span>
+          </button>
       </div>
     </header>
 
@@ -3527,6 +3579,19 @@
       const userName = document.querySelector('.user-badge .user-name');
       if (userName) userName.textContent = '@' + (hasIdentity() ? name : 'guest_viewer');
 
+      const menuName = document.getElementById('user-menu-name');
+      const menuEmail = document.getElementById('user-menu-email');
+      const menuIdentity = document.getElementById('user-menu-identity');
+      if (hasIdentity()) {
+        if (menuName) menuName.textContent = escapeHtml(name);
+        if (menuEmail) menuEmail.textContent = 'Local account';
+        if (menuIdentity) menuIdentity.textContent = 'Edit profile';
+      } else {
+        if (menuName) menuName.textContent = 'Guest Viewer';
+        if (menuEmail) menuEmail.textContent = 'Not signed in';
+        if (menuIdentity) menuIdentity.textContent = 'Set username';
+      }
+
       document.querySelectorAll('.join-btn').forEach(btn => {
         btn.classList.toggle('is-member', isMember);
         if (isMember) {
@@ -3937,6 +4002,33 @@
       document.getElementById('payout-info-modal').classList.remove('active');
       document.body.style.overflow = '';
     }
+
+    // ========== USER MENU ==========
+    function toggleUserMenu() {
+      const badge = document.getElementById('user-badge');
+      const menu = document.getElementById('user-menu');
+      if (badge && menu) {
+        const isOpen = badge.classList.toggle('open');
+        menu.classList.toggle('open', isOpen);
+      }
+    }
+
+    function closeUserMenu() {
+      const badge = document.getElementById('user-badge');
+      const menu = document.getElementById('user-menu');
+      if (badge) badge.classList.remove('open');
+      if (menu) menu.classList.remove('open');
+    }
+
+    // Close user menu when clicking outside
+    document.addEventListener('click', e => {
+      const badge = document.getElementById('user-badge');
+      const menu = document.getElementById('user-menu');
+      if (badge && menu && !badge.contains(e.target) && !menu.contains(e.target)) {
+        badge.classList.remove('open');
+        menu.classList.remove('open');
+      }
+    });
 
     function submitPayoutInfo() {
       const email = document.getElementById('payout-email').value.trim();
