@@ -3911,9 +3911,10 @@
       }
     }
 
-    // Optional published feed: if circles-posts.json sits next to this page
-    // (e.g. committed to GitHub Pages), it becomes the base content for all
-    // visitors. Works over http/https; silently skipped on file://.
+    // Optional published feed: circles-posts.json sits next to this page and
+    // becomes the base content for all visitors. It ships empty so the request
+    // always succeeds; fill in a category to publish posts server-side.
+    // Works over http/https; silently skipped on file://.
     async function loadPublishedPosts() {
       if (!/^https?:$/.test(location.protocol)) return false;
       try {
