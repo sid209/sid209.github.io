@@ -1217,6 +1217,47 @@
 
     .modal-submit:hover { background: var(--accent-hover); }
 
+    .modal-link {
+      display: inline-flex; align-items: center; justify-content: center; gap: 7px;
+      width: 100%; margin-top: 12px; padding: 10px;
+      background: transparent; color: var(--accent);
+      border: 1px solid var(--accent); border-radius: 8px;
+      font-size: 13px; font-weight: 600;
+    }
+    .modal-link:hover { background: var(--accent-soft); }
+
+    .identity-divider {
+      display: flex; align-items: center; gap: 10px;
+      margin: 16px 0; color: var(--text-3); font-size: 12px;
+    }
+    .identity-divider::before,
+    .identity-divider::after {
+      content: ''; flex: 1; height: 1px; background: var(--border);
+    }
+
+    .recover-user-list {
+      display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px;
+    }
+    .recover-user-btn {
+      display: flex; align-items: center; gap: 10px;
+      padding: 12px 14px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text);
+      font-size: 13px; font-weight: 500;
+      text-align: left;
+      cursor: pointer;
+      transition: background 0.15s, border-color 0.15s;
+    }
+    .recover-user-btn:hover { background: var(--accent-soft); border-color: var(--accent); }
+    .recover-user-btn i { color: var(--accent); font-size: 14px; }
+
+    .recover-empty {
+      text-align: center; padding: 20px;
+      color: var(--text-3); font-size: 12.5px;
+    }
+
     .compose-limit { font-size: 11.5px; color: var(--text-3); text-align: center; margin-bottom: 8px; }
     .compose-limit.limit-hit { color: var(--accent); font-weight: 600; }
 
@@ -1853,6 +1894,33 @@
         <input type="text" class="field-input" id="identity-name" placeholder="e.g. nightowl" autocomplete="off" maxlength="20">
         <button class="modal-submit" onclick="submitIdentity()">
           <i class="fas fa-arrow-right"></i> Continue
+        </button>
+        <div class="identity-divider">
+          <span>Already have an account?</span>
+        </div>
+        <button class="modal-link" onclick="showRecoverAccount()">
+          <i class="fas fa-key"></i> Recover Account
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== RECOVER ACCOUNT MODAL ========== -->
+  <div class="modal-overlay" id="recover-modal" onclick="if(event.target===this) closeRecoverModal()">
+    <div class="modal">
+      <div class="modal-header">
+        <div>
+          <h2><i class="fas fa-key"></i> Recover Account</h2>
+          <p>Enter your username to load your saved data.</p>
+        </div>
+        <button class="modal-close" onclick="closeRecoverModal()"><i class="fas fa-times"></i></button>
+      </div>
+      <div class="modal-body">
+        <div id="recover-user-list" class="recover-user-list"></div>
+        <label class="field-label" for="recover-name">Or type username</label>
+        <input type="text" class="field-input" id="recover-name" placeholder="Enter your username" autocomplete="off" maxlength="20">
+        <button class="modal-submit" onclick="recoverAccount()">
+          <i class="fas fa-sign-in-alt"></i> Recover
         </button>
       </div>
     </div>
@@ -3765,6 +3833,71 @@
       pendingIdentityAction = null;
     }
 
+    // ========== RECOVER ACCOUNT ==========
+    function showRecoverAccount() {
+      closeIdentityModal();
+      renderRecoverUserList();
+      document.getElementById('recover-modal').classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeRecoverModal() {
+      document.getElementById('recover-modal').classList.remove('active');
+      document.body.style.overflow = '';
+    }
+
+    function renderRecoverUserList() {
+      const container = document.getElementById('recover-user-list');
+      const usernames = getSavedUsernames();
+      if (usernames.length === 0) {
+        container.innerHTML = '<p class="recover-empty">No saved accounts found on this device.</p>';
+        return;
+      }
+      container.innerHTML = usernames.map(name => `
+        <button class="recover-user-btn" onclick="recoverUser('${escapeHtml(name)}')">
+          <i class="fas fa-user"></i> @${escapeHtml(name)}
+        </button>
+      `).join('');
+    }
+
+    function recoverUser(username) {
+      const success = loadUserState(username);
+      if (success) {
+        closeRecoverModal();
+        applyIdentityUI();
+        saveState();
+        showToast(`Recovered account: @${username}`);
+        if (typeof pendingIdentityAction === 'function') {
+          pendingIdentityAction();
+          pendingIdentityAction = null;
+        }
+      } else {
+        showToast('Failed to recover account. Data may be corrupted.', true);
+      }
+    }
+
+    function recoverAccount() {
+      const input = document.getElementById('recover-name');
+      const raw = (input.value || '').trim().replace(/^@/, '');
+      if (!raw) {
+        showToast('Enter a username to recover.', true);
+        input.focus();
+        return;
+      }
+      if (!/^[A-Za-z0-9_]{3,20}$/.test(raw)) {
+        showToast('Invalid username format.', true);
+        input.focus();
+        return;
+      }
+      const usernames = getSavedUsernames();
+      if (!usernames.some(u => u.toLowerCase() === raw.toLowerCase())) {
+        showToast('No saved account found for that username.', true);
+        input.focus();
+        return;
+      }
+      recoverUser(raw);
+    }
+
     function isNameTaken(name) {
       const lower = name.toLowerCase();
       if (displayName && lower === displayName.toLowerCase()) return false;
@@ -4454,11 +4587,16 @@
     // ==================== LOCAL PERSISTENCE ====================
     // GitHub Pages serves static files, so the site cannot write back to its
     // own code. Instead every new post/reply is saved in this browser's
-    // localStorage. Saved posts can be backed up by copying this browser's
-    // storage, or by restoring a saved-state file kept alongside the site.
-    const STORAGE_KEY = 'circles_saved_state_v1';
+    // localStorage, keyed by username. This allows account recovery on any device.
+    const STORAGE_PREFIX = 'circles_user_';
+    const INDEX_KEY = 'circles_user_index';
+
+    function getUserStorageKey(username) {
+      return STORAGE_PREFIX + username.toLowerCase();
+    }
 
     function saveState() {
+      if (!displayName) return; // Don't save if no username
       try {
         const snapshot = {
           threads,
@@ -4468,40 +4606,56 @@
           claimedNames,
           userActions,
           categoryCounts,
-          liveStats
+          liveStats,
+          savedAt: Date.now()
         };
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(snapshot));
+        localStorage.setItem(getUserStorageKey(displayName), JSON.stringify(snapshot));
+        // Update user index
+        let index = {};
+        try { index = JSON.parse(localStorage.getItem(INDEX_KEY)) || {}; } catch (e) {}
+        index[displayName.toLowerCase()] = Date.now();
+        localStorage.setItem(INDEX_KEY, JSON.stringify(index));
       } catch (e) {
         console.warn('Dot Circles: could not save state', e);
       }
     }
 
     function loadState() {
+      // This is now called with a specific username via loadUserState(username)
+      // Kept for backwards compatibility - loads the most recent user
+      let index = {};
+      try { index = JSON.parse(localStorage.getItem(INDEX_KEY)) || {}; } catch (e) {}
+      const usernames = Object.keys(index).sort((a, b) => index[b] - index[a]);
+      if (usernames.length > 0) {
+        loadUserState(usernames[0]);
+      }
+    }
+
+    function loadUserState(username) {
+      const key = getUserStorageKey(username);
       let saved;
       try {
-        const raw = localStorage.getItem(STORAGE_KEY);
-        if (!raw) return;
+        const raw = localStorage.getItem(key);
+        if (!raw) return false;
         saved = JSON.parse(raw);
       } catch (e) {
-        console.warn('Dot Circles: could not load saved state', e);
-        return;
+        console.warn('Dot Circles: could not load user state', e);
+        return false;
       }
-      if (!saved || typeof saved !== 'object') return;
+      if (!saved || typeof saved !== 'object') return false;
 
       if (saved.threads && typeof saved.threads === 'object') {
         Object.keys(threads).forEach(cat => {
           if (!Array.isArray(saved.threads[cat])) return;
           const savedList = saved.threads[cat];
           const savedIds = new Set(savedList.map(t => t && t.id));
-          // Keep saved posts and replies, but surface any new seed threads that
-          // were added after this browser last saved its state.
           const freshSeeds = threads[cat].filter(t => !savedIds.has(t.id));
           threads[cat] = freshSeeds.concat(savedList);
         });
       }
       if (saved.categoryCounts) Object.assign(categoryCounts, saved.categoryCounts);
       if (saved.liveStats) Object.assign(liveStats, saved.liveStats);
-      displayName = saved.displayName || '';
+      displayName = saved.displayName || username;
       if (Array.isArray(saved.claimedNames)) claimedNames = saved.claimedNames;
       if (saved.userActions) {
         userActions = {
@@ -4514,6 +4668,13 @@
         isMember = true;
         memberName = saved.memberName || 'member';
       }
+      return true;
+    }
+
+    function getSavedUsernames() {
+      let index = {};
+      try { index = JSON.parse(localStorage.getItem(INDEX_KEY)) || {}; } catch (e) {}
+      return Object.keys(index).sort((a, b) => index[b] - index[a]);
     }
 
     // Optional published feed: circles-posts.json sits next to this page and
