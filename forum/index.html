@@ -3604,7 +3604,8 @@
       const viewsKarma     = viewsNum         * KARMA_WEIGHTS.views;
       const likesKarma     = thread.likes     * KARMA_WEIGHTS.likes;
       const commentsKarma  = thread.comments  * KARMA_WEIGHTS.comments;
-      const totalKarma     = viewsKarma + likesKarma + commentsKarma;
+      const bonusKarma     = thread.bonusKarma || 0;
+      const totalKarma     = viewsKarma + likesKarma + commentsKarma + bonusKarma;
 
       const earningsCard = `
         <div class="earnings-card">
@@ -3626,6 +3627,10 @@
               <span><i class="fas fa-comment"></i> Replies (<span id="post-comments-count">${thread.comments}</span>)</span>
               <span>+<span id="post-comments-karma">${commentsKarma.toLocaleString('en-US')}</span></span>
             </div>
+            ${bonusKarma ? `<div class="earnings-row">
+              <span><i class="fas fa-bolt"></i> Karma Booster</span>
+              <span>+${bonusKarma.toLocaleString('en-US')}</span>
+            </div>` : ''}
           </div>
           <div class="karma-revenue">
             <span><i class="fas fa-dollar-sign"></i> Revenue earned</span>
@@ -4395,7 +4400,7 @@
       const viewsKarma    = viewsNum        * KARMA_WEIGHTS.views;
       const likesKarma    = thread.likes    * KARMA_WEIGHTS.likes;
       const commentsKarma = thread.comments * KARMA_WEIGHTS.comments;
-      const totalKarma    = viewsKarma + likesKarma + commentsKarma;
+      const totalKarma    = viewsKarma + likesKarma + commentsKarma + (thread.bonusKarma || 0);
 
       const set = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
       set('post-karma-total', formatKarma(totalKarma));
