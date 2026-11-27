@@ -4379,7 +4379,9 @@
       pending += gained * REVENUE_PER_KARMA;
       // On a fresh page load/restart, surface even tiny accrued amounts so the
       // user sees a popup on restart; afterwards use the normal $0.01 threshold.
-      const threshold = sessionFirstAccrual ? 0.01 : 0.005;
+      // Show a popup whenever any revenue has accrued (even tiny amounts),
+      // so the user sees feedback both on restart and while the site is open.
+      const threshold = 0.001;
       if (pending >= threshold && pending > 0) {
         try { localStorage.setItem(pendingKey, '0'); } catch (e) {}
         showRevenuePopup(pending);
