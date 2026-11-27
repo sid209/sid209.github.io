@@ -535,25 +535,33 @@
     .activity-link:hover { color: var(--accent); }
 
     .karma-booster {
-      display: flex; align-items: center; justify-content: space-between; gap: 18px;
+      display: grid; gap: 9px;
       margin-bottom: 18px; padding: 14px 16px;
       background: var(--accent-soft);
       border: 1px solid var(--accent-border); border-radius: 14px;
     }
-    .karma-booster-copy { display: flex; align-items: center; gap: 11px; min-width: 0; }
+    .karma-booster-head { display: flex; align-items: center; gap: 9px; flex-wrap: wrap; }
     .karma-booster-icon {
-      width: 38px; height: 38px; flex: none;
+      width: 30px; height: 30px; flex: none;
       display: grid; place-items: center;
-      border-radius: 12px;
+      border-radius: 10px;
       background: var(--accent); color: #fff;
       box-shadow: 0 5px 14px rgba(245, 78, 0, 0.18);
     }
-    .karma-booster-icon i { font-size: 16px; }
-    .karma-booster-text { min-width: 0; }
-    .karma-booster-title { display: block; font-size: 14px; font-weight: 700; letter-spacing: -0.01em; }
-    .karma-booster-desc { display: block; margin-top: 2px; font-size: 12px; color: var(--text-2); }
+    .karma-booster-icon i { font-size: 13px; }
+    .karma-booster-title { font-size: 14px; font-weight: 700; letter-spacing: -0.01em; }
+    .karma-booster-desc { margin: 0; font-size: 12.5px; color: var(--text-2); line-height: 1.5; }
+    .karma-booster-desc strong { color: var(--text); }
+    .karma-booster-actions { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .karma-booster-link {
+      height: 34px; padding: 0 12px;
+      display: inline-flex; align-items: center; justify-content: center; gap: 7px;
+      border-radius: 9px; background: var(--surface); border: 1px solid var(--accent-border);
+      color: var(--text); font-size: 12.5px; font-weight: 600;
+    }
+    .karma-booster-link:hover { border-color: var(--accent); color: var(--accent); }
     .karma-booster-btn {
-      height: 36px; flex: none; padding: 0 13px;
+      height: 34px; flex: none; padding: 0 13px;
       display: inline-flex; align-items: center; justify-content: center; gap: 7px;
       border-radius: 9px; background: var(--accent); color: #fff;
       font-size: 12.5px; font-weight: 650;
@@ -562,6 +570,25 @@
     .karma-booster-btn.is-claimed {
       background: var(--green-soft); color: var(--green); border: 1px solid var(--revenue-border);
     }
+
+    .thread-pin {
+      font-size: 10px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase;
+      color: var(--accent); background: var(--accent-soft); border: 1px solid var(--accent-border);
+      padding: 1px 7px; border-radius: 999px;
+      display: inline-flex; align-items: center; gap: 4px;
+    }
+    .thread-pin i { font-size: 8px; }
+    .thread-item.is-pinned { background: var(--accent-soft); }
+
+    .booster-status {
+      display: flex; align-items: center; gap: 7px;
+      margin: 0 0 10px; padding: 8px 11px;
+      border-radius: 9px; background: var(--accent-soft); border: 1px solid var(--accent-border);
+      font-size: 12px; font-weight: 600; color: var(--text);
+    }
+    .booster-status i { color: var(--accent); font-size: 11px; }
+    .booster-status.claimed { background: var(--green-soft); border-color: var(--revenue-border); color: var(--green); }
+    .booster-status.claimed i { color: var(--green); }
 
     .pinned-post {
       background: var(--surface);
@@ -1156,10 +1183,8 @@
       .featured-card { gap: 12px; }
       .featured-foot { justify-content: space-between; }
       .featured-revenue { font-size: 12px; }
-      .karma-booster { align-items: flex-start; gap: 10px; padding: 12px; }
-      .karma-booster-icon { width: 34px; height: 34px; border-radius: 10px; }
-      .karma-booster-btn { width: 36px; padding: 0; font-size: 0; }
-      .karma-booster-btn i { font-size: 12px; }
+      .karma-booster { padding: 12px; }
+      .karma-booster-btn { flex: 1 1 auto; }
       .search-wrap { display: none; }
       .thread-item { grid-template-columns: 34px minmax(0, 1fr); }
       .thread-avatar { width: 34px; height: 34px; font-size: 13px; }
@@ -1460,16 +1485,25 @@
           </div>
 
           <div class="karma-booster" id="karma-booster">
-            <div class="karma-booster-copy">
+            <div class="karma-booster-head">
               <span class="karma-booster-icon"><i class="fas fa-bolt"></i></span>
-              <span class="karma-booster-text">
-                <span class="karma-booster-title">Karma Booster</span>
-                <span class="karma-booster-desc">Install an app or game and post a YouTube gameplay video to earn 500 extra karma.</span>
-              </span>
+              <span class="karma-booster-title">Karma Booster · Wheel of Emotion</span>
+              <span class="pinned-badge"><i class="fas fa-thumbtack"></i> Pinned</span>
             </div>
-            <button class="karma-booster-btn" id="karma-booster-btn" onclick="openKarmaBooster()">
-              <i class="fas fa-arrow-up"></i> Boost karma
-            </button>
+            <p class="karma-booster-desc">
+              Install <strong>Wheel of Emotion</strong> and keep it installed. Reply on the pinned post with
+              your feedback, a review or a suggestion — your first reply each day adds
+              <strong>10 karma</strong> instantly.
+            </p>
+            <div class="karma-booster-actions">
+              <a class="karma-booster-link" href="https://play.google.com/store/apps/details?id=com.wheelofemotionapp.app"
+                 target="_blank" rel="noopener noreferrer">
+                <i class="fab fa-google-play"></i> Google Play
+              </a>
+              <button class="karma-booster-btn" id="karma-booster-btn" onclick="openKarmaBoosterPost()">
+                <i class="fas fa-reply"></i> Reply &amp; earn 10
+              </button>
+            </div>
           </div>
 
           <section>
@@ -1729,7 +1763,6 @@
     let displayName = '';
     let claimedNames = [];
     let pendingIdentityAction = null;
-    let karmaBoosterSubmission = false;
     let userActions = { replies: 0, likes: 0, boosterKarma: 0 };
 
     // ==================== TOOLS ====================
@@ -2383,6 +2416,23 @@
       ],
       testers: [
         {
+          id: 'karma-booster', icon: 'fa-bolt',
+          title: 'Karma Booster: keep Wheel of Emotion installed and tell us what to improve',
+          tags: [], pinned: true,
+          author: 'Dot Circles', views: '0', time: 'always open',
+          comments: 0, likes: 0, lastReply: 'Dot Circles', memberOnly: false,
+          body: `<p><strong>Wheel of Emotion</strong> is a small app for naming what you feel, one spin at a time. We would rather hear the awkward truth than a polite nod, so this thread is where we collect it.</p>
+            <p><a href="https://play.google.com/store/apps/details?id=com.wheelofemotionapp.app" target="_blank" rel="noopener noreferrer"><strong>Install Wheel of Emotion on Google Play</strong></a></p>
+            <p><strong>What we are asking for:</strong></p>
+            <ul>
+              <li>Install the app and <strong>keep it installed</strong>. We need people using it day to day, not for five minutes.</li>
+              <li>Reply below with your feedback, a review, or a suggestion. Specific is better: what confused you, what felt good, what you would change.</li>
+              <li>Come back and reply again each day. Your first reply each day adds <strong>10 karma</strong> to your account instantly.</li>
+            </ul>
+            <p>This post is replies only and stays pinned at the top of Apps &amp; Game Testers, so the thread is always easy to find.</p>`,
+          replies: []
+        },
+        {
           id: 'g1', icon: 'fa-gamepad',
           title: 'Beta testers wanted: a cozy puzzle game I built solo',
           tags: [{ label: 'TRIAL', cls: '' }],
@@ -2757,16 +2807,19 @@
     function renderThreadItem(thread, category, showCategory) {
       const karma = calculateKarma(thread);
       const revenue = displayRevenue(thread);
+      const isPinned = thread.id === KARMA_BOOSTER_ID;
       const searchText = `${thread.title} ${thread.author} ${CAT_LABELS[category] || ''}`.toLowerCase();
       const catChip = showCategory
         ? `<span class="thread-cat ${category}">${CAT_LABELS[category] || category}</span>`
         : '';
+      const pinBadge = isPinned ? '<span class="thread-pin"><i class="fas fa-thumbtack"></i> Pinned</span>' : '';
       return `
-        <div class="thread-item" data-thread-id="${thread.id}" data-search="${escapeHtml(searchText)}" onclick="openPost('${category}', '${thread.id}')">
+        <div class="thread-item${isPinned ? ' is-pinned' : ''}" data-thread-id="${thread.id}" data-search="${escapeHtml(searchText)}" onclick="openPost('${category}', '${thread.id}')">
           <div class="thread-avatar"><i class="fas ${thread.icon}"></i></div>
           <div class="thread-info">
             <div class="thread-title">
               <a href="javascript:void(0)">${escapeHtml(thread.title)}</a>
+              ${pinBadge}
             </div>
             <div class="thread-meta">
               ${catChip}
@@ -2778,12 +2831,13 @@
           <div class="thread-stats">
             <span><i class="fas fa-comment"></i> ${thread.comments}</span>
             <span><i class="fas fa-heart"></i> ${thread.likes}</span>
+            ${!isPinned ? `
             <span class="earnings-badge" title="Karma from views, likes and replies">
               <i class="fas fa-star"></i> ${formatKarma(karma)}
             </span>
             <span class="revenue-badge" title="Revenue earned from this post's karma">
               <i class="fas fa-dollar-sign"></i> ${formatRevenue(revenue)}
-            </span>
+            </span>` : ''}
           </div>
           <div class="last-post">
             <i class="fas fa-reply"></i> @${escapeHtml(thread.lastReply)}
@@ -2821,7 +2875,9 @@
       feed.hidden = false;
       if (title) title.textContent = CAT_LABELS[cat] || cat;
       list.className = 'thread-list cat-' + cat;
-      list.innerHTML = (threads[cat] || []).map(t => renderThreadItem(t, cat)).join('');
+      // Pinned post always first
+      const sorted = [...(threads[cat] || [])].sort((a, b) => (a.id === KARMA_BOOSTER_ID ? -1 : b.id === KARMA_BOOSTER_ID ? 1 : 0));
+      list.innerHTML = sorted.map(t => renderThreadItem(t, cat)).join('');
     }
 
     function selectCategory(cat) {
@@ -2879,12 +2935,16 @@
 
     function renderFlat(mode) {
       const all = collectThreads();
+      // Pinned post always first in flat view too
+      const pinned = all.find(x => x.thread.id === KARMA_BOOSTER_ID);
+      const rest = all.filter(x => x.thread.id !== KARMA_BOOSTER_ID);
       if (mode === 'hot') {
-        all.sort((a, b) => calculateKarma(b.thread) - calculateKarma(a.thread));
+        rest.sort((a, b) => calculateKarma(b.thread) - calculateKarma(a.thread));
       } else {
-        all.sort((a, b) => timeToMinutes(a.thread.time) - timeToMinutes(b.thread.time));
+        rest.sort((a, b) => timeToMinutes(a.thread.time) - timeToMinutes(b.thread.time));
       }
-      document.getElementById('flat-threads').innerHTML = all.map(x => renderThreadItem(x.thread, x.cat, true)).join('');
+      const sorted = pinned ? [pinned, ...rest] : rest;
+      document.getElementById('flat-threads').innerHTML = sorted.map(x => renderThreadItem(x.thread, x.cat, true)).join('');
       if (searchTerm) filterThreads(searchTerm);
     }
 
@@ -3030,14 +3090,26 @@
 
       const repliesHtml = thread.replies.map(r => renderReply(r)).join('');
 
+      const isBooster = thread.id === KARMA_BOOSTER_ID;
+
       let bodyHtml, replyFormHtml, repliesHeaderHtml;
       bodyHtml = thread.body;
+      const boosterNote = isBooster
+        ? (karmaBoosterClaimedToday()
+            ? `<div class="booster-status claimed"><i class="fas fa-circle-check"></i> You already have today’s 10 karma. Reply again tomorrow to earn another 10.</div>`
+            : `<div class="booster-status"><i class="fas fa-bolt"></i> Your reply adds 10 karma to your account instantly.</div>`)
+        : '';
       replyFormHtml = `
         <div class="reply-form">
-          <h4><i class="fas fa-comment-dots"></i> Join the conversation</h4>
-          <textarea id="reply-input" placeholder="Add your voice..."></textarea>
+          <h4><i class="fas fa-comment-dots"></i> ${isBooster ? 'Leave your feedback' : 'Join the conversation'}</h4>
+          ${boosterNote}
+          <textarea id="reply-input" placeholder="${isBooster
+            ? 'What should we fix, keep or add in Wheel of Emotion?'
+            : 'Add your voice...'}"></textarea>
           <div class="reply-submit-row">
-            <span class="hint"><i class="fas fa-info-circle"></i> Be kind and constructive</span>
+            <span class="hint"><i class="fas fa-info-circle"></i> ${isBooster
+              ? 'Keep the app installed so you can reply with fresh feedback'
+              : 'Be kind and constructive'}</span>
             <button class="submit-btn" onclick="submitReply('${category}', '${id}')">
               <i class="fas fa-paper-plane"></i> Respond
             </button>
@@ -3101,11 +3173,13 @@
           <div class="post-meta-row">
             <span><i class="fas fa-user"></i> <span class="author">@${escapeHtml(thread.author)}</span></span>
             <span><i class="fas fa-eye"></i> <span id="post-meta-views">${formatViews(thread.views)} views</span></span>
-            <span><i class="fas fa-clock"></i> Posted ${escapeHtml(thread.time)}</span>
+            ${thread.pinned
+              ? '<span><i class="fas fa-thumbtack"></i> Pinned post</span>'
+              : `<span><i class="fas fa-clock"></i> Posted ${escapeHtml(thread.time)}</span>`}
             <span><i class="fas fa-comment"></i> <span id="post-meta-responses">${thread.comments} responses</span></span>
             <span><i class="fas fa-heart"></i> <span id="post-meta-likes">${thread.likes} likes</span></span>
           </div>
-          ${earningsCard}
+          ${thread.pinned ? '' : earningsCard}
         </div>
         <div class="post-body">${bodyHtml}</div>
         <div class="post-replies">
@@ -3152,15 +3226,26 @@
       }
       const thread = threads[category].find(t => t.id === threadId);
       if (!thread) return;
+      const isBooster = thread.id === KARMA_BOOSTER_ID;
+
       thread.replies.push({ author: authorName(), time: 'just now', badge: 'You', text: text });
       thread.comments += 1;
-      userActions.replies += 1;
+      // A Karma Booster reply pays its own 10 karma instead of the usual
+      // interaction karma, so the jump in the activity card is exactly 10.
+      const awarded = isBooster ? claimKarmaBooster() : 0;
+      if (!isBooster) userActions.replies += 1;
       thread.time = 'just now';
       thread.lastReply = authorName();
 
       liveStats.posts += 1;
       updateStatDisplay('posts', liveStats.posts);
-      showToast('Response posted! Your voice is live in the conversation.');
+      if (isBooster) {
+        showToast(awarded
+          ? `+${awarded} karma added. Keep Wheel of Emotion installed and reply again tomorrow with more feedback.`
+          : 'Thanks for the feedback! You already earned today’s 10 karma — reply again tomorrow.');
+      } else {
+        showToast('Response posted! Your voice is live in the conversation.');
+      }
 
       openPost(category, threadId);
       renderForum();
@@ -3419,7 +3504,11 @@
     const PAYOUT_TARGET = 80;
     const ENGAGEMENT_KEY = 'circles_engagement_v1';
     const KARMA_BOOSTER_KEY = 'circles_karma_booster_v1';
-    const KARMA_BOOSTER_REWARD = 500;
+    // The Karma Booster is a single pinned post about Wheel of Emotion. Replying
+    // to it pays this much karma, once per calendar day.
+    const KARMA_BOOSTER_ID = 'karma-booster';
+    const KARMA_BOOSTER_CAT = 'testers';
+    const KARMA_BOOSTER_REWARD = 10;
     // Every calendar day earns a different amount: it averages about $4 but
     // swings between roughly $1.50 and $6.50. The rate is seeded from the date,
     // so it holds steady while the page is open and only changes at midnight.
@@ -3624,8 +3713,8 @@
         const claimed = karmaBoosterClaimedToday();
         boosterBtn.classList.toggle('is-claimed', claimed);
         boosterBtn.innerHTML = claimed
-          ? '<i class="fas fa-circle-check"></i> Claimed today'
-          : '<i class="fas fa-arrow-up"></i> Boost karma';
+          ? '<i class="fas fa-circle-check"></i> Earned today'
+          : '<i class="fas fa-reply"></i> Reply &amp; earn 10';
       }
 
       const title = card.querySelector('.activity-title');
@@ -3688,35 +3777,22 @@
       }
     }
 
-    function openKarmaBooster() {
-      if (!hasIdentity()) {
-        pendingIdentityAction = openKarmaBooster;
-        openIdentityModal();
-        return;
-      }
-      if (karmaBoosterClaimedToday()) {
-        showToast('You already claimed today’s Karma Booster. Come back tomorrow!', true);
-        return;
-      }
-      openComposeModal();
-      const circle = document.getElementById('compose-circle');
-      const title = document.getElementById('compose-title');
-      const body = document.getElementById('compose-body');
-      if (circle) circle.value = 'testers';
-      if (title) title.placeholder = 'App or game name + gameplay video';
-      if (body) body.placeholder = 'Install an app or game, then paste your YouTube gameplay video link here.';
-      karmaBoosterSubmission = true;
+    function openKarmaBoosterPost() {
+      if (!(threads[KARMA_BOOSTER_CAT] || []).some(t => t.id === KARMA_BOOSTER_ID)) return;
+      ensureForumView();
+      openPost(KARMA_BOOSTER_CAT, KARMA_BOOSTER_ID);
     }
 
+    // Pays the Karma Booster reward and returns the karma added (0 if today's
+    // reward is already claimed). Only the pinned post can call this.
     function claimKarmaBooster() {
-      if (karmaBoosterClaimedToday()) return false;
+      if (karmaBoosterClaimedToday()) return 0;
       const today = new Date().toDateString();
       try {
         localStorage.setItem(KARMA_BOOSTER_KEY, JSON.stringify({ date: today, claimed: true }));
       } catch (e) {}
       userActions.boosterKarma = (userActions.boosterKarma || 0) + KARMA_BOOSTER_REWARD;
-      saveState();
-      return true;
+      return KARMA_BOOSTER_REWARD;
     }
 
     function openComposeModal() {
@@ -3725,7 +3801,6 @@
         openIdentityModal();
         return;
       }
-      karmaBoosterSubmission = false;
       const left = postsLeftToday();
       const note = document.getElementById('compose-limit');
       if (note) {
@@ -3743,7 +3818,6 @@
     function closeComposeModal() {
       document.getElementById('compose-modal').classList.remove('active');
       document.body.style.overflow = '';
-      karmaBoosterSubmission = false;
     }
 
     function bodyToHtml(text) {
@@ -3775,13 +3849,6 @@
       if (!title) { titleEl.style.borderColor = '#d93025'; setTimeout(() => titleEl.style.borderColor = '', 800); ok = false; }
       if (!body)  { bodyEl.style.borderColor  = '#d93025'; setTimeout(() => bodyEl.style.borderColor  = '', 800); ok = false; }
       if (!ok) { showToast('Add a title and some content to post', true); return; }
-      if (karmaBoosterSubmission) {
-        const youtubeLink = /https?:\/\/(www\.)?(youtube\.com|youtu\.be)\//i.test(body);
-        if (circle !== 'testers' || !youtubeLink) {
-          showToast('Booster requires the Apps & Game Testers category and a YouTube gameplay video link.', true);
-          return;
-        }
-      }
 
       const iconMap = CATEGORY_ICONS;
 
@@ -3803,11 +3870,6 @@
 
       threads[circle].unshift(newThread);
       recordPostToday();
-      let boosterClaimed = false;
-      if (karmaBoosterSubmission) {
-        boosterClaimed = claimKarmaBooster();
-      }
-      karmaBoosterSubmission = false;
       categoryCounts[circle] += 1;
 
       liveStats.posts += 1;
@@ -3819,11 +3881,7 @@
       closeComposeModal();
       renderForum();
       saveState();
-      if (boosterClaimed) {
-        showToast(`Karma Booster complete! +${formatKarma(KARMA_BOOSTER_REWARD)} karma and ${formatRevenue(KARMA_BOOSTER_REWARD * REVENUE_PER_KARMA)} added. 🎉`);
-      } else {
-        showToast('Conversation started — your post is live! 🎉');
-      }
+      showToast('Conversation started — your post is live! 🎉');
       openPost(circle, newThread.id);
     }
 
