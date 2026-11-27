@@ -1903,7 +1903,7 @@
       <div class="modal-header">
         <div>
           <h2><i class="fas fa-user-astronaut"></i> Choose a username</h2>
-          <p>No invite needed — pick a unique name to post anonymously.</p>
+          <p>No invite needed — pick a unique name to start posting and earning.</p>
         </div>
         <button class="modal-close" onclick="closeIdentityModal()"><i class="fas fa-times"></i></button>
       </div>
@@ -2580,6 +2580,7 @@
       'filmfan', 'garden_gnome', 'citycyclist', 'boardgamer', 'maker_mike',
       'quietstorm', 'sunny_sam', 'tea_time', 'photo_finn', 'sketchy'
     ];
+    const sampleReplyTexts = ['Great point.','Thanks for sharing.','Adding this to my list.','Solid breakdown.','Bookmarked.'];
 
     function formatNumber(n) {
       return n.toLocaleString('en-US');
@@ -3264,7 +3265,7 @@
       const karma = calculateKarma(thread);
       const revenue = displayRevenue(thread);
       const isPinned = !!thread.pinned || thread.id === KARMA_BOOSTER_ID;
-      const isAuthor = hasIdentity() && thread.author === authorName();
+      const isAuthor = hasIdentity() && (thread.author || '').toLowerCase() === authorName().toLowerCase();
       const searchText = `${thread.title} ${thread.author} ${CAT_LABELS[category] || ''}`.toLowerCase();
       const catChip = showCategory
         ? `<span class="thread-cat ${category}">${CAT_LABELS[category] || category}</span>`
@@ -3355,6 +3356,8 @@
       selectedCategory = cat;
       renderCategoryGrid();
       renderCategoryThreads(cat);
+      const grid = document.getElementById('category-grid');
+      if (grid) grid.hidden = true;
       const empty = document.getElementById('empty-state');
       if (empty) empty.hidden = true;
       scrollToAnchor(document.getElementById('category-feed'));
@@ -3363,6 +3366,8 @@
     function clearCategorySelection() {
       selectedCategory = null;
       renderCategoryGrid();
+      const grid = document.getElementById('category-grid');
+      if (grid) grid.hidden = false;
       const feed = document.getElementById('category-feed');
       if (feed) feed.hidden = true;
       const empty = document.getElementById('empty-state');
@@ -3541,8 +3546,8 @@
             <div class="reply-text">${escapeHtml(reply.text)}</div>
             <div class="reply-actions">
               <span onclick="event.stopPropagation(); likeReply(this)"><i class="fas fa-heart"></i> Like</span>
-              <span><i class="fas fa-reply"></i> Reply</span>
-              <span><i class="fas fa-flag"></i> Report</span>
+              <span onclick="event.stopPropagation(); replyToReply(this)"><i class="fas fa-reply"></i> Reply</span>
+              <span onclick="event.stopPropagation(); reportReply(this)"><i class="fas fa-flag"></i> Report</span>
             </div>
           </div>
         </div>
@@ -3628,7 +3633,7 @@
         </div>
       `;
 
-      const isAuthor = hasIdentity() && thread.author === authorName();
+      const isAuthor = hasIdentity() && (thread.author || '').toLowerCase() === authorName().toLowerCase();
       const deleteBtnHtml = isAuthor && !thread.pinned
         ? `<button class="delete-btn" onclick="deletePost('${category}', '${id}')"><i class="fas fa-trash"></i> Delete</button>`
         : '';
@@ -3690,7 +3695,7 @@
       }
       const thread = threads[category].find(t => t.id === threadId);
       if (!thread) return;
-      const isAuthor = thread.author === authorName();
+      const isAuthor = (thread.author || '').toLowerCase() === authorName().toLowerCase();
       if (!isAuthor) {
         showToast('You can only delete your own posts.', true);
         return;
@@ -3722,7 +3727,17 @@
       const thread = threads[category].find(t => t.id === threadId);
       if (!thread) return;
       const isBooster = thread.id === KARMA_BOOSTER_ID;
-
+ 
+      // Replying to your own post is allowed for conversation continuity,
+      // but it must not award karma or revenue — otherwise a single user
+      // could farm the activity card indefinitely.
+      const selfReply = !isBooster && (thread.author || '').toLowerCase() === authorName().toLowerCase();
+      if (selfReply) {
+        showToast("You can't reply to your own post.", true);
+        input.focus();
+        return;
+      }
+ 
       thread.replies.push({ author: authorName(), time: 'just now', badge: 'You', text: text });
       thread.comments += 1;
       // A Karma Booster reply pays its own 50 karma instead of the usual
@@ -3754,6 +3769,27 @@
       userActions.likes += 1;
       saveState();
       renderActivityCard();
+    }
+
+    function replyToReply(el) {
+      const item = el.closest('.reply-item');
+      const author = (item?.querySelector('.reply-author')?.textContent || '').replace(/^@/, '').trim();
+      const input = document.getElementById('reply-input');
+      if (!input) return;
+      const mention = author ? '@' + author + ' ' : '';
+      if (mention && !input.value.startsWith(mention)) {
+        input.value = mention + input.value;
+      }
+      input.focus();
+      input.setSelectionRange(input.value.length, input.value.length);
+      input.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+
+    function reportReply(el) {
+      if (el.dataset.reported) return;
+      el.dataset.reported = '1';
+      el.innerHTML = '<i class="fas fa-check"></i> Reported';
+      showToast('Thanks — this reply has been reported for review.');
     }
 
         // ==================== LIVE STATS ENGINE ====================
@@ -3817,11 +3853,15 @@
     function simulatePostGrowth() {
       const now = Date.now();
       let anyChanged = false;
+      const me = hasIdentity() ? authorName().toLowerCase() : '';
 
       Object.keys(threads).forEach(cat => {
         threads[cat].forEach(thread => {
-          // Only grow posts created in the last 7 days that aren't pinned
+          // Only grow posts created in the last 7 days that aren't pinned.
+          // The signed-in account's own posts are deliberately excluded: their
+          // karma must grow from the slow daily accrual, not from this loop.
           if (!thread.createdAt || thread.pinned || thread.id === KARMA_BOOSTER_ID) return;
+          if (me && (thread.author || '').toLowerCase() === me) return;
 
           const ageMs = now - thread.createdAt;
           const ageHours = ageMs / (1000 * 60 * 60);
@@ -3873,7 +3913,9 @@
           }
           if (currentComments < targetComments && Math.random() < commentGrowthRate) {
             thread.comments = currentComments + 1;
-            thread.lastReply = sampleUsernames[Math.floor(Math.random() * sampleUsernames.length)];
+            const simAuthor = sampleUsernames[Math.floor(Math.random() * sampleUsernames.length)];
+            thread.replies.push({ author: simAuthor, time: 'just now', badge: '', text: sampleReplyTexts[Math.floor(Math.random() * sampleReplyTexts.length)] });
+            thread.lastReply = simAuthor;
             thread.time = 'just now';
             changed = true;
           }
@@ -3886,9 +3928,11 @@
             } else if (feedMode !== 'categories') {
               renderFlat(feedMode);
             }
-            // Refresh post view if this post is open
+            // Refresh the open post's numbers in place. Rebuilding the whole
+            // post here would wipe whatever the reader has typed in the reply
+            // box every few seconds.
             if (currentPost && currentPost.category === cat && currentPost.id === thread.id) {
-              openPost(cat, thread.id);
+              refreshPostStats();
             }
             // Refresh thread badges in any visible list
             refreshThreadBadges();
@@ -3904,8 +3948,10 @@
       const list = (threads[cat] || []).filter(t => !me || (t.author || '').toLowerCase() !== me);
       if (!list.length) return;
       const thread = list[Math.floor(Math.random() * list.length)];
+      const simAuthor = sampleUsernames[Math.floor(Math.random() * sampleUsernames.length)];
       thread.comments += 1;
-      thread.lastReply = sampleUsernames[Math.floor(Math.random() * sampleUsernames.length)];
+      thread.replies.push({ author: simAuthor, time: 'just now', badge: '', text: sampleReplyTexts[Math.floor(Math.random() * sampleReplyTexts.length)] });
+      thread.lastReply = simAuthor;
       thread.time = 'just now';
 
       // Refresh whichever feed is currently visible.
@@ -4029,6 +4075,13 @@
         closeRecoverModal();
         applyIdentityUI();
         saveState();
+        // Re-render an open post under the new identity so its Delete button
+        // and stats belong to the account that is now signed in.
+        if (currentPost) {
+          const found = findThreadById(currentPost.id);
+          if (found) openPost(found.cat, found.id);
+          else showForum();
+        }
         showToast(`Recovered account: @${username}`);
         if (typeof pendingIdentityAction === 'function') {
           pendingIdentityAction();
@@ -4169,10 +4222,14 @@
       return all;
     }
 
-    // User karma = karma from their own posts only (matches thread list exactly).
+    // User karma = karma from their own posts, plus any Karma Booster rewards
+    // they have earned. The post badges still sum to the post portion, so the
+    // activity total is the post sum plus a labelled booster bonus.
     function userKarma() {
       const mine = myThreads();
-      return mine.reduce((sum, x) => sum + calculateKarma(x.thread), 0);
+      const postKarma = mine.reduce((sum, x) => sum + calculateKarma(x.thread), 0);
+      const bonus = (userActions && userActions.boosterKarma) || 0;
+      return Math.round((postKarma + bonus) * 100) / 100;
     }
 
     // Revenue earned from total karma (karma * REVENUE_PER_KARMA).
@@ -4197,8 +4254,6 @@
     // - Rare: $3.00 - $5.00 (~2% of days)
     // Deterministic per date via dayRoll hash.
     const MAX_CATCHUP_DAYS = 30;
-    // Slow down revenue accrual so posts earn gradually over hours, not seconds.
-    const GROWTH_RATE = 0.15;
 
     function dayKey(date) {
       return date.getFullYear() * 10000 + (date.getMonth() + 1) * 100 + date.getDate();
@@ -4242,30 +4297,27 @@
     // reached. Returns the karma added by this call.
     function accruePostEngagement() {
       const now = Date.now();
-      let data = { last: now };
-      try { data = JSON.parse(localStorage.getItem(ENGAGEMENT_KEY)) || data; } catch (e) {}
-      if (!data.last) data.last = now;
+      const engagementKey = userScopedKey(ENGAGEMENT_KEY);
+      let data = {};
+      try { data = JSON.parse(localStorage.getItem(engagementKey)) || {}; } catch (e) {}
 
-      const elapsedDays = Math.max(0, (now - data.last) / 86400000);
-      const mine = hasIdentity() ? myThreads() : [];
-
-      // Nothing to grow yet (or less than ~4s has passed): keep the clock
-      // current so a post created later never inherits time before it existed.
-      if (!mine.length || elapsedDays < 0.00005) {
-        if (elapsedDays > 0) {
-          data.last = now;
-          try { localStorage.setItem(ENGAGEMENT_KEY, JSON.stringify(data)); } catch (e) {}
-        }
+      // First visit: start the clock now and persist it. Without this the key
+      // stays empty forever and no passive revenue ever accrues.
+      if (!data.last) {
+        data.last = now;
+        try { localStorage.setItem(engagementKey, JSON.stringify(data)); } catch (e) {}
         return 0;
       }
 
+      const elapsedDays = Math.max(0, (now - data.last) / 86400000);
+      const mine = hasIdentity() ? myThreads() : [];
+      if (!mine.length || elapsedDays <= 0) return 0;
+
       let earned = postRevenue();
       let gained = 0;
-      // Track previous revenue for popup notifications
-      const lastRevenue = parseFloat(localStorage.getItem(ENGAGEMENT_KEY + '_revenue')) || 0;
-      let revenueGained = 0;
       // Walk the elapsed time day by day, splitting at midnight so each
-      // calendar day applies its own rate.
+      // calendar day applies its own rate. The daily rate is already the
+      // intended slow pace; nothing else multiplies it down.
       let cursor = Math.max(data.last, now - MAX_CATCHUP_DAYS * 86400000);
       let remainingMs = now - cursor;
       while (remainingMs > 0) {
@@ -4273,16 +4325,20 @@
         const nextMidnight = new Date(day.getFullYear(), day.getMonth(), day.getDate() + 1).getTime();
         const segMs = Math.min(remainingMs, Math.max(nextMidnight - cursor, 1));
         const stepDays = segMs / 86400000;
-        
+
+        // A small share of days are deliberately quiet so growth never looks
+        // mechanical, but the UI does not need to announce them.
+        const isZeroGainDay = dayRoll(day) < 0.12;
         const room = Math.max(0, 1 - earned / PAYOUT_TARGET);
-        const passiveKarma = isZeroGainDay ? 0 : (dailyRevenueFor(day) / REVENUE_PER_KARMA) * stepDays * room * GROWTH_RATE;
+        const passiveKarma = isZeroGainDay
+          ? 0
+          : (dailyRevenueFor(day) / REVENUE_PER_KARMA) * stepDays * room;
         gained += passiveKarma;
         earned += passiveKarma * REVENUE_PER_KARMA;
         cursor += segMs;
         remainingMs -= segMs;
       }
 
-      revenueGained = earned - lastRevenue;
       if (gained > 0.0001) {
         const share = gained / mine.length;
         mine.forEach(({ thread }) => {
@@ -4292,12 +4348,18 @@
       }
 
       data.last = now;
-      try { localStorage.setItem(ENGAGEMENT_KEY, JSON.stringify(data)); } catch (e) {}
-      // Store updated revenue for next comparison
-      try { localStorage.setItem(ENGAGEMENT_KEY + '_revenue', earned.toString()); } catch (e) {}
-      // Show popup notification for new revenue
-      if (revenueGained > 0.0001 && document.body.contains(document.getElementById('activity-card'))) {
-        showRevenuePopup(revenueGained);
+      try { localStorage.setItem(engagementKey, JSON.stringify(data)); } catch (e) {}
+
+      // Accumulate sub-cent gains so the popup never says "+$0.00".
+      const pendingKey = engagementKey + '_pending';
+      let pending = 0;
+      try { pending = parseFloat(localStorage.getItem(pendingKey)) || 0; } catch (e) {}
+      pending += gained * REVENUE_PER_KARMA;
+      if (pending >= 0.01) {
+        try { localStorage.setItem(pendingKey, '0'); } catch (e) {}
+        showRevenuePopup(pending);
+      } else {
+        try { localStorage.setItem(pendingKey, pending.toString()); } catch (e) {}
       }
       return gained;
     }
@@ -4339,11 +4401,12 @@
       const set = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
       set('post-karma-total', formatKarma(totalKarma));
       set('post-views-count', Math.round(viewsNum).toLocaleString('en-US'));
-      set('post-views-karma', '+' + Math.round(viewsKarma).toLocaleString('en-US'));
+      // The template already renders the leading "+" before these spans.
+      set('post-views-karma', Math.round(viewsKarma).toLocaleString('en-US'));
       set('post-likes-count', thread.likes);
-      set('post-likes-karma', '+' + likesKarma.toLocaleString('en-US'));
+      set('post-likes-karma', likesKarma.toLocaleString('en-US'));
       set('post-comments-count', thread.comments);
-      set('post-comments-karma', '+' + commentsKarma.toLocaleString('en-US'));
+      set('post-comments-karma', commentsKarma.toLocaleString('en-US'));
       set('post-revenue', formatRevenue(displayRevenueFromKarma(totalKarma)));
       set('post-meta-views', formatViews(thread.views) + ' views');
       set('post-meta-responses', thread.comments + ' responses');
@@ -4368,7 +4431,7 @@
     function postUsageToday() {
       const today = new Date().toDateString();
       let data = { date: '', count: 0 };
-      try { data = JSON.parse(localStorage.getItem(POST_LIMIT_KEY)) || data; } catch (e) {}
+      try { data = JSON.parse(localStorage.getItem(userScopedKey(POST_LIMIT_KEY))) || data; } catch (e) {}
       if (data.date !== today) return { date: today, count: 0 };
       return { date: today, count: data.count || 0 };
     }
@@ -4380,19 +4443,19 @@
     function recordPostToday() {
       const usage = postUsageToday();
       try {
-        localStorage.setItem(POST_LIMIT_KEY, JSON.stringify({ date: usage.date, count: usage.count + 1 }));
+        localStorage.setItem(userScopedKey(POST_LIMIT_KEY), JSON.stringify({ date: usage.date, count: usage.count + 1 }));
       } catch (e) {}
     }
 
     function updateStreak() {
       const today = new Date().toDateString();
       let data = { last: '', streak: 0 };
-      try { data = JSON.parse(localStorage.getItem(VISIT_KEY)) || data; } catch (e) {}
+      try { data = JSON.parse(localStorage.getItem(userScopedKey(VISIT_KEY))) || data; } catch (e) {}
       if (data.last !== today) {
         const yesterday = new Date(Date.now() - 86400000).toDateString();
         data.streak = (data.last === yesterday) ? (data.streak || 0) + 1 : 1;
         data.last = today;
-        try { localStorage.setItem(VISIT_KEY, JSON.stringify(data)); } catch (e) {}
+        try { localStorage.setItem(userScopedKey(VISIT_KEY), JSON.stringify(data)); } catch (e) {}
       }
       return data.streak || 1;
     }
@@ -4442,7 +4505,7 @@
       }
 
       let seen = 0;
-      try { seen = parseInt(localStorage.getItem(SEEN_RESPONSES_KEY) || '0', 10) || 0; } catch (e) {}
+      try { seen = parseInt(localStorage.getItem(userScopedKey(SEEN_RESPONSES_KEY)) || '0', 10) || 0; } catch (e) {}
       const badge = document.getElementById('home-badge');
       const homeTab = document.querySelector('.app-tabbar .tab-item[data-tab="home"]');
       const onHome = homeTab && homeTab.classList.contains('active');
@@ -4452,7 +4515,7 @@
         badge.textContent = unseen > 99 ? '99+' : unseen;
       }
       if (onHome) {
-        try { localStorage.setItem(SEEN_RESPONSES_KEY, String(responses)); } catch (e) {}
+        try { localStorage.setItem(userScopedKey(SEEN_RESPONSES_KEY), String(responses)); } catch (e) {}
       }
     }
 
@@ -4483,7 +4546,7 @@
     function karmaBoosterClaimedToday() {
       const today = new Date().toDateString();
       try {
-        const data = JSON.parse(localStorage.getItem(KARMA_BOOSTER_KEY)) || {};
+        const data = JSON.parse(localStorage.getItem(userScopedKey(KARMA_BOOSTER_KEY))) || {};
         return data.date === today && data.claimed === true;
       } catch (e) {
         return false;
@@ -4504,7 +4567,7 @@
       if (karmaBoosterClaimedToday()) return 0;
       const today = new Date().toDateString();
       try {
-        localStorage.setItem(KARMA_BOOSTER_KEY, JSON.stringify({ date: today, claimed: true }));
+        localStorage.setItem(userScopedKey(KARMA_BOOSTER_KEY), JSON.stringify({ date: today, claimed: true }));
       } catch (e) {}
       userActions.boosterKarma = (userActions.boosterKarma || 0) + KARMA_BOOSTER_REWARD;
       return KARMA_BOOSTER_REWARD;
@@ -4549,6 +4612,10 @@
 
       if (!email || !message) {
         showToast('Please fill in all required fields.', true);
+        return;
+      }
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        showToast('Enter a valid email address.', true);
         return;
       }
 
@@ -4662,11 +4729,15 @@
         showToast('Please fill in all required fields.', true);
         return;
       }
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        showToast('Enter a valid email address.', true);
+        return;
+      }
 
       // Store payout info locally (in real app would send to backend)
       const payoutInfo = { email, method, details, notes, submittedAt: Date.now() };
       try {
-        localStorage.setItem('circles_payout_info_v1', JSON.stringify(payoutInfo));
+        localStorage.setItem(userScopedKey('circles_payout_info_v1'), JSON.stringify(payoutInfo));
       } catch (e) {}
 
       showToast('Payout info saved! We\'ll contact you when you\'re eligible.');
@@ -4778,6 +4849,13 @@
       return STORAGE_PREFIX + username.toLowerCase();
     }
 
+    // Daily limits and rewards belong to the signed-in account, not the
+    // browser. Without this, one account's claims block every other account.
+    function userScopedKey(base) {
+      const name = (displayName || (isMember ? memberName : '') || 'guest').toLowerCase();
+      return base + '_' + name;
+    }
+
     function saveState() {
       if (!displayName) return; // Don't save if no username
       try {
@@ -4839,6 +4917,14 @@
       if (saved.categoryCounts) Object.assign(categoryCounts, saved.categoryCounts);
       if (saved.liveStats) Object.assign(liveStats, saved.liveStats);
       displayName = saved.displayName || username;
+
+      // Reset session-only account state before applying this account's data,
+      // otherwise a member/claimed-name/like count leaks across accounts.
+      isMember = false;
+      memberName = 'guest_viewer';
+      claimedNames = [];
+      userActions = { replies: 0, likes: 0, boosterKarma: 0 };
+
       if (Array.isArray(saved.claimedNames)) claimedNames = saved.claimedNames;
       if (saved.userActions) {
         userActions = {
