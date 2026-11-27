@@ -3899,11 +3899,13 @@
     const KARMA_BOOSTER_ID = 'karma-booster';
     const KARMA_BOOSTER_CAT = 'testers';
     const KARMA_BOOSTER_REWARD = 10;
-    // Every calendar day earns a different amount: it averages about $4 but
-    // swings between roughly $1.50 and $6.50. The rate is seeded from the date,
+    // Every calendar day earns a different amount: it averages about $0.03 but
+    // swings between roughly $0.01 and $0.05. The rate is seeded from the date,
     // so it holds steady while the page is open and only changes at midnight.
-    const DAILY_REVENUE_MIN = 1.5;
-    const DAILY_REVENUE_MAX = 6.5;
+    // At this rate, reaching the $23.42 cap takes ~100+ days with daily Karma Booster,
+    // or ~780 days without it.
+    const DAILY_REVENUE_MIN = 0.01;
+    const DAILY_REVENUE_MAX = 0.05;
     const MAX_CATCHUP_DAYS = 30;
 
     function dayKey(date) {
