@@ -3532,6 +3532,87 @@
       }
     }
 
+    // ==================== POST GROWTH SIMULATION ====================
+    // Gradually increase views, likes, comments for posts over time
+    function simulatePostGrowth() {
+      const now = Date.now();
+      let anyChanged = false;
+
+      Object.keys(threads).forEach(cat => {
+        threads[cat].forEach(thread => {
+          // Only grow posts created in the last 7 days that aren't pinned
+          if (!thread.createdAt || thread.pinned || thread.id === KARMA_BOOSTER_ID) return;
+
+          const ageMs = now - thread.createdAt;
+          const ageHours = ageMs / (1000 * 60 * 60);
+          const ageDays = ageHours / 24;
+
+          // Skip very old posts (7+ days)
+          if (ageDays > 7) return;
+
+          // Growth curves: views grow fast early, likes/comments grow slower
+          // Target values based on post "potential" (randomized per post)
+          const potential = thread._potential || (thread._potential = {
+            views: 50 + Math.random() * 500,      // 50-550 views
+            likes: 2 + Math.random() * 30,         // 2-32 likes
+            comments: 1 + Math.random() * 15       // 1-16 comments
+          });
+
+          const currentViews = parseCount(thread.views);
+          const currentLikes = thread.likes || 0;
+          const currentComments = thread.comments || 0;
+
+          // Logistic growth curve: fast early, slows as it approaches potential
+          // views grow fastest, then likes, then comments
+          const viewGrowthRate = 0.15 / (1 + ageHours * 0.05);
+          const likeGrowthRate = 0.08 / (1 + ageHours * 0.1);
+          const commentGrowthRate = 0.04 / (1 + ageHours * 0.15);
+
+          // Calculate target based on age (asymptotic to potential)
+          const viewProgress = 1 - Math.exp(-ageHours * 0.15);
+          const likeProgress = 1 - Math.exp(-ageHours * 0.08);
+          const commentProgress = 1 - Math.exp(-ageHours * 0.04);
+
+          const targetViews = Math.floor(potential.views * viewProgress);
+          const targetLikes = Math.floor(potential.likes * likeProgress);
+          const targetComments = Math.floor(potential.comments * commentProgress);
+
+          // Increment by small random amounts toward target
+          let changed = false;
+          if (currentViews < targetViews && Math.random() < viewGrowthRate) {
+            thread.views = String(currentViews + Math.floor(Math.random() * 3) + 1);
+            changed = true;
+          }
+          if (currentLikes < targetLikes && Math.random() < likeGrowthRate) {
+            thread.likes = currentLikes + 1;
+            changed = true;
+          }
+          if (currentComments < targetComments && Math.random() < commentGrowthRate) {
+            thread.comments = currentComments + 1;
+            thread.lastReply = sampleUsernames[Math.floor(Math.random() * sampleUsernames.length)];
+            thread.time = 'just now';
+            changed = true;
+          }
+
+          if (changed) {
+            anyChanged = true;
+            // Refresh visible feed if this category is showing
+            if (feedMode === 'categories' && selectedCategory === cat) {
+              renderCategoryThreads(cat);
+            } else if (feedMode !== 'categories') {
+              renderFlat(feedMode);
+            }
+            // Refresh post view if this post is open
+            if (currentPost && currentPost.category === cat && currentPost.id === thread.id) {
+              openPost(cat, thread.id);
+            }
+            // Refresh thread badges in any visible list
+            refreshThreadBadges();
+          }
+        });
+      });
+    }
+
     function bumpRandomThread() {
       const categories = ['journey', 'tools', 'coupons', 'testers', 'lounge', 'general', 'review', 'hobbies', 'tech', 'entertainment', 'movies', 'music', 'games'];
       const cat = categories[Math.floor(Math.random() * categories.length)];
@@ -3582,6 +3663,14 @@
         setTimeout(scheduleActivity, next);
       }
       setTimeout(scheduleActivity, 1500);
+
+      // Post growth simulation: runs every 8-12 seconds
+      function schedulePostGrowth() {
+        simulatePostGrowth();
+        const next = 8000 + Math.random() * 4000;
+        setTimeout(schedulePostGrowth, next);
+      }
+      setTimeout(schedulePostGrowth, 5000);
 
       setInterval(() => {
         updateActivityText('just now');
@@ -4244,14 +4333,15 @@
         title: title,
         tags: [],
         author: authorName(),
-        views: '12',
+        views: '1',
         time: 'just now',
         comments: 0,
-        likes: 3,
+        likes: 0,
         lastReply: authorName(),
         memberOnly: false,
         body: bodyToHtml(body),
-        replies: []
+        replies: [],
+        createdAt: Date.now()
       };
 
       threads[circle].unshift(newThread);
