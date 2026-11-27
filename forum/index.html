@@ -1288,23 +1288,7 @@
     .toast.show { opacity: 1; transform: translate(-50%, 0); }
     .toast i { color: var(--green); font-size: 13px; }
 
-    .revenue-popup {
-      position: fixed; left: 50%; bottom: 80px; z-index: 200;
-      /* JS may override left/top/bottom to float above the earned stat */
-      display: flex; align-items: center; gap: 8px;
-      max-width: calc(100vw - 24px);
-      padding: 8px 14px;
-      background: var(--surface);
-      border: 1px solid var(--border-strong); border-radius: 10px;
-      box-shadow: var(--shadow-md);
-      font-size: 12px;
-      opacity: 0; pointer-events: none;
-      transform: translate(-50%, 14px);
-      transition: opacity 0.3s ease, transform 0.3s ease;
-    }
-
-    .revenue-popup.show { opacity: 1; transform: translate(-50%, 0); }
-    .revenue-popup i { color: var(--green); font-size: 12px; }
+    /* revenue popup removed */
 
     /* ====== ANIMATION ====== */
     @keyframes pulse { 50% { opacity: 0.45; } }
@@ -2055,7 +2039,7 @@
   </div>
 
   <div class="toast" id="toast"><i class="fas fa-check-circle"></i> <span id="toast-text">Success</span></div>
-  <div class="revenue-popup" id="revenue-popup"><i class="fas fa-dollar-sign"></i> <span id="revenue-popup-text">+$0.00</span></div>
+  <!-- revenue popup removed -->
 
   <script>
     // ==================== MEMBERSHIP STATE ====================
@@ -4373,25 +4357,6 @@
       data.last = processUntil;
       try { localStorage.setItem(engagementKey, JSON.stringify(data)); } catch (e) {}
 
-      // Accumulate sub-cent gains so the popup never says "+$0.00".
-      const pendingKey = engagementKey + '_pending';
-      let pending = 0;
-      try { pending = parseFloat(localStorage.getItem(pendingKey)) || 0; } catch (e) {}
-      pending += gained * REVENUE_PER_KARMA;
-      // On a fresh page load/restart, surface even tiny accrued amounts so the
-      // user sees a popup on restart; afterwards use the normal $0.01 threshold.
-      // Show a popup whenever any revenue has accrued (even tiny amounts),
-      // so the user sees feedback both on restart and while the site is open.
-      const threshold = 0.0001;
-      if (pending >= threshold && pending > 0) {
-        try { localStorage.setItem(pendingKey, '0'); } catch (e) {}
-        showRevenuePopup(pending);
-      } else if (pending > 0) {
-        try { localStorage.setItem(pendingKey, pending.toString()); } catch (e) {}
-      } else {
-        try { localStorage.setItem(pendingKey, '0'); } catch (e) {}
-      }
-      sessionFirstAccrual = true;
       return gained;
     }
 
@@ -4870,8 +4835,6 @@
 
     // ==================== TOAST ====================
     let toastTimer;
-    let revenuePopupTimer;
-    let sessionFirstAccrual = false;
     function showToast(message, isError) {
       const toast = document.getElementById('toast');
       const text = document.getElementById('toast-text');
@@ -4885,38 +4848,7 @@
       toastTimer = setTimeout(() => toast.classList.remove('show'), 3500);
     }
 
-    function showRevenuePopup(amount) {
-      const popup = document.getElementById('revenue-popup');
-      const text = document.getElementById('revenue-popup-text');
-      text.textContent = '+' + formatRevenue(amount);
-
-      // Float the popup above the "earned" part of the activity card when it
-      // is on screen; otherwise fall back to the bottom-center position.
-      const revenueEl = document.getElementById('my-revenue');
-      const card = document.getElementById('activity-card');
-      if (revenueEl && card && card.offsetParent !== null) {
-        const rect = revenueEl.getBoundingClientRect();
-        const popupWidth = popup.offsetWidth || 120;
-        let left = rect.left + rect.width / 2;
-        left = Math.max(12 + popupWidth / 2, Math.min(window.innerWidth - 12 - popupWidth / 2, left));
-        const top = rect.top - 10; // 10px gap above the earned number
-        popup.style.left = left + 'px';
-        popup.style.top = top + 'px';
-        popup.style.bottom = 'auto';
-        popup.style.transform = 'translate(-50%, -100%)';
-        popup.style.transition = 'opacity 0.3s ease';
-      } else {
-        popup.style.left = '50%';
-        popup.style.top = '';
-        popup.style.bottom = '80px';
-        popup.style.transform = '';
-        popup.style.transition = '';
-      }
-
-      popup.classList.add('show');
-      clearTimeout(revenuePopupTimer);
-      revenuePopupTimer = setTimeout(() => popup.classList.remove('show'), 2500);
-    }
+    // revenue popup removed
 
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape') { closeIdentityModal(); closeComposeModal(); }
