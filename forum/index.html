@@ -2557,6 +2557,7 @@
 
     function formatRevenue(amount) {
       if (amount >= 1000) return '$' + (amount / 1000).toFixed(1) + 'k';
+      if (amount > 0 && amount < 0.01) return '$' + amount.toFixed(3);
       return '$' + amount.toFixed(2);
     }
 
@@ -4378,7 +4379,7 @@
       pending += gained * REVENUE_PER_KARMA;
       // On a fresh page load/restart, surface even tiny accrued amounts so the
       // user sees a popup on restart; afterwards use the normal $0.01 threshold.
-      const threshold = sessionFirstAccrual ? 0.01 : 0.001;
+      const threshold = sessionFirstAccrual ? 0.01 : 0.005;
       if (pending >= threshold && pending > 0) {
         try { localStorage.setItem(pendingKey, '0'); } catch (e) {}
         showRevenuePopup(pending);
