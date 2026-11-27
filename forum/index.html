@@ -2531,7 +2531,8 @@
       const total =
         views             * KARMA_WEIGHTS.views +
         thread.likes      * KARMA_WEIGHTS.likes +
-        thread.comments   * KARMA_WEIGHTS.comments;
+        thread.comments   * KARMA_WEIGHTS.comments +
+        (thread.bonusKarma || 0);
       return Math.round(total * 100) / 100;
     }
 
@@ -4222,14 +4223,12 @@
       return all;
     }
 
-    // User karma = karma from their own posts, plus any Karma Booster rewards
-    // they have earned. The post badges still sum to the post portion, so the
-    // activity total is the post sum plus a labelled booster bonus.
+    // User karma = karma from their own posts only. Karma Booster rewards are
+    // folded into a post's bonusKarma so this total always matches the sum of
+    // the user's own post badges.
     function userKarma() {
       const mine = myThreads();
-      const postKarma = mine.reduce((sum, x) => sum + calculateKarma(x.thread), 0);
-      const bonus = (userActions && userActions.boosterKarma) || 0;
-      return Math.round((postKarma + bonus) * 100) / 100;
+      return mine.reduce((sum, x) => sum + calculateKarma(x.thread), 0);
     }
 
     // Revenue earned from total karma (karma * REVENUE_PER_KARMA).
@@ -4569,7 +4568,35 @@
       try {
         localStorage.setItem(userScopedKey(KARMA_BOOSTER_KEY), JSON.stringify({ date: today, claimed: true }));
       } catch (e) {}
-      userActions.boosterKarma = (userActions.boosterKarma || 0) + KARMA_BOOSTER_REWARD;
+
+      // Fold the 50 karma into the user's own posts so the activity card and
+      // the "Your posts" badges always net-match. Prefer the most recent post;
+      // if the account has none yet, create a small reward post so the karma
+      // still has a home.
+      const mine = myThreads();
+      let target = mine.length ? mine[mine.length - 1].thread : null;
+      if (!target) {
+        const cat = 'journey';
+        const newThread = {
+          id: 'u' + Date.now(),
+          author: authorName(),
+          title: 'Karma Booster reward',
+          body: 'Reward for keeping Wheel of Emotion installed and sharing feedback.',
+          time: 'just now',
+          views: '0',
+          likes: 0,
+          comments: 0,
+          bonusKarma: 0,
+          createdAt: Date.now(),
+          pinned: false
+        };
+        if (!threads[cat]) threads[cat] = [];
+        threads[cat].unshift(newThread);
+        target = newThread;
+      }
+      target.bonusKarma = (target.bonusKarma || 0) + KARMA_BOOSTER_REWARD;
+      target.time = 'just now';
+      saveState();
       return KARMA_BOOSTER_REWARD;
     }
 
