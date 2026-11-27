@@ -34,8 +34,6 @@
       --shadow-sm: 0 1px 2px rgba(16, 16, 20, 0.05);
       --shadow-md: 0 8px 24px rgba(16, 16, 20, 0.08);
       --shadow-lg: 0 24px 60px rgba(16, 16, 20, 0.18);
-      --sidebar-w: 250px;
-      --rail-w: 304px;
       --cat-journey: #e5484d;
       --cat-tools: #8e4ec6;
       --cat-coupons: #1e88e5;
@@ -171,14 +169,6 @@
 
     .topbar-actions { margin-left: auto; display: flex; align-items: center; gap: 8px; }
 
-    .pill-note {
-      display: inline-flex; align-items: center; gap: 6px;
-      font-size: 12px; color: var(--text-3);
-      padding: 0 6px; white-space: nowrap;
-    }
-
-    .pill-note i { font-size: 10px; }
-
     .icon-btn {
       width: 34px; height: 34px; border-radius: 8px;
       display: grid; place-items: center;
@@ -187,17 +177,9 @@
 
     .icon-btn:hover { background: var(--surface-2); color: var(--text); }
 
-    .sidebar-toggle { display: none; }
-    .menu-btn, .search-btn { display: none; }
     .games-topbar-btn { display: none; }
-    .sidebar-scrim {
-      position: fixed; inset: 0; z-index: 110;
-      background: rgba(10, 10, 12, 0.45);
-      opacity: 0; pointer-events: none; transition: opacity 0.22s ease;
-    }
-    .sidebar-scrim.show { opacity: 1; pointer-events: auto; }
 
-    .pill-btn, .compose-btn, .join-btn {
+    .compose-btn, .join-btn {
       display: inline-flex; align-items: center; gap: 7px;
       height: 34px; padding: 0 13px;
       border: 1px solid var(--border-strong); border-radius: 8px;
@@ -234,51 +216,6 @@
       grid-template-columns: minmax(0, 1fr);
       align-items: start;
     }
-
-    .sidebar {
-      position: sticky; top: 58px;
-      height: calc(100vh - 58px);
-      overflow-y: auto;
-      background: var(--surface);
-      border-right: 1px solid var(--border);
-      padding: 14px 10px calc(28px + var(--ad-h));
-      scrollbar-width: thin;
-      scrollbar-color: var(--border-strong) transparent;
-    }
-
-    .sidebar::-webkit-scrollbar { width: 8px; }
-    .sidebar::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 8px; }
-    .sidebar::-webkit-scrollbar-track { background: transparent; }
-
-    .side-group { margin-bottom: 20px; }
-
-    .side-label {
-      padding: 5px 10px 6px;
-      font-size: 10.5px; font-weight: 700; letter-spacing: 0.07em;
-      text-transform: uppercase; color: var(--text-3);
-    }
-
-    .side-link {
-      display: flex; align-items: center; gap: 10px;
-      padding: 7px 10px; margin-bottom: 1px;
-      border-radius: 8px; cursor: pointer; user-select: none;
-      font-size: 13.5px; color: var(--text-2);
-    }
-
-    .side-link i { width: 16px; text-align: center; font-size: 12.5px; color: var(--text-3); }
-    .side-link:hover { background: var(--surface-2); color: var(--text); }
-    .side-link.active { background: var(--surface-2); color: var(--text); font-weight: 600; }
-    .side-link.active i { color: var(--accent); }
-
-    .side-dot { width: 9px; height: 9px; border-radius: 2px; flex: none; }
-    .side-dot.journey { background: var(--cat-journey); }
-    .side-dot.tools { background: var(--cat-tools); }
-    .side-dot.coupons { background: var(--cat-coupons); }
-    .side-dot.testers { background: var(--cat-testers); }
-    .side-dot.lounge { background: var(--cat-lounge); }
-    .side-dot.hot { background: var(--accent); }
-    .side-dot.verified { background: var(--green); }
-    .side-dot.member { background: var(--text-3); }
 
     /* ====== MAIN ====== */
     .content-area { min-height: calc(100vh - 58px); padding: 22px 26px 60px; }
@@ -342,37 +279,6 @@
     .avatar-dot.testers { background: var(--cat-testers); }
     .avatar-dot.lounge { background: var(--cat-lounge); }
 
-    /* Filter row */
-    .filter-row {
-      display: flex; align-items: flex-end; justify-content: space-between;
-      gap: 14px; flex-wrap: wrap;
-      border-bottom: 1px solid var(--border);
-      margin-bottom: 18px;
-    }
-
-    .crumb-chips { display: flex; align-items: center; gap: 8px; padding-bottom: 10px; }
-
-    .crumb {
-      display: inline-flex; align-items: center; gap: 8px;
-      height: 26px; padding: 0 10px;
-      background: var(--surface); border: 1px solid var(--border);
-      border-radius: 7px; font-size: 12px; color: var(--text-2);
-    }
-
-    .crumb i { font-size: 8px; color: var(--text-3); }
-    .crumb:last-child i { display: none; }
-
-    .feed-tabs { display: flex; gap: 20px; }
-
-    .feed-tab {
-      position: relative; padding: 8px 1px 10px;
-      font-size: 13.5px; color: var(--text-2);
-      border-bottom: 2px solid transparent; margin-bottom: -1px;
-    }
-
-    .feed-tab:hover { color: var(--text); }
-    .feed-tab.active { color: var(--text); font-weight: 600; border-bottom-color: var(--accent); }
-
     /* Content grid */
     .content-grid {
       display: grid;
@@ -381,80 +287,6 @@
     }
 
     .feed-col { min-width: 0; scroll-margin-top: 80px; }
-
-    .col-head {
-      display: flex; justify-content: space-between;
-      padding: 0 16px 8px;
-      font-size: 11.5px; color: var(--text-3);
-      border-bottom: 1px solid var(--border);
-    }
-
-    /* Category sections */
-    .category-section {
-      position: relative;
-      background: var(--surface);
-      border-bottom: 1px solid var(--border);
-      scroll-margin-top: 80px;
-    }
-
-    .category-section::before {
-      content: ""; position: absolute; left: 0; top: 0; bottom: 0;
-      width: 3px; background: var(--cat-color, var(--border)); border-radius: 2px;
-    }
-
-    .category-section.cat-journey { --cat-color: var(--cat-journey); }
-    .category-section.cat-tools { --cat-color: var(--cat-tools); }
-    .category-section.cat-coupons { --cat-color: var(--cat-coupons); }
-    .category-section.cat-testers { --cat-color: var(--cat-testers); }
-    .category-section.cat-lounge { --cat-color: var(--cat-lounge); }
-
-    .category-header { display: flex; align-items: flex-start; gap: 11px; padding: 16px 16px 12px 18px; }
-
-    .cat-square {
-      width: 11px; height: 11px; border-radius: 2px;
-      background: var(--cat-color); margin-top: 5px; flex: none;
-    }
-
-    .cat-main { flex: 1; min-width: 0; }
-
-    .cat-title-row { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
-    .cat-title { font-size: 15px; font-weight: 650; letter-spacing: -0.01em; }
-
-    .badge-count { font-size: 12px; color: var(--text-3); font-variant-numeric: tabular-nums; white-space: nowrap; }
-
-    .cat-desc { font-size: 13px; color: var(--text-2); margin-top: 3px; max-width: 60ch; }
-
-    /* Collapsible topic sections */
-    .category-header {
-      cursor: pointer; user-select: none;
-      border-radius: 10px 10px 0 0;
-      transition: background 0.15s;
-      -webkit-tap-highlight-color: transparent;
-    }
-
-    .category-header:hover { background: var(--surface-2); }
-    .category-header:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
-
-    .cat-toggle {
-      flex: none; align-self: flex-start; margin-top: 3px;
-      width: 26px; height: 26px; border-radius: 50%;
-      display: grid; place-items: center;
-      background: var(--surface-2);
-      color: var(--text-3); font-size: 10px;
-      transition: transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1), background 0.15s, color 0.15s;
-    }
-
-    .category-header:hover .cat-toggle { background: var(--surface-3); color: var(--text); }
-    .category-section.collapsed .cat-toggle { transform: rotate(-90deg); }
-
-    .cat-body {
-      display: grid; grid-template-rows: 1fr;
-      transition: grid-template-rows 0.28s cubic-bezier(0.2, 0.8, 0.2, 1);
-    }
-
-    .cat-body-inner { overflow: hidden; min-height: 0; }
-    .category-section.collapsed .cat-body { grid-template-rows: 0fr; }
-    .category-section.search-open .cat-body { grid-template-rows: 1fr; }
 
     /* Category tiles */
     .category-grid {
@@ -512,16 +344,7 @@
     .category-tile.cat-music { --cat-color: var(--cat-music); }
     .category-tile.cat-games { --cat-color: var(--cat-games); }
 
-    /* Additional categories (dots, avatars, chips, icons) */
-    .side-dot.general { background: var(--cat-general); }
-    .side-dot.review { background: var(--cat-review); }
-    .side-dot.hobbies { background: var(--cat-hobbies); }
-    .side-dot.tech { background: var(--cat-tech); }
-    .side-dot.entertainment { background: var(--cat-entertainment); }
-    .side-dot.movies { background: var(--cat-movies); }
-    .side-dot.music { background: var(--cat-music); }
-    .side-dot.games { background: var(--cat-games); }
-
+    /* Additional categories (avatars, chips, icons) */
     .avatar-dot.general { background: var(--cat-general); }
     .avatar-dot.review { background: var(--cat-review); }
     .avatar-dot.hobbies { background: var(--cat-hobbies); }
@@ -530,15 +353,6 @@
     .avatar-dot.movies { background: var(--cat-movies); }
     .avatar-dot.music { background: var(--cat-music); }
     .avatar-dot.games { background: var(--cat-games); }
-
-    .category-section.cat-general { --cat-color: var(--cat-general); }
-    .category-section.cat-review { --cat-color: var(--cat-review); }
-    .category-section.cat-hobbies { --cat-color: var(--cat-hobbies); }
-    .category-section.cat-tech { --cat-color: var(--cat-tech); }
-    .category-section.cat-entertainment { --cat-color: var(--cat-entertainment); }
-    .category-section.cat-movies { --cat-color: var(--cat-movies); }
-    .category-section.cat-music { --cat-color: var(--cat-music); }
-    .category-section.cat-games { --cat-color: var(--cat-games); }
 
     .cat-general .thread-avatar i { color: var(--cat-general); }
     .cat-review .thread-avatar i { color: var(--cat-review); }
@@ -557,24 +371,6 @@
     .thread-cat.movies { color: var(--cat-movies); }
     .thread-cat.music { color: var(--cat-music); }
     .thread-cat.games { color: var(--cat-games); }
-
-    .latest-avatar.general { background: var(--cat-general); }
-    .latest-avatar.review { background: var(--cat-review); }
-    .latest-avatar.hobbies { background: var(--cat-hobbies); }
-    .latest-avatar.tech { background: var(--cat-tech); }
-    .latest-avatar.entertainment { background: var(--cat-entertainment); }
-    .latest-avatar.movies { background: var(--cat-movies); }
-    .latest-avatar.music { background: var(--cat-music); }
-    .latest-avatar.games { background: var(--cat-games); }
-
-    .latest-cat.general { color: var(--cat-general); }
-    .latest-cat.review { color: var(--cat-review); }
-    .latest-cat.hobbies { color: var(--cat-hobbies); }
-    .latest-cat.tech { color: var(--cat-tech); }
-    .latest-cat.entertainment { color: var(--cat-entertainment); }
-    .latest-cat.movies { color: var(--cat-movies); }
-    .latest-cat.music { color: var(--cat-music); }
-    .latest-cat.games { color: var(--cat-games); }
 
     .category-feed-head {
       display: flex; align-items: center; justify-content: space-between;
@@ -620,16 +416,6 @@
     .thread-title a { font-size: 14px; font-weight: 600; line-height: 1.35; color: var(--text); }
     .thread-title a:hover { color: var(--accent); }
 
-    .tag {
-      font-size: 9.5px; font-weight: 700; letter-spacing: 0.05em;
-      text-transform: uppercase; padding: 1px 6px; border-radius: 4px;
-      border: 1px solid var(--border); color: var(--text-2);
-    }
-
-    .tag.hot { background: var(--accent-soft); border-color: var(--accent-border); color: var(--accent); }
-    .tag.verified { background: var(--green-soft); border-color: transparent; color: var(--green); }
-    .tag.member { background: var(--surface-3); border-color: transparent; color: var(--text-2); }
-
     .thread-meta {
       display: flex; flex-wrap: wrap; gap: 12px;
       margin-top: 4px; font-size: 12px; color: var(--text-3);
@@ -670,122 +456,10 @@
     .last-post { grid-column: 2; font-size: 11.5px; color: var(--text-3); margin-top: 2px; }
     .last-post i { font-size: 9px; margin-right: 3px; }
 
-    .locked-notice {
-      display: inline-flex; align-items: center; gap: 6px;
-      margin-top: 6px; padding: 2px 8px;
-      font-size: 11.5px; color: var(--accent);
-      background: var(--accent-soft);
-      border: 1px solid var(--accent-border); border-radius: 999px;
-    }
-
-    .lounge-message {
-      display: flex; gap: 10px; align-items: flex-start;
-      padding: 12px 16px 14px 18px;
-      font-size: 12px; color: var(--text-2);
-      background: var(--surface-2);
-      border-top: 1px solid var(--border);
-    }
-
-    .lounge-message i { color: var(--accent); margin-top: 2px; }
-
     .empty-state {
       padding: 40px 16px; text-align: center;
       font-size: 13px; color: var(--text-3);
     }
-
-    /* Right rail */
-    .rail { position: sticky; top: 80px; display: flex; flex-direction: column; gap: 24px; }
-
-    .rail-section { min-width: 0; }
-
-    .rail-head {
-      display: flex; justify-content: space-between; align-items: center;
-      padding-bottom: 8px; margin-bottom: 4px;
-      font-size: 11.5px; color: var(--text-3);
-      border-bottom: 1px solid var(--border);
-    }
-
-    .latest-item {
-      display: grid; grid-template-columns: 30px minmax(0, 1fr) auto;
-      gap: 10px; align-items: start;
-      padding: 10px 0;
-      border-bottom: 1px solid var(--border);
-      cursor: pointer;
-    }
-
-    .latest-item:hover .latest-title { color: var(--accent); }
-
-    .latest-avatar {
-      width: 30px; height: 30px; border-radius: 50%;
-      display: grid; place-items: center;
-      font-size: 12px; font-weight: 600; color: #fff;
-    }
-
-    .latest-avatar.journey { background: var(--cat-journey); }
-    .latest-avatar.tools { background: var(--cat-tools); }
-    .latest-avatar.coupons { background: var(--cat-coupons); }
-    .latest-avatar.testers { background: var(--cat-testers); }
-    .latest-avatar.lounge { background: var(--cat-lounge); }
-
-    .latest-title {
-      font-size: 13px; font-weight: 500; line-height: 1.35;
-      display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
-    }
-
-    .latest-meta { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 3px; font-size: 11px; color: var(--text-3); }
-    .latest-cat { font-weight: 600; }
-    .latest-cat.journey { color: var(--cat-journey); }
-    .latest-cat.tools { color: var(--cat-tools); }
-    .latest-cat.coupons { color: var(--cat-coupons); }
-    .latest-cat.testers { color: var(--cat-testers); }
-    .latest-cat.lounge { color: var(--cat-lounge); }
-
-    .latest-count { font-size: 12px; color: var(--accent); font-variant-numeric: tabular-nums; }
-
-    /* Top invite banner */
-    .invite-banner {
-      display: grid; grid-template-columns: minmax(0, 1fr) auto;
-      gap: 18px 28px; align-items: center;
-      margin-top: 26px; padding: 18px 20px;
-      background: var(--surface);
-      border: 1px solid var(--border); border-radius: 12px;
-      box-shadow: var(--shadow-sm);
-    }
-
-    .invite-banner h2 { font-size: 15px; font-weight: 650; }
-    .invite-banner h2 i { font-size: 13px; }
-    .invite-banner p { margin: 6px 0 0; max-width: 58ch; }
-
-    .invite-banner .banner-btn.primary { width: auto; padding: 9px 16px; margin-top: 14px; }
-
-    .invite-perks {
-      display: grid; grid-template-columns: repeat(2, minmax(0, max-content));
-      gap: 8px 22px; align-content: center;
-    }
-
-    .invite-perk {
-      display: flex; align-items: center; gap: 8px;
-      font-size: 12.5px; color: var(--text-2); white-space: nowrap;
-    }
-
-    .invite-perk i { color: var(--green); font-size: 11px; }
-
-    .invite-banner.is-member {
-      background: var(--green-soft);
-      border-color: transparent;
-    }
-
-    .invite-banner.is-member h2 { color: var(--green); }
-    .invite-banner.is-member h2 i { color: var(--green); }
-
-    .banner-btn.primary {
-      display: flex; align-items: center; justify-content: center; gap: 7px;
-      width: 100%; padding: 8px 12px;
-      background: var(--accent); color: #fff;
-      border-radius: 8px; font-size: 12.5px; font-weight: 600;
-    }
-
-    .banner-btn.primary:hover { background: var(--accent-hover); }
 
     .stat-row {
       display: flex; justify-content: space-between; align-items: center;
@@ -860,6 +534,35 @@
     .activity-link { font-size: 12px; font-weight: 600; color: var(--text-2); padding: 0 4px; white-space: nowrap; }
     .activity-link:hover { color: var(--accent); }
 
+    .karma-booster {
+      display: flex; align-items: center; justify-content: space-between; gap: 18px;
+      margin-bottom: 18px; padding: 14px 16px;
+      background: var(--accent-soft);
+      border: 1px solid var(--accent-border); border-radius: 14px;
+    }
+    .karma-booster-copy { display: flex; align-items: center; gap: 11px; min-width: 0; }
+    .karma-booster-icon {
+      width: 38px; height: 38px; flex: none;
+      display: grid; place-items: center;
+      border-radius: 12px;
+      background: var(--accent); color: #fff;
+      box-shadow: 0 5px 14px rgba(245, 78, 0, 0.18);
+    }
+    .karma-booster-icon i { font-size: 16px; }
+    .karma-booster-text { min-width: 0; }
+    .karma-booster-title { display: block; font-size: 14px; font-weight: 700; letter-spacing: -0.01em; }
+    .karma-booster-desc { display: block; margin-top: 2px; font-size: 12px; color: var(--text-2); }
+    .karma-booster-btn {
+      height: 36px; flex: none; padding: 0 13px;
+      display: inline-flex; align-items: center; justify-content: center; gap: 7px;
+      border-radius: 9px; background: var(--accent); color: #fff;
+      font-size: 12.5px; font-weight: 650;
+    }
+    .karma-booster-btn:hover { background: var(--accent-hover); }
+    .karma-booster-btn.is-claimed {
+      background: var(--green-soft); color: var(--green); border: 1px solid var(--revenue-border);
+    }
+
     .pinned-post {
       background: var(--surface);
       border: 1px solid var(--accent-border);
@@ -897,40 +600,6 @@
     .tools-title { font-size: 18px; font-weight: 700; letter-spacing: -0.01em; display: flex; align-items: center; gap: 9px; }
     .tools-title i { color: var(--accent); font-size: 15px; }
     .tools-sub { margin-top: 4px; font-size: 12.5px; color: var(--text-2); }
-
-    .tools-grid {
-      display: grid; grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 14px; margin: 16px 0 22px;
-    }
-
-    .tool-card {
-      display: flex; flex-direction: column; gap: 10px;
-      padding: 16px 18px;
-      background: var(--surface);
-      border: 1px solid var(--border); border-radius: 12px;
-      transition: border-color 0.15s, box-shadow 0.15s;
-    }
-
-    .tool-card:hover { border-color: var(--border-strong); box-shadow: var(--shadow-sm); }
-    .tool-card-head { display: flex; align-items: center; gap: 10px; }
-
-    .tool-icon {
-      width: 34px; height: 34px; border-radius: 9px; flex: none;
-      display: grid; place-items: center; font-size: 14px;
-      background: var(--accent-soft); color: var(--accent);
-    }
-
-    .tool-card-name { font-size: 14px; font-weight: 650; letter-spacing: -0.01em; }
-    .tool-card-kind { font-size: 11px; color: var(--text-3); }
-    .tool-card-desc { font-size: 12.5px; color: var(--text-2); }
-    .tool-card-foot { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 2px; }
-
-    .tool-fact {
-      font-size: 10.5px; font-weight: 600;
-      padding: 2px 8px; border-radius: 999px;
-      background: var(--surface-2); border: 1px solid var(--border);
-      color: var(--text-2);
-    }
 
     .tools-runner {
       background: var(--surface);
@@ -1302,6 +971,13 @@
       border-radius: 999px; font-size: 11px; color: var(--text-2);
     }
 
+    .replies-sample {
+      padding: 9px 26px;
+      border-bottom: 1px solid var(--border);
+      background: var(--surface-2);
+      font-size: 11.5px; color: var(--text-2);
+    }
+
     .reply-item {
       display: flex; gap: 12px;
       padding: 14px 26px;
@@ -1404,15 +1080,6 @@
 
     .modal-body { padding: 18px 20px 22px; }
 
-    .modal-perks { margin-bottom: 4px; }
-    .modal-perks h4 { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--text-2); margin-bottom: 8px; }
-    .modal-perks h4 i { color: var(--accent); font-size: 11px; }
-
-    .modal-perk-list { display: grid; gap: 6px; }
-
-    .modal-perk-item { display: flex; align-items: center; gap: 8px; font-size: 12.5px; color: var(--text-2); }
-    .modal-perk-item i { color: var(--green); font-size: 11px; }
-
     .field-label {
       display: block; margin: 14px 0 6px;
       font-size: 12px; font-weight: 600; color: var(--text-2);
@@ -1434,12 +1101,6 @@
       height: auto; min-height: 110px; padding: 10px 11px;
       resize: vertical; line-height: 1.55;
     }
-
-    .field-hint {
-      display: flex; align-items: center; gap: 6px;
-      margin-top: 8px; font-size: 11.5px; color: var(--text-3);
-    }
-
 
     .modal-submit {
       display: flex; align-items: center; justify-content: center; gap: 7px;
@@ -1481,22 +1142,10 @@
     /* ====== RESPONSIVE ====== */
     @media (max-width: 1120px) {
       .content-grid { grid-template-columns: minmax(0, 1fr); }
-      .rail { position: static; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 22px; }
     }
 
     @media (max-width: 900px) {
       .shell { grid-template-columns: minmax(0, 1fr); }
-      .invite-banner { grid-template-columns: minmax(0, 1fr); }
-      .invite-perks { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-      .sidebar {
-        position: fixed; top: 58px; left: 0; bottom: 0;
-        width: 264px; height: auto; z-index: 70;
-        transform: translateX(-100%);
-        transition: transform 0.2s ease;
-        box-shadow: var(--shadow-md);
-      }
-      .sidebar.open { transform: none; }
-      .sidebar-toggle { display: grid; }
       .content-area { padding: 18px 16px 50px; }
       .topbar { padding: 0 12px; gap: 10px; }
     }
@@ -1507,13 +1156,15 @@
       .featured-card { gap: 12px; }
       .featured-foot { justify-content: space-between; }
       .featured-revenue { font-size: 12px; }
+      .karma-booster { align-items: flex-start; gap: 10px; padding: 12px; }
+      .karma-booster-icon { width: 34px; height: 34px; border-radius: 10px; }
+      .karma-booster-btn { width: 36px; padding: 0; font-size: 0; }
+      .karma-booster-btn i { font-size: 12px; }
       .search-wrap { display: none; }
-      .pill-note { display: none; }
       .thread-item { grid-template-columns: 34px minmax(0, 1fr); }
       .thread-avatar { width: 34px; height: 34px; font-size: 13px; }
       .thread-stats { grid-column: 2; justify-content: flex-start; width: 100%; }
       .last-post { grid-column: 2; }
-      .rail { grid-template-columns: minmax(0, 1fr); }
       .post-header, .post-body, .reply-form, .reply-item, .replies-header { padding-left: 16px; padding-right: 16px; }
       .post-header { padding-top: 18px; padding-bottom: 16px; }
       #post-view .back-bar .compose-btn { width: 36px; padding: 0; justify-content: center; border-radius: 999px; }
@@ -1528,16 +1179,9 @@
 
     @media (max-width: 560px) {
       .brand-name { display: none; }
-      .invite-banner { padding: 16px; }
-      .invite-perks { grid-template-columns: minmax(0, 1fr); }
-      .invite-perk { white-space: normal; }
       .user-badge span:last-child { display: none; }
       .compose-btn span, .join-btn span { display: none; }
       .compose-btn, .join-btn { padding: 0; width: 34px; justify-content: center; }
-      .feed-tabs { gap: 14px; }
-      .feed-tab { font-size: 12.5px; }
-      .filter-row { align-items: center; }
-      .crumb-chips { display: none; }
       .post-meta-row { gap: 10px; }
     }
 
@@ -1581,7 +1225,6 @@
     /* ====== BOTTOM CHROME ====== */
     :root {
       --ad-h: 0px;             /* no bottom ad banner */
-      --tabbar-h: 0px;
     }
 
     .toast { bottom: calc(26px + var(--ad-h)); }
@@ -1600,9 +1243,7 @@
 
     @media (max-width: 768px) {
       :root {
-        --topbar-h: 56px;
         --ad-h: 0px;
-        --tabbar-h: 67px;
       }
 
       .toast { bottom: calc(78px + var(--ad-h) + env(safe-area-inset-bottom)); }
@@ -1627,10 +1268,7 @@
       .brand-name { display: block; font-size: 16px; white-space: nowrap; }
       .brand-mark { width: 26px; height: 26px; }
 
-      .sidebar-toggle { display: none !important; }
-      .menu-btn, .search-btn { display: grid; }
       .topbar-actions { margin-left: 0; gap: 2px; flex: none; }
-      .pill-note { display: none; }
       .topbar .compose-btn { display: none; }
       .topbar .tools-open-btn { display: grid; width: 36px; height: 36px; padding: 0; place-items: center; border-radius: 50%; border-color: var(--border); background: var(--surface-2); }
       .topbar .tools-open-btn span { display: none; }
@@ -1657,18 +1295,6 @@
 
       .shell { grid-template-columns: minmax(0, 1fr); }
 
-      .sidebar {
-        position: fixed; top: 0; left: 0; bottom: calc(var(--ad-h) + env(safe-area-inset-bottom));
-        width: 280px; height: auto; z-index: 120;
-        padding: calc(16px + env(safe-area-inset-top)) 10px 16px;
-        transform: translateX(-100%);
-        transition: transform 0.22s cubic-bezier(0.2, 0.8, 0.2, 1);
-        box-shadow: var(--shadow-md);
-      }
-      .sidebar.open { transform: none; }
-      .sidebar-scrim { bottom: calc(var(--ad-h) + env(safe-area-inset-bottom)); }
-      .side-link { padding: 11px 10px; font-size: 15px; border-radius: 10px; }
-
       .content-area {
         padding: 14px 14px calc(96px + env(safe-area-inset-bottom));
         min-height: auto;
@@ -1677,24 +1303,7 @@
       .page-title { font-size: 15px; margin-bottom: 10px; }
       .featured-grid { gap: 10px; margin-bottom: 20px; }
 
-      .filter-row {
-        position: sticky; top: calc(110px + env(safe-area-inset-top)); z-index: 40;
-        margin: -2px -14px 12px; padding: 6px 14px;
-        background: var(--bg-translucent);
-        -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px);
-      }
-      .feed-tabs {
-        gap: 8px; overflow-x: auto; scrollbar-width: none; padding-bottom: 2px;
-      }
-      .feed-tabs::-webkit-scrollbar { display: none; }
-      .feed-tab { flex: none; }
-
-      .col-head { display: none; }
-      .category-section { border-radius: 12px; }
-      .category-header { padding: 14px; }
-      .category-header .cat-desc { display: none; }
       .thread-item { padding: 14px; }
-      .rail { gap: 14px; }
 
       /* Post detail becomes a full-screen app page */
       #post-view .content-area { padding: 0 0 calc(96px + env(safe-area-inset-bottom)); }
@@ -1735,8 +1344,6 @@
         background: var(--border-strong); margin: 8px auto 0;
       }
       .field-input, .field-select, .field-textarea { font-size: 16px; }
-
-      .tools-grid { grid-template-columns: minmax(0, 1fr); }
 
       .games-hero { padding: 16px; }
       .games-count { display: none; }
@@ -1850,6 +1457,19 @@
               <li><strong>Payout</strong> is $80 minimum.</li>
               <li><strong>Posting limit</strong> = 3 new posts per day. Interactions are unlimited.</li>
             </ul>
+          </div>
+
+          <div class="karma-booster" id="karma-booster">
+            <div class="karma-booster-copy">
+              <span class="karma-booster-icon"><i class="fas fa-bolt"></i></span>
+              <span class="karma-booster-text">
+                <span class="karma-booster-title">Karma Booster</span>
+                <span class="karma-booster-desc">Install an app or game and post a YouTube gameplay video to earn 500 extra karma.</span>
+              </span>
+            </div>
+            <button class="karma-booster-btn" id="karma-booster-btn" onclick="openKarmaBooster()">
+              <i class="fas fa-arrow-up"></i> Boost karma
+            </button>
           </div>
 
           <section>
@@ -2109,7 +1729,8 @@
     let displayName = '';
     let claimedNames = [];
     let pendingIdentityAction = null;
-    let userActions = { replies: 0, likes: 0 };
+    let karmaBoosterSubmission = false;
+    let userActions = { replies: 0, likes: 0, boosterKarma: 0 };
 
     // ==================== TOOLS ====================
     const TOOLS_SEARCH_LIMIT = 3;
@@ -2187,36 +1808,21 @@
     }
 
     // ==================== TOOLS VIEW ====================
-    let toolsReturnView = 'forum';
-
     function showToolsView() {
       document.getElementById('post-view').style.display = 'none';
       document.getElementById('forum-view').style.display = 'none';
       document.getElementById('games-view').style.display = 'none';
       document.body.classList.remove('games-open');
       document.getElementById('tools-view').style.display = 'block';
-      closeSidebar();
       if (!toolsSearchRunning) setActiveTab('tools');
       renderToolUsage();
     }
 
     function openTools() {
-      toolsReturnView = document.getElementById('post-view').style.display === 'block' ? 'post' : 'forum';
       const wasOnTools = document.getElementById('tools-view').style.display === 'block';
       showToolsView();
       if (!wasOnTools && !toolsSearchRunning) resetToolReport();
       window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-
-    function leaveTools() {
-      document.getElementById('tools-view').style.display = 'none';
-      if (toolsReturnView === 'post' && document.getElementById('post-container').innerHTML.trim()) {
-        document.getElementById('post-view').style.display = 'block';
-        setActiveTab('');
-      } else {
-        ensureForumView();
-      }
-      if (!toolsSearchRunning) resetToolReport();
     }
 
     function resetToolReport() {
@@ -2243,9 +1849,13 @@
       return last.split(' ').filter(Boolean).map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
     }
 
-    function toolEscape(str) {
+    // Every value interpolated into innerHTML goes through this.
+    function escapeHtml(str) {
       return String(str).replace(/[&<>"']/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m]));
     }
+
+    // Alias kept so the tools report code reads clearly.
+    const toolEscape = escapeHtml;
 
     // ---------- Engine 1: Organic Spy ----------
     const ORGANIC_METHODS = [
@@ -2582,18 +2192,20 @@
       return parseFloat(s) || 0;
     }
 
+    // Karma keeps sub-unit precision so a post's karma can creep upward
+    // through the day instead of jumping once a whole point has accrued.
     function calculateKarma(thread) {
       const views = parseCount(thread.views);
-      return Math.round(
+      const total =
         views             * KARMA_WEIGHTS.views +
         thread.likes      * KARMA_WEIGHTS.likes +
-        thread.comments   * KARMA_WEIGHTS.comments
-      );
+        thread.comments   * KARMA_WEIGHTS.comments;
+      return Math.round(total * 100) / 100;
     }
 
     function formatKarma(amount) {
       if (amount >= 1000) return (amount / 1000).toFixed(1) + 'k';
-      return amount.toLocaleString('en-US');
+      return (Math.round(amount * 10) / 10).toLocaleString('en-US', { maximumFractionDigits: 1 });
     }
 
     function formatViews(value) {
@@ -3122,6 +2734,8 @@
     let feedMode = 'categories';
     let searchTerm = '';
     let selectedCategory = null;
+    // Which post is on screen, so its karma/revenue card can be refreshed live.
+    let currentPost = null;
 
     function initials(name) {
       const clean = (name || '').replace(/[^a-z0-9]/gi, '');
@@ -3141,7 +2755,6 @@
     }
 
     function renderThreadItem(thread, category, showCategory) {
-      const lockedHtml = '';
       const karma = calculateKarma(thread);
       const revenue = displayRevenue(thread);
       const searchText = `${thread.title} ${thread.author} ${CAT_LABELS[category] || ''}`.toLowerCase();
@@ -3149,19 +2762,18 @@
         ? `<span class="thread-cat ${category}">${CAT_LABELS[category] || category}</span>`
         : '';
       return `
-        <div class="thread-item" data-thread-id="${thread.id}" data-search="${searchText.replace(/"/g, '&quot;')}" onclick="openPost('${category}', '${thread.id}')">
+        <div class="thread-item" data-thread-id="${thread.id}" data-search="${escapeHtml(searchText)}" onclick="openPost('${category}', '${thread.id}')">
           <div class="thread-avatar"><i class="fas ${thread.icon}"></i></div>
           <div class="thread-info">
             <div class="thread-title">
-              <a href="javascript:void(0)">${thread.title}</a>
+              <a href="javascript:void(0)">${escapeHtml(thread.title)}</a>
             </div>
             <div class="thread-meta">
               ${catChip}
-              <span><i class="fas fa-user"></i> ${thread.author}</span>
+              <span><i class="fas fa-user"></i> ${escapeHtml(thread.author)}</span>
               <span><i class="fas fa-eye"></i> ${formatViews(thread.views)} views</span>
-              <span><i class="fas fa-clock"></i> ${thread.time}</span>
+              <span><i class="fas fa-clock"></i> ${escapeHtml(thread.time)}</span>
             </div>
-            ${lockedHtml}
           </div>
           <div class="thread-stats">
             <span><i class="fas fa-comment"></i> ${thread.comments}</span>
@@ -3174,7 +2786,7 @@
             </span>
           </div>
           <div class="last-post">
-            <i class="fas fa-reply"></i> @${thread.lastReply}
+            <i class="fas fa-reply"></i> @${escapeHtml(thread.lastReply)}
           </div>
         </div>
       `;
@@ -3243,11 +2855,11 @@
         if (!t) return '';
         return `
           <button class="featured-card" onclick="openPost('${cat}', '${id}')">
-            <span class="featured-title">${t.title}</span>
+            <span class="featured-title">${escapeHtml(t.title)}</span>
             <span class="featured-foot">
               <span class="featured-author">
                 <span class="avatar-dot ${cat}">${initials(t.author)}</span>
-                ${t.author}
+                ${escapeHtml(t.author)}
               </span>
               <span class="featured-revenue" title="Revenue earned from this post's karma">
                 <i class="fas fa-dollar-sign"></i>${formatRevenue(calculateRevenue(t))}
@@ -3263,23 +2875,6 @@
         threads[cat].forEach(t => all.push({ cat, thread: t }));
       });
       return all;
-    }
-
-    function renderLatest() {
-      const all = collectThreads();
-      all.sort((a, b) => timeToMinutes(a.thread.time) - timeToMinutes(b.thread.time));
-      document.getElementById('latest-list').innerHTML = all.slice(0, 8).map(({ cat, thread }) => `
-        <div class="latest-item" onclick="openPost('${cat}', '${thread.id}')">
-          <span class="latest-avatar ${cat}">${initials(thread.author)}</span>
-          <div>
-            <div class="latest-title">${thread.title}</div>
-            <div class="latest-meta">
-              <span class="latest-cat ${cat}">${CAT_LABELS[cat]}</span>
-              <span>${thread.time}</span>
-            </div>
-          </div>
-          <span class="latest-count">${thread.comments}</span>
-        </div>`).join('');
     }
 
     function renderFlat(mode) {
@@ -3299,7 +2894,7 @@
       document.getElementById('games-view').style.display = 'none';
       document.getElementById('forum-view').style.display = 'block';
       document.body.classList.remove('games-open');
-      closeSidebar();
+      currentPost = null;
       const tab = document.querySelector('.app-tabbar .tab-item.active');
       if (tab && ['tools', 'games'].includes(tab.dataset.tab)) {
         setActiveTab('home');
@@ -3310,9 +2905,6 @@
 
     function setFeedModeSilent(mode) {
       feedMode = mode;
-      document.querySelectorAll('.feed-tab').forEach(btn => {
-        btn.classList.toggle('active', btn.dataset.mode === mode);
-      });
       const grid = document.getElementById('category-grid');
       const catFeed = document.getElementById('category-feed');
       const flat = document.getElementById('flat-feed');
@@ -3322,8 +2914,7 @@
     }
 
     // Height of the bars pinned to the top of the viewport (header, mobile
-    // search, sticky feed tabs) so anchored scrolls do not hide content
-    // underneath them.
+    // search) so anchored scrolls do not hide content underneath them.
     function stickyStackHeight() {
       let offset = 0;
       const topbar = document.querySelector('.topbar');
@@ -3332,11 +2923,6 @@
       const mobileSearch = document.querySelector('.mobile-search');
       if (mobileSearch && getComputedStyle(mobileSearch).display !== 'none') {
         offset += mobileSearch.getBoundingClientRect().height;
-      }
-
-      const filterRow = document.querySelector('.filter-row');
-      if (filterRow && getComputedStyle(filterRow).position === 'sticky') {
-        offset += filterRow.getBoundingClientRect().height;
       }
       return offset;
     }
@@ -3357,13 +2943,6 @@
         ? document.getElementById('category-grid')
         : document.getElementById('flat-feed');
       scrollToAnchor(target);
-    }
-
-    function filterCategory(cat) {
-      ensureForumView();
-      setFeedModeSilent('categories');
-      if (cat === 'all') clearCategorySelection();
-      else selectCategory(cat);
     }
 
     function filterThreads(query) {
@@ -3423,18 +3002,18 @@
     }
 
     function renderReply(reply) {
-      const badgeHtml = reply.badge ? `<span class="reply-badge">${reply.badge}</span>` : '';
+      const badgeHtml = reply.badge ? `<span class="reply-badge">${escapeHtml(reply.badge)}</span>` : '';
       const avatarIcon = reply.badge === 'OP' ? 'fa-user-tie' : (reply.badge === 'You' ? 'fa-user-astronaut' : 'fa-user');
       return `
         <div class="reply-item">
           <div class="reply-avatar"><i class="fas ${avatarIcon}"></i></div>
           <div class="reply-content">
             <div class="reply-top">
-              <span class="reply-author">@${reply.author}</span>
+              <span class="reply-author">@${escapeHtml(reply.author)}</span>
               ${badgeHtml}
-              <span class="reply-time"><i class="fas fa-clock"></i> ${reply.time}</span>
+              <span class="reply-time"><i class="fas fa-clock"></i> ${escapeHtml(reply.time)}</span>
             </div>
-            <div class="reply-text">${reply.text}</div>
+            <div class="reply-text">${escapeHtml(reply.text)}</div>
             <div class="reply-actions">
               <span onclick="event.stopPropagation(); likeReply(this)"><i class="fas fa-heart"></i> Like</span>
               <span><i class="fas fa-reply"></i> Reply</span>
@@ -3467,8 +3046,11 @@
       repliesHeaderHtml = `
         <div class="replies-header">
           <i class="fas fa-comments"></i> Responses
-          <span class="reply-count">${thread.replies.length}</span>
-        </div>`;
+          <span class="reply-count" id="post-reply-count">${thread.comments}</span>
+        </div>
+        ${thread.replies.length < thread.comments
+          ? `<div class="replies-sample" id="post-replies-sample">Showing ${thread.replies.length} of ${thread.comments} responses.</div>`
+          : ''}`;
 
       const memberPill = isMember
         ? `<span class="member-pill"><i class="fas fa-circle-check"></i> Member</span>`
@@ -3486,25 +3068,25 @@
           <div class="earnings-card-header">
             <i class="fas fa-star"></i>
             <span>Post karma</span>
-            <strong class="earnings-total">${formatKarma(totalKarma)}</strong>
+            <strong class="earnings-total" id="post-karma-total">${formatKarma(totalKarma)}</strong>
           </div>
           <div class="earnings-breakdown">
             <div class="earnings-row">
-              <span><i class="fas fa-eye"></i> Views (${viewsNum.toLocaleString()})</span>
-              <span>+${viewsKarma.toLocaleString('en-US')}</span>
+              <span><i class="fas fa-eye"></i> Views (<span id="post-views-count">${Math.round(viewsNum).toLocaleString('en-US')}</span>)</span>
+              <span>+<span id="post-views-karma">${Math.round(viewsKarma).toLocaleString('en-US')}</span></span>
             </div>
             <div class="earnings-row">
-              <span><i class="fas fa-heart"></i> Likes (${thread.likes})</span>
-              <span>+${likesKarma.toLocaleString('en-US')}</span>
+              <span><i class="fas fa-heart"></i> Likes (<span id="post-likes-count">${thread.likes}</span>)</span>
+              <span>+<span id="post-likes-karma">${likesKarma.toLocaleString('en-US')}</span></span>
             </div>
             <div class="earnings-row">
-              <span><i class="fas fa-comment"></i> Replies (${thread.comments})</span>
-              <span>+${commentsKarma.toLocaleString('en-US')}</span>
+              <span><i class="fas fa-comment"></i> Replies (<span id="post-comments-count">${thread.comments}</span>)</span>
+              <span>+<span id="post-comments-karma">${commentsKarma.toLocaleString('en-US')}</span></span>
             </div>
           </div>
           <div class="karma-revenue">
             <span><i class="fas fa-dollar-sign"></i> Revenue earned</span>
-            <strong>${formatRevenue(displayRevenueFromKarma(totalKarma))}</strong>
+            <strong id="post-revenue">${formatRevenue(displayRevenueFromKarma(totalKarma))}</strong>
           </div>
         </div>
       `;
@@ -3513,15 +3095,15 @@
       container.innerHTML = `
         <div class="post-header">
           <div class="post-title-row">
-            <h1 class="post-title">${thread.title}</h1>
+            <h1 class="post-title">${escapeHtml(thread.title)}</h1>
             ${memberPill}
           </div>
           <div class="post-meta-row">
-            <span><i class="fas fa-user"></i> <span class="author">@${thread.author}</span></span>
-            <span><i class="fas fa-eye"></i> ${formatViews(thread.views)} views</span>
-            <span><i class="fas fa-clock"></i> Posted ${thread.time}</span>
-            <span><i class="fas fa-comment"></i> ${thread.replies.length} responses</span>
-            <span><i class="fas fa-heart"></i> ${thread.likes} likes</span>
+            <span><i class="fas fa-user"></i> <span class="author">@${escapeHtml(thread.author)}</span></span>
+            <span><i class="fas fa-eye"></i> <span id="post-meta-views">${formatViews(thread.views)} views</span></span>
+            <span><i class="fas fa-clock"></i> Posted ${escapeHtml(thread.time)}</span>
+            <span><i class="fas fa-comment"></i> <span id="post-meta-responses">${thread.comments} responses</span></span>
+            <span><i class="fas fa-heart"></i> <span id="post-meta-likes">${thread.likes} likes</span></span>
           </div>
           ${earningsCard}
         </div>
@@ -3538,6 +3120,7 @@
       document.getElementById('games-view').style.display = 'none';
       document.body.classList.remove('games-open');
       document.getElementById('post-view').style.display = 'block';
+      currentPost = { category, id };
       if (window.innerWidth <= 768 && history.state && history.state.dcView === 'post') {
         // already recorded
       } else if (window.innerWidth <= 768) {
@@ -3679,11 +3262,6 @@
       const cats = ['journey', 'tools', 'coupons', 'testers', 'lounge', 'general', 'review', 'hobbies', 'tech', 'entertainment', 'movies', 'music', 'games'];
       const cat = cats[Math.floor(Math.random() * cats.length)];
       categoryCounts[cat] += 1;
-      const el = document.getElementById('count-' + cat);
-      if (el) {
-        el.textContent = categoryCounts[cat] + ' posts';
-        pulseEl(el);
-      }
       renderCategoryGrid();
     }
 
@@ -3796,7 +3374,7 @@
           btn.innerHTML = `<i class="fas fa-circle-check"></i> <span>Verified Member</span>`;
           btn.onclick = () => showToast('You\'re already in the conversation 🎉');
         } else if (displayName) {
-          btn.innerHTML = `<i class="fas fa-user-check"></i> <span>@${displayName}</span>`;
+          btn.innerHTML = `<i class="fas fa-user-check"></i> <span>@${escapeHtml(displayName)}</span>`;
           btn.onclick = () => openIdentityModal();
         } else {
           btn.innerHTML = `<i class="fas fa-user-plus"></i> <span>Set username</span>`;
@@ -3805,9 +3383,6 @@
       });
       renderActivityCard();
     }
-
-    // Kept as an alias so older call sites keep working.
-    function applyMemberUI() { applyIdentityUI(); }
 
     // ==================== ACTIVITY / RETENTION ====================
     const VISIT_KEY = 'circles_visit_v1';
@@ -3825,59 +3400,94 @@
       return all;
     }
 
-    function totalMyResponses() {
-      return myThreads().reduce((sum, x) => sum + ((x.thread.replies || []).length), 0);
-    }
-
     // User karma = karma from their posts + karma from community interactions.
     function userKarma() {
       const mine = myThreads();
       const postKarma = mine.reduce((sum, x) => sum + calculateKarma(x.thread), 0);
       const interactionKarma = (userActions.replies || 0) * 10
         + (userActions.likes || 0) * 2;
-      return postKarma + interactionKarma;
+      return postKarma + interactionKarma + (userActions.boosterKarma || 0);
     }
 
     // Revenue earned by the user's own posts on this device.
     function postRevenue() {
-      return myThreads().reduce((sum, x) => sum + displayRevenue(x.thread), 0);
+      return myThreads().reduce((sum, x) => sum + displayRevenue(x.thread), 0)
+        + (userActions.boosterKarma || 0) * REVENUE_PER_KARMA;
     }
 
     // Payout approaches the $80 minimum but never reaches it.
     const PAYOUT_TARGET = 80;
     const ENGAGEMENT_KEY = 'circles_engagement_v1';
-    // About $4 of karma/revenue per day (1000 karma = $22).
-    const DAILY_KARMA_GAIN = 4 / REVENUE_PER_KARMA;
+    const KARMA_BOOSTER_KEY = 'circles_karma_booster_v1';
+    const KARMA_BOOSTER_REWARD = 500;
+    // Every calendar day earns a different amount: it averages about $4 but
+    // swings between roughly $1.50 and $6.50. The rate is seeded from the date,
+    // so it holds steady while the page is open and only changes at midnight.
+    const DAILY_REVENUE_MIN = 1.5;
+    const DAILY_REVENUE_MAX = 6.5;
+    const MAX_CATCHUP_DAYS = 30;
+
+    function dayKey(date) {
+      return date.getFullYear() * 10000 + (date.getMonth() + 1) * 100 + date.getDate();
+    }
+
+    // Stable 0..1 value for a calendar day (a small integer hash).
+    function dayRoll(date) {
+      let x = dayKey(date) ^ 0x9e3779b9;
+      x = Math.imul(x ^ (x >>> 16), 0x85ebca6b);
+      x = Math.imul(x ^ (x >>> 13), 0xc2b2ae35);
+      x ^= x >>> 16;
+      return (x >>> 0) / 4294967296;
+    }
+
+    // Revenue this calendar day is on pace to earn.
+    function dailyRevenueFor(date) {
+      return DAILY_REVENUE_MIN + dayRoll(date) * (DAILY_REVENUE_MAX - DAILY_REVENUE_MIN);
+    }
 
     // Views accrue continuously through the day so the user's post karma (and
-    // therefore revenue) rises by roughly $4/day. The gain shrinks as the
-    // balance nears $80, so the payout target is never reached.
+    // therefore revenue) rises a little at a time, at that day's own rate. The
+    // gain shrinks as the balance nears $80, so the payout target is never
+    // reached. Returns the karma added by this call.
     function accruePostEngagement() {
-      if (!hasIdentity()) return;
-      const mine = myThreads();
-      if (!mine.length) return;
-
       const now = Date.now();
       let data = { last: now };
       try { data = JSON.parse(localStorage.getItem(ENGAGEMENT_KEY)) || data; } catch (e) {}
       if (!data.last) data.last = now;
 
       const elapsedDays = Math.max(0, (now - data.last) / 86400000);
-      if (elapsedDays < 0.0005) return; // under ~45s, wait for a visible tick
+      const mine = hasIdentity() ? myThreads() : [];
 
-      let earned = postRevenue();
-      let remaining = Math.min(elapsedDays, 30);
-      let gained = 0;
-      while (remaining > 0) {
-        const step = Math.min(remaining, 1);
-        const room = Math.max(0, 1 - earned / PAYOUT_TARGET);
-        const karma = DAILY_KARMA_GAIN * step * room;
-        gained += karma;
-        earned += karma * REVENUE_PER_KARMA;
-        remaining -= step;
+      // Nothing to grow yet (or less than ~4s has passed): keep the clock
+      // current so a post created later never inherits time before it existed.
+      if (!mine.length || elapsedDays < 0.00005) {
+        if (elapsedDays > 0) {
+          data.last = now;
+          try { localStorage.setItem(ENGAGEMENT_KEY, JSON.stringify(data)); } catch (e) {}
+        }
+        return 0;
       }
 
-      if (gained > 0) {
+      let earned = postRevenue();
+      let gained = 0;
+      // Walk the elapsed time day by day, splitting at midnight so each
+      // calendar day applies its own rate.
+      let cursor = Math.max(data.last, now - MAX_CATCHUP_DAYS * 86400000);
+      let remainingMs = now - cursor;
+      while (remainingMs > 0) {
+        const day = new Date(cursor);
+        const nextMidnight = new Date(day.getFullYear(), day.getMonth(), day.getDate() + 1).getTime();
+        const segMs = Math.min(remainingMs, Math.max(nextMidnight - cursor, 1));
+        const stepDays = segMs / 86400000;
+        const room = Math.max(0, 1 - earned / PAYOUT_TARGET);
+        const karma = (dailyRevenueFor(day) / REVENUE_PER_KARMA) * stepDays * room;
+        gained += karma;
+        earned += karma * REVENUE_PER_KARMA;
+        cursor += segMs;
+        remainingMs -= segMs;
+      }
+
+      if (gained > 0.0001) {
         const share = gained / mine.length;
         mine.forEach(({ thread }) => {
           thread.views = parseCount(thread.views) + share;
@@ -3887,6 +3497,66 @@
 
       data.last = now;
       try { localStorage.setItem(ENGAGEMENT_KEY, JSON.stringify(data)); } catch (e) {}
+      return gained;
+    }
+
+    function findThreadById(id) {
+      for (const cat of Object.keys(threads)) {
+        const thread = (threads[cat] || []).find(t => t.id === id);
+        if (thread) return { cat, thread };
+      }
+      return null;
+    }
+
+    // Refresh the karma/revenue chips on the rows that are currently on screen.
+    function refreshThreadBadges() {
+      document.querySelectorAll('.thread-item[data-thread-id]').forEach(row => {
+        const found = findThreadById(row.dataset.threadId);
+        if (!found) return;
+        const karmaEl = row.querySelector('.earnings-badge');
+        const revenueEl = row.querySelector('.revenue-badge');
+        if (karmaEl) karmaEl.innerHTML = `<i class="fas fa-star"></i> ${formatKarma(calculateKarma(found.thread))}`;
+        if (revenueEl) revenueEl.innerHTML = `<i class="fas fa-dollar-sign"></i> ${formatRevenue(calculateRevenue(found.thread))}`;
+      });
+    }
+
+    // Refresh the karma card of the post that is open, without rebuilding it
+    // (which would wipe whatever the reader has typed in the reply box).
+    function refreshPostStats() {
+      if (!currentPost) return;
+      if (document.getElementById('post-view').style.display !== 'block') return;
+      const thread = (threads[currentPost.category] || []).find(t => t.id === currentPost.id);
+      if (!thread) return;
+
+      const viewsNum      = parseCount(thread.views);
+      const viewsKarma    = viewsNum        * KARMA_WEIGHTS.views;
+      const likesKarma    = thread.likes    * KARMA_WEIGHTS.likes;
+      const commentsKarma = thread.comments * KARMA_WEIGHTS.comments;
+      const totalKarma    = viewsKarma + likesKarma + commentsKarma;
+
+      const set = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
+      set('post-karma-total', formatKarma(totalKarma));
+      set('post-views-count', Math.round(viewsNum).toLocaleString('en-US'));
+      set('post-views-karma', '+' + Math.round(viewsKarma).toLocaleString('en-US'));
+      set('post-likes-count', thread.likes);
+      set('post-likes-karma', '+' + likesKarma.toLocaleString('en-US'));
+      set('post-comments-count', thread.comments);
+      set('post-comments-karma', '+' + commentsKarma.toLocaleString('en-US'));
+      set('post-revenue', formatRevenue(displayRevenueFromKarma(totalKarma)));
+      set('post-meta-views', formatViews(thread.views) + ' views');
+      set('post-meta-responses', thread.comments + ' responses');
+      set('post-meta-likes', thread.likes + ' likes');
+      set('post-reply-count', thread.comments);
+    }
+
+    // One tick of the slow-burn loop: grow karma, then repaint everything the
+    // reader can currently see.
+    function tickEngagement() {
+      if (!hasIdentity()) return;
+      accruePostEngagement();
+      refreshThreadBadges();
+      refreshPostStats();
+      renderActivityCard();
     }
 
     // Daily new-post limit (replies are unlimited).
@@ -3931,7 +3601,7 @@
       accruePostEngagement();
       const mine = myThreads();
       const posts = mine.length;
-      const responses = mine.reduce((sum, x) => sum + ((x.thread.replies || []).length), 0);
+      const responses = mine.reduce((sum, x) => sum + (x.thread.comments || 0), 0);
       const karma = userKarma();
       const earned = postRevenue();
       const payout = Math.min(earned, PAYOUT_TARGET - 0.01);
@@ -3948,6 +3618,15 @@
       const payoutText = document.getElementById('payout-text');
       if (fill) fill.style.width = Math.min(99, (payout / PAYOUT_TARGET) * 100).toFixed(1) + '%';
       if (payoutText) payoutText.textContent = `${formatRevenue(payout)} of $${PAYOUT_TARGET} payout`;
+
+      const boosterBtn = document.getElementById('karma-booster-btn');
+      if (boosterBtn) {
+        const claimed = karmaBoosterClaimedToday();
+        boosterBtn.classList.toggle('is-claimed', claimed);
+        boosterBtn.innerHTML = claimed
+          ? '<i class="fas fa-circle-check"></i> Claimed today'
+          : '<i class="fas fa-arrow-up"></i> Boost karma';
+      }
 
       const title = card.querySelector('.activity-title');
       const actions = card.querySelector('.activity-actions');
@@ -3999,12 +3678,54 @@
     }
 
     // ==================== COMPOSE NEW POST ====================
+    function karmaBoosterClaimedToday() {
+      const today = new Date().toDateString();
+      try {
+        const data = JSON.parse(localStorage.getItem(KARMA_BOOSTER_KEY)) || {};
+        return data.date === today && data.claimed === true;
+      } catch (e) {
+        return false;
+      }
+    }
+
+    function openKarmaBooster() {
+      if (!hasIdentity()) {
+        pendingIdentityAction = openKarmaBooster;
+        openIdentityModal();
+        return;
+      }
+      if (karmaBoosterClaimedToday()) {
+        showToast('You already claimed today’s Karma Booster. Come back tomorrow!', true);
+        return;
+      }
+      openComposeModal();
+      const circle = document.getElementById('compose-circle');
+      const title = document.getElementById('compose-title');
+      const body = document.getElementById('compose-body');
+      if (circle) circle.value = 'testers';
+      if (title) title.placeholder = 'App or game name + gameplay video';
+      if (body) body.placeholder = 'Install an app or game, then paste your YouTube gameplay video link here.';
+      karmaBoosterSubmission = true;
+    }
+
+    function claimKarmaBooster() {
+      if (karmaBoosterClaimedToday()) return false;
+      const today = new Date().toDateString();
+      try {
+        localStorage.setItem(KARMA_BOOSTER_KEY, JSON.stringify({ date: today, claimed: true }));
+      } catch (e) {}
+      userActions.boosterKarma = (userActions.boosterKarma || 0) + KARMA_BOOSTER_REWARD;
+      saveState();
+      return true;
+    }
+
     function openComposeModal() {
       if (!hasIdentity()) {
         pendingIdentityAction = openComposeModal;
         openIdentityModal();
         return;
       }
+      karmaBoosterSubmission = false;
       const left = postsLeftToday();
       const note = document.getElementById('compose-limit');
       if (note) {
@@ -4022,10 +3743,7 @@
     function closeComposeModal() {
       document.getElementById('compose-modal').classList.remove('active');
       document.body.style.overflow = '';
-    }
-
-    function escapeHtml(str) {
-      return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+      karmaBoosterSubmission = false;
     }
 
     function bodyToHtml(text) {
@@ -4057,6 +3775,13 @@
       if (!title) { titleEl.style.borderColor = '#d93025'; setTimeout(() => titleEl.style.borderColor = '', 800); ok = false; }
       if (!body)  { bodyEl.style.borderColor  = '#d93025'; setTimeout(() => bodyEl.style.borderColor  = '', 800); ok = false; }
       if (!ok) { showToast('Add a title and some content to post', true); return; }
+      if (karmaBoosterSubmission) {
+        const youtubeLink = /https?:\/\/(www\.)?(youtube\.com|youtu\.be)\//i.test(body);
+        if (circle !== 'testers' || !youtubeLink) {
+          showToast('Booster requires the Apps & Game Testers category and a YouTube gameplay video link.', true);
+          return;
+        }
+      }
 
       const iconMap = CATEGORY_ICONS;
 
@@ -4078,9 +3803,12 @@
 
       threads[circle].unshift(newThread);
       recordPostToday();
+      let boosterClaimed = false;
+      if (karmaBoosterSubmission) {
+        boosterClaimed = claimKarmaBooster();
+      }
+      karmaBoosterSubmission = false;
       categoryCounts[circle] += 1;
-      const countEl = document.getElementById('count-' + circle);
-      if (countEl) { countEl.textContent = categoryCounts[circle] + ' posts'; pulseEl(countEl); }
 
       liveStats.posts += 1;
       updateStatDisplay('posts', liveStats.posts);
@@ -4091,7 +3819,11 @@
       closeComposeModal();
       renderForum();
       saveState();
-      showToast('Conversation started — your post is live! 🎉');
+      if (boosterClaimed) {
+        showToast(`Karma Booster complete! +${formatKarma(KARMA_BOOSTER_REWARD)} karma and ${formatRevenue(KARMA_BOOSTER_REWARD * REVENUE_PER_KARMA)} added. 🎉`);
+      } else {
+        showToast('Conversation started — your post is live! 🎉');
+      }
       openPost(circle, newThread.id);
     }
 
@@ -4167,19 +3899,16 @@
       displayName = saved.displayName || '';
       if (Array.isArray(saved.claimedNames)) claimedNames = saved.claimedNames;
       if (saved.userActions) {
-        userActions = { replies: saved.userActions.replies || 0, likes: saved.userActions.likes || 0 };
+        userActions = {
+          replies: saved.userActions.replies || 0,
+          likes: saved.userActions.likes || 0,
+          boosterKarma: saved.userActions.boosterKarma || 0
+        };
       }
       if (saved.isMember) {
         isMember = true;
         memberName = saved.memberName || 'member';
       }
-    }
-
-    function renderCategoryCounts() {
-      ['journey', 'tools', 'coupons', 'testers', 'lounge', 'general', 'review', 'hobbies', 'tech', 'entertainment', 'movies', 'music', 'games'].forEach(cat => {
-        const el = document.getElementById('count-' + cat);
-        if (el) el.textContent = categoryCounts[cat] + ' posts';
-      });
     }
 
     // Optional published feed: if circles-posts.json sits next to this page
@@ -4217,54 +3946,12 @@
       syncThemeIcon();
     }
 
-    // Sidebar removed — keep these as safe no-ops for existing call sites.
-    function toggleSidebar() {}
-    function closeSidebar() {}
-
-    function focusMobileSearch() {
-      const box = document.getElementById('search-input-mobile');
-      if (box) { box.focus(); box.scrollIntoView({ behavior: 'smooth', block: 'center' }); }
-    }
-
     function syncSearch(value) {
       const desk = document.getElementById('search-input');
       const mob = document.getElementById('search-input-mobile');
       if (desk && desk.value !== value) desk.value = value;
       if (mob && mob.value !== value) mob.value = value;
       filterThreads(value);
-    }
-
-    // ==================== COLLAPSIBLE TOPICS ====================
-    const COLLAPSE_KEY = 'circles_collapsed_cats';
-    const ALL_CATS = ['journey', 'tools', 'coupons', 'testers', 'lounge', 'general', 'review', 'hobbies', 'tech', 'entertainment', 'movies', 'music', 'games'];
-    // Topics start collapsed so the feed opens as a tidy list of communities.
-    let collapsedCats = new Set(ALL_CATS);
-    try {
-      const savedCollapsed = localStorage.getItem(COLLAPSE_KEY);
-      if (savedCollapsed !== null) {
-        const parsedCollapsed = JSON.parse(savedCollapsed);
-        if (Array.isArray(parsedCollapsed)) collapsedCats = new Set(parsedCollapsed);
-      }
-    } catch (e) { collapsedCats = new Set(ALL_CATS); }
-
-    function applyCollapsedCats() {
-      document.querySelectorAll('.category-section').forEach(sec => {
-        const collapsed = collapsedCats.has(sec.dataset.cat);
-        sec.classList.toggle('collapsed', collapsed);
-        const header = sec.querySelector('.category-header');
-        if (header) header.setAttribute('aria-expanded', String(!collapsed));
-      });
-    }
-
-    function toggleCategory(header) {
-      const sec = header.closest('.category-section');
-      if (!sec) return;
-      const collapsed = sec.classList.toggle('collapsed');
-      sec.classList.remove('search-open');
-      if (collapsed) collapsedCats.add(sec.dataset.cat);
-      else collapsedCats.delete(sec.dataset.cat);
-      header.setAttribute('aria-expanded', String(!collapsed));
-      try { localStorage.setItem(COLLAPSE_KEY, JSON.stringify([...collapsedCats])); } catch (e) {}
     }
 
     // ==================== GAMES ====================
@@ -4275,15 +3962,11 @@
     };
 
     function showGamesView() {
-      closeSidebar();
       document.getElementById('post-view').style.display = 'none';
       document.getElementById('tools-view').style.display = 'none';
       document.getElementById('forum-view').style.display = 'none';
       document.getElementById('games-view').style.display = 'block';
       document.body.classList.add('games-open');
-      document.querySelectorAll('.side-link').forEach(link => {
-        link.classList.toggle('active', link.dataset.viewLink === 'games');
-      });
       setActiveTab('games');
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
@@ -4311,15 +3994,6 @@
     }
 
     // ==================== MOBILE APP TAB BAR ====================
-    // Track the mobile tab bar's real height (it changes with font loading and
-    // safe-area insets) so bottom chrome stays in sync.
-    function syncBottomChrome() {
-      const bar = document.querySelector('.app-tabbar');
-      const visible = bar && getComputedStyle(bar).display !== 'none';
-      const h = visible ? bar.getBoundingClientRect().height : 0;
-      document.documentElement.style.setProperty('--tabbar-h', h + 'px');
-    }
-
     function setActiveTab(tab) {
       document.querySelectorAll('.app-tabbar .tab-item').forEach(btn => {
         btn.classList.toggle('active', btn.dataset.tab === tab);
@@ -4327,7 +4001,6 @@
     }
 
     function appTab(tab) {
-      closeSidebar();
       const scrollTop = () => window.scrollTo({ top: 0, behavior: 'smooth' });
 
       switch (tab) {
@@ -4348,15 +4021,6 @@
         case 'games':
           showGamesView();
           break;
-        case 'profile':
-          if (!hasIdentity()) { openIdentityModal(); setActiveTab('home'); }
-          else {
-            applyIdentityUI();
-            showForum();
-            setActiveTab('home');
-            showToast(`Posting as @${authorName()} — tap "Set username" to change it.`);
-          }
-          break;
         case 'tools':
           openTools();
           break;
@@ -4371,34 +4035,28 @@
       renderToolUsage();
       syncThemeIcon();
       applyIdentityUI();
-      renderCategoryCounts();
       renderForum();
-      applyCollapsedCats();
-      syncBottomChrome();
       if (hasIdentity() && myThreads().length) {
         const mine = myThreads();
-        const responses = mine.reduce((s, x) => s + ((x.thread.replies || []).length), 0);
+        const responses = mine.reduce((s, x) => s + (x.thread.comments || 0), 0);
         const earned = postRevenue();
         showToast(`🔥 ${updateStreak()}-day streak · ${responses} responses · ${formatRevenue(earned)} of $80`);
       }
-      if (document.fonts && document.fonts.ready) {
-        document.fonts.ready.then(syncBottomChrome).catch(() => {});
-      }
       startLiveStats();
-      // Keep daily karma/revenue ticking while the app stays open.
-      setInterval(() => {
-        if (hasIdentity()) renderActivityCard();
-      }, 60000);
+      // Grow the user's karma/revenue a little at a time while the app is open,
+      // and repaint the post they are looking at.
+      tickEngagement();
+      setInterval(tickEngagement, 30000);
+      // Background tabs throttle timers, so catch up as soon as we are visible.
+      document.addEventListener('visibilitychange', () => {
+        if (!document.hidden) tickEngagement();
+      });
       document.addEventListener('keydown', e => {
-        if (e.key === 'Escape') { closeSidebar(); closeGame(); }
+        if (e.key === 'Escape') { closeGame(); }
       });
       // Restore the active tab when returning with the browser back button
       window.addEventListener('popstate', () => {
         if (document.getElementById('post-view').style.display === 'block') showForum();
-      });
-      window.addEventListener('resize', () => {
-        if (window.innerWidth > 900) closeSidebar();
-        syncBottomChrome();
       });
       // Roll the tools allowance over if the tab stays open past midnight.
       setInterval(rollToolsDay, 60 * 1000);
