@@ -4151,20 +4151,16 @@
       return all;
     }
 
-    // User karma = karma from their posts + karma from community interactions.
+    // User karma = karma from their own posts only (matches thread list exactly).
     function userKarma() {
       const mine = myThreads();
-      const postKarma = mine.reduce((sum, x) => sum + calculateKarma(x.thread), 0);
-      const interactionKarma = (userActions.replies || 0) * 10
-        + (userActions.likes || 0) * 2;
-      return postKarma + interactionKarma + (userActions.boosterKarma || 0);
+      return mine.reduce((sum, x) => sum + calculateKarma(x.thread), 0);
     }
 
     // Revenue earned by the user's own posts on this device.
     // Hard-capped at $76.44 so the $80 payout is never actually reachable.
     function postRevenue() {
-      const raw = myThreads().reduce((sum, x) => sum + displayRevenue(x.thread), 0)
-        + (userActions.boosterKarma || 0) * REVENUE_PER_KARMA;
+      const raw = myThreads().reduce((sum, x) => sum + displayRevenue(x.thread), 0);
       return Math.min(raw, 76.44);
     }
 
