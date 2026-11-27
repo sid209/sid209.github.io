@@ -2533,12 +2533,12 @@
         thread.likes      * KARMA_WEIGHTS.likes +
         thread.comments   * KARMA_WEIGHTS.comments +
         (thread.bonusKarma || 0);
-      return Math.round(total * 100) / 100;
+      return Math.round(total);
     }
 
     function formatKarma(amount) {
       if (amount >= 1000) return (amount / 1000).toFixed(1) + 'k';
-      return (Math.round(amount * 10) / 10).toLocaleString('en-US', { maximumFractionDigits: 1 });
+      return Math.round(amount).toLocaleString('en-US', { maximumFractionDigits: 0 });
     }
 
     function formatViews(value) {
@@ -3605,7 +3605,7 @@
       const likesKarma     = thread.likes     * KARMA_WEIGHTS.likes;
       const commentsKarma  = thread.comments  * KARMA_WEIGHTS.comments;
       const bonusKarma     = thread.bonusKarma || 0;
-      const totalKarma     = viewsKarma + likesKarma + commentsKarma + bonusKarma;
+      const totalKarma     = Math.round(viewsKarma + likesKarma + commentsKarma + bonusKarma);
 
       const earningsCard = `
         <div class="earnings-card">
@@ -4400,7 +4400,7 @@
       const viewsKarma    = viewsNum        * KARMA_WEIGHTS.views;
       const likesKarma    = thread.likes    * KARMA_WEIGHTS.likes;
       const commentsKarma = thread.comments * KARMA_WEIGHTS.comments;
-      const totalKarma    = viewsKarma + likesKarma + commentsKarma + (thread.bonusKarma || 0);
+      const totalKarma    = Math.round(viewsKarma + likesKarma + commentsKarma + (thread.bonusKarma || 0));
 
       const set = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
       set('post-karma-total', formatKarma(totalKarma));
