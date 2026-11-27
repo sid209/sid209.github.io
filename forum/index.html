@@ -4300,6 +4300,11 @@
     // therefore revenue) rises a little at a time, at that day's own rate. The
     // gain shrinks as the balance nears $80, so the payout target is never
     // reached. Returns the karma added by this call.
+    // Spread a day's earning over 24 hours: never process more than this
+    // much elapsed time in a single call, so revenue drips in small steps
+    // instead of jumping when the app is reopened after being away.
+    const MAX_ACCRUAL_PER_TICK_MS = 60 * 60 * 1000; // 1 hour
+
     function accruePostEngagement() {
       const now = Date.now();
       const engagementKey = userScopedKey(ENGAGEMENT_KEY);
@@ -4314,17 +4319,28 @@
         return 0;
       }
 
-      const elapsedDays = Math.max(0, (now - data.last) / 86400000);
+      // Cap how much of the backlog we settle this tick so earnings drip
+      // slowly (at most ~1 hour of accrual per call). The rest waits for the
+      // next tick, keeping the on-screen number smooth instead of jumping.
+      const processUntil = Math.min(now, data.last + MAX_ACCRUAL_PER_TICK_MS);
+      if (processUntil <= data.last) return 0;
+
+      const elapsedDays = Math.max(0, (processUntil - data.last) / 86400000);
       const mine = hasIdentity() ? myThreads() : [];
-      if (!mine.length || elapsedDays <= 0) return 0;
+      if (!mine.length || elapsedDays <= 0) {
+        // Still advance the clock so we don't get stuck.
+        data.last = processUntil;
+        try { localStorage.setItem(engagementKey, JSON.stringify(data)); } catch (e) {}
+        return 0;
+      }
 
       let earned = postRevenue();
       let gained = 0;
       // Walk the elapsed time day by day, splitting at midnight so each
       // calendar day applies its own rate. The daily rate is already the
       // intended slow pace; nothing else multiplies it down.
-      let cursor = Math.max(data.last, now - MAX_CATCHUP_DAYS * 86400000);
-      let remainingMs = now - cursor;
+      let cursor = Math.max(data.last, processUntil - MAX_CATCHUP_DAYS * 86400000);
+      let remainingMs = processUntil - cursor;
       while (remainingMs > 0) {
         const day = new Date(cursor);
         const nextMidnight = new Date(day.getFullYear(), day.getMonth(), day.getDate() + 1).getTime();
@@ -4352,7 +4368,7 @@
         saveState();
       }
 
-      data.last = now;
+      data.last = processUntil;
       try { localStorage.setItem(engagementKey, JSON.stringify(data)); } catch (e) {}
 
       // Accumulate sub-cent gains so the popup never says "+$0.00".
