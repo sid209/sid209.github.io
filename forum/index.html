@@ -1698,7 +1698,7 @@
             <p class="karma-booster-desc">
               Install <strong>Wheel of Emotion</strong> and keep it installed. Reply on the pinned post with
               your feedback, a review or a suggestion — your first reply each day adds
-              <strong>10 karma</strong> instantly.
+              <strong>50 karma</strong> instantly.
             </p>
             <div class="karma-booster-actions">
               <a class="karma-booster-link" href="https://play.google.com/store/apps/details?id=com.wheelofemotionapp.app"
@@ -2811,7 +2811,7 @@
             <ul>
               <li>Install the app and <strong>keep it installed</strong>. We need people using it day to day, not for five minutes.</li>
               <li>Reply below with your feedback, a review, or a suggestion. Specific is better: what confused you, what felt good, what you would change.</li>
-              <li>Come back and reply again each day. Your first reply each day adds <strong>10 karma</strong> to your account instantly.</li>
+              <li>Come back and reply again each day. Your first reply each day adds <strong>50 karma</strong> to your account instantly.</li>
             </ul>
             <p>This post is replies only and stays pinned at the top of Apps &amp; Game Testers, so the thread is always easy to find.</p>`,
           replies: []
@@ -3561,8 +3561,8 @@
       bodyHtml = thread.body;
       const boosterNote = isBooster
         ? (karmaBoosterClaimedToday()
-            ? `<div class="booster-status claimed"><i class="fas fa-circle-check"></i> You already have today’s 10 karma. Reply again tomorrow to earn another 10.</div>`
-            : `<div class="booster-status"><i class="fas fa-bolt"></i> Your reply adds 10 karma to your account instantly.</div>`)
+            ? `<div class="booster-status claimed"><i class="fas fa-circle-check"></i> You already have today’s 50 karma. Reply again tomorrow to earn another 50.</div>`
+            : `<div class="booster-status"><i class="fas fa-bolt"></i> Your reply adds 50 karma to your account instantly.</div>`)
         : '';
       replyFormHtml = `
         <div class="reply-form">
@@ -3725,8 +3725,8 @@
 
       thread.replies.push({ author: authorName(), time: 'just now', badge: 'You', text: text });
       thread.comments += 1;
-      // A Karma Booster reply pays its own 10 karma instead of the usual
-      // interaction karma, so the jump in the activity card is exactly 10.
+      // A Karma Booster reply pays its own 50 karma instead of the usual
+      // interaction karma, so the jump in the activity card is exactly 50.
       const awarded = isBooster ? claimKarmaBooster() : 0;
       if (!isBooster) userActions.replies += 1;
       thread.time = 'just now';
@@ -3737,7 +3737,7 @@
       if (isBooster) {
         showToast(awarded
           ? `+${awarded} karma added. Keep Wheel of Emotion installed and reply again tomorrow with more feedback.`
-          : 'Thanks for the feedback! You already earned today’s 10 karma — reply again tomorrow.');
+          : 'Thanks for the feedback! You already earned today’s 50 karma — reply again tomorrow.');
       } else {
         showToast('Response posted! Your voice is live in the conversation.');
       }
