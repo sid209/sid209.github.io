@@ -569,23 +569,6 @@
     .activity-link { font-size: 12px; font-weight: 600; color: var(--text-2); padding: 0 4px; white-space: nowrap; }
     .activity-link:hover { color: var(--accent); }
 
-    .home-footer-links {
-      display: flex; justify-content: center; gap: 16px;
-      padding: 24px 0 12px; margin-top: 8px;
-      border-top: 1px solid var(--border);
-    }
-    .home-footer-link {
-      display: inline-flex; align-items: center; gap: 6px;
-      font-size: 12.5px; font-weight: 600; color: var(--text-2);
-      padding: 8px 12px; border-radius: 8px;
-      background: transparent; border: 1px solid transparent;
-      cursor: pointer; transition: all 0.15s;
-    }
-    .home-footer-link:hover {
-      color: var(--accent); background: var(--accent-soft); border-color: var(--accent-border);
-    }
-    .home-footer-link i { font-size: 13px; }
-
     .karma-booster {
       display: grid; gap: 9px;
       margin-bottom: 18px; padding: 14px 16px;
@@ -661,6 +644,23 @@
     .pinned-rules { margin: 10px 0 0; padding-left: 18px; display: grid; gap: 6px; }
     .pinned-rules li { font-size: 12.5px; color: var(--text-2); line-height: 1.5; }
     .pinned-rules strong { color: var(--text); }
+
+    .pinned-actions {
+      display: flex; gap: 10px;
+      margin-top: 14px; padding-top: 14px;
+      border-top: 1px solid var(--border);
+    }
+    .pinned-action-link {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-size: 12px; font-weight: 600; color: var(--text-2);
+      padding: 8px 12px; border-radius: 8px;
+      background: transparent; border: 1px solid transparent;
+      cursor: pointer; transition: all 0.15s;
+    }
+    .pinned-action-link:hover {
+      color: var(--accent); background: var(--accent-soft); border-color: var(--accent-border);
+    }
+    .pinned-action-link i { font-size: 13px; }
 
     .tab-badge {
       position: absolute; top: 2px; right: calc(50% - 18px);
@@ -1601,6 +1601,10 @@
               <li><strong>Payout</strong> is $25 minimum.</li>
               <li><strong>Posting limit</strong> = 3 new posts per day. Interactions are unlimited.</li>
             </ul>
+            <div class="pinned-actions">
+              <button class="pinned-action-link" onclick="openContactModal()"><i class="fas fa-envelope"></i> Contact Us</button>
+              <button class="pinned-action-link" onclick="openPayoutInfoModal()"><i class="fas fa-dollar-sign"></i> Payout Info</button>
+            </div>
           </div>
 
           <div class="karma-booster" id="karma-booster">
@@ -1651,13 +1655,6 @@
           </div>
         </div>
       </div>
-
-      <!-- ========== FOOTER LINKS (Home page only) ========== -->
-      <div class="home-footer-links">
-        <button class="home-footer-link" onclick="openContactModal()"><i class="fas fa-envelope"></i> Contact Us</button>
-        <button class="home-footer-link" onclick="openPayoutInfoModal()"><i class="fas fa-dollar-sign"></i> Payout Info</button>
-      </div>
-    </div>
 
       <!-- ========== TOOLS VIEW ========== -->
       <div id="tools-view" class="content-area" style="display:none">
