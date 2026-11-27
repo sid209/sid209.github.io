@@ -1355,9 +1355,16 @@
       .join-btn-mobile-menu.open { display: block; }
 
       .join-btn-mobile-menu-header {
+        display: flex; align-items: center; gap: 10px;
         padding: 12px 16px; background: var(--surface-2); border-bottom: 1px solid var(--border);
       }
-      .join-btn-mobile-menu-title { font-weight: 600; color: var(--text); font-size: 14px; }
+      .join-btn-mobile-menu-avatar {
+        width: 36px; height: 36px; border-radius: 50%; flex: none;
+        display: grid; place-items: center; background: var(--accent-soft); color: var(--accent); font-size: 14px;
+      }
+      .join-btn-mobile-menu-title { flex: 1; }
+      .join-btn-mobile-menu-name { font-weight: 600; color: var(--text); font-size: 14px; }
+      .join-btn-mobile-menu-email { font-size: 11px; color: var(--text-3); }
 
       .join-btn-mobile-menu-divider { height: 1px; background: var(--border); margin: 6px 0; }
 
@@ -1494,11 +1501,15 @@
         </button>
         <div class="join-btn-mobile-menu" id="join-btn-mobile-menu">
           <div class="join-btn-mobile-menu-header">
-            <span class="join-btn-mobile-menu-title">Account</span>
+            <span class="join-btn-mobile-menu-avatar"><i class="fas fa-user"></i></span>
+            <div>
+              <div class="join-btn-mobile-menu-name" id="join-btn-mobile-menu-name">Guest Viewer</div>
+              <div class="join-btn-mobile-menu-email" id="join-btn-mobile-menu-email">Not signed in</div>
+            </div>
           </div>
           <div class="join-btn-mobile-menu-divider"></div>
-          <button class="join-btn-mobile-menu-item" onclick="openIdentityModal(); closeJoinBtnMobileMenu();">
-            <i class="fas fa-user-edit"></i> Pick a username
+          <button class="join-btn-mobile-menu-item" id="join-btn-mobile-identity" onclick="openIdentityModal(); closeJoinBtnMobileMenu();">
+            <i class="fas fa-user-edit"></i> <span>Pick a username</span>
           </button>
           <button class="join-btn-mobile-menu-item" onclick="openPayoutInfoModal(); closeJoinBtnMobileMenu();">
             <i class="fas fa-dollar-sign"></i> Payout Info
@@ -3624,14 +3635,23 @@
       const menuName = document.getElementById('user-menu-name');
       const menuEmail = document.getElementById('user-menu-email');
       const menuIdentity = document.getElementById('user-menu-identity');
+      const mobileMenuName = document.getElementById('join-btn-mobile-menu-name');
+      const mobileMenuEmail = document.getElementById('join-btn-mobile-menu-email');
+      const mobileIdentity = document.getElementById('join-btn-mobile-identity');
       if (hasIdentity()) {
         if (menuName) menuName.textContent = escapeHtml(name);
         if (menuEmail) menuEmail.textContent = 'Local account';
         if (menuIdentity) menuIdentity.textContent = 'Edit profile';
+        if (mobileMenuName) mobileMenuName.textContent = escapeHtml(name);
+        if (mobileMenuEmail) mobileMenuEmail.textContent = 'Local account';
+        if (mobileIdentity) mobileIdentity.innerHTML = '<i class="fas fa-user-edit"></i> <span>Edit profile</span>';
       } else {
         if (menuName) menuName.textContent = 'Guest Viewer';
         if (menuEmail) menuEmail.textContent = 'Not signed in';
         if (menuIdentity) menuIdentity.textContent = 'Set username';
+        if (mobileMenuName) mobileMenuName.textContent = 'Guest Viewer';
+        if (mobileMenuEmail) mobileMenuEmail.textContent = 'Not signed in';
+        if (mobileIdentity) mobileIdentity.innerHTML = '<i class="fas fa-user-edit"></i> <span>Pick a username</span>';
       }
 
       document.querySelectorAll('.join-btn').forEach(btn => {
