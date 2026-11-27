@@ -569,6 +569,23 @@
     .activity-link { font-size: 12px; font-weight: 600; color: var(--text-2); padding: 0 4px; white-space: nowrap; }
     .activity-link:hover { color: var(--accent); }
 
+    .home-footer-links {
+      display: flex; justify-content: center; gap: 16px;
+      padding: 24px 0 12px; margin-top: 8px;
+      border-top: 1px solid var(--border);
+    }
+    .home-footer-link {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-size: 12.5px; font-weight: 600; color: var(--text-2);
+      padding: 8px 12px; border-radius: 8px;
+      background: transparent; border: 1px solid transparent;
+      cursor: pointer; transition: all 0.15s;
+    }
+    .home-footer-link:hover {
+      color: var(--accent); background: var(--accent-soft); border-color: var(--accent-border);
+    }
+    .home-footer-link i { font-size: 13px; }
+
     .karma-booster {
       display: grid; gap: 9px;
       margin-bottom: 18px; padding: 14px 16px;
@@ -1513,12 +1530,6 @@
           <button class="join-btn-mobile-menu-item" id="join-btn-mobile-identity" onclick="openIdentityModal(); closeJoinBtnMobileMenu();">
             <i class="fas fa-user-edit"></i> <span>Pick a username</span>
           </button>
-          <button class="join-btn-mobile-menu-item" onclick="openPayoutInfoModal(); closeJoinBtnMobileMenu();">
-            <i class="fas fa-dollar-sign"></i> Payout Info
-          </button>
-          <button class="join-btn-mobile-menu-item" onclick="openContactModal(); closeJoinBtnMobileMenu();">
-            <i class="fas fa-envelope"></i> Contact Us
-          </button>
         </div>
         </div>
         <div class="user-badge" id="user-badge" onclick="toggleUserMenu()">
@@ -1534,13 +1545,6 @@
               <div class="user-menu-email" id="user-menu-email">Not signed in</div>
             </div>
           </div>
-          <div class="user-menu-divider"></div>
-          <button class="user-menu-item" onclick="openContactModal(); closeUserMenu();">
-            <i class="fas fa-envelope"></i> Contact Us
-          </button>
-          <button class="user-menu-item" onclick="openPayoutInfoModal(); closeUserMenu();">
-            <i class="fas fa-dollar-sign"></i> Payout Info
-          </button>
           <div class="user-menu-divider"></div>
           <button class="user-menu-item" onclick="openIdentityModal(); closeUserMenu();">
             <i class="fas fa-user-edit"></i> <span id="user-menu-identity">Set username</span>
@@ -1584,8 +1588,6 @@
             <div class="activity-actions">
               <button class="activity-cta" onclick="openComposeModal()"><i class="fas fa-pen"></i> New post</button>
               <button class="activity-link" onclick="showMyPosts()">My posts</button>
-              <button class="activity-link" onclick="openContactModal()"><i class="fas fa-envelope"></i> Contact Us</button>
-              <button class="activity-link" onclick="openPayoutInfoModal()"><i class="fas fa-dollar-sign"></i> Payout Info</button>
             </div>
           </div>
 
@@ -1649,6 +1651,13 @@
           </div>
         </div>
       </div>
+
+      <!-- ========== FOOTER LINKS (Home page only) ========== -->
+      <div class="home-footer-links">
+        <button class="home-footer-link" onclick="openContactModal()"><i class="fas fa-envelope"></i> Contact Us</button>
+        <button class="home-footer-link" onclick="openPayoutInfoModal()"><i class="fas fa-dollar-sign"></i> Payout Info</button>
+      </div>
+    </div>
 
       <!-- ========== TOOLS VIEW ========== -->
       <div id="tools-view" class="content-area" style="display:none">
