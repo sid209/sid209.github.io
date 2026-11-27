@@ -1653,7 +1653,7 @@
               <div class="payout-track"><span id="payout-fill"></span></div>
               <span class="payout-label" id="payout-text">$0.00 of $80 payout</span>
             </div>
-            <div class="zero-stats" style="margin-top: 12px; padding: 8px 12px; background: var(--surface-2); border-radius: 8px; font-size: 11px; color: var(--text-3); display: flex; gap: 16px;"></div>
+            
             <div class="activity-actions">
               <button class="activity-cta" onclick="openComposeModal()"><i class="fas fa-pen"></i> New post</button>
               <button class="activity-link" onclick="showMyPosts()">My posts</button>
@@ -2044,7 +2044,7 @@
     let displayName = '';
     let claimedNames = [];
     let pendingIdentityAction = null;
-    let userActions = { replies: 0, likes: 0, boosterKarma: 0, zeroKarmaDays: 0, zeroRevenueDays: 0 };
+    let userActions = { replies: 0, likes: 0, boosterKarma: 0 };
 
     // ==================== TOOLS ====================
     const TOOLS_SEARCH_LIMIT = 3;
@@ -4251,15 +4251,6 @@
         const segMs = Math.min(remainingMs, Math.max(nextMidnight - cursor, 1));
         const stepDays = segMs / 86400000;
         
-        // ~12% chance of a "zero gain" day (deterministic per day via dayRoll)
-        const zeroGainRoll = dayRoll(day);
-        const isZeroGainDay = zeroGainRoll < 0.12;
-        
-        if (isZeroGainDay) {
-          userActions.zeroKarmaDays = (userActions.zeroKarmaDays || 0) + 1;
-          userActions.zeroRevenueDays = (userActions.zeroRevenueDays || 0) + 1;
-        }
-        
         const room = Math.max(0, 1 - earned / PAYOUT_TARGET);
         const passiveKarma = isZeroGainDay ? 0 : (dailyRevenueFor(day) / REVENUE_PER_KARMA) * stepDays * room;
         gained += passiveKarma;
@@ -4399,17 +4390,6 @@
       const payoutText = document.getElementById('payout-text');
       if (fill) fill.style.width = Math.min(99, (payout / PAYOUT_TARGET) * 100).toFixed(1) + '%';
       if (payoutText) payoutText.textContent = `${formatRevenue(payout)} of $${PAYOUT_TARGET} payout`;
-
-      // Update zero karma/revenue days
-      const zeroStatsEl = card.querySelector('.zero-stats');
-      if (zeroStatsEl) {
-        const zeroKarmaDays = userActions.zeroKarmaDays || 0;
-        const zeroRevenueDays = userActions.zeroRevenueDays || 0;
-        zeroStatsEl.innerHTML = `
-          <span><i class="fas fa-circle-xmark"></i> ${zeroKarmaDays} zero-karma days</span>
-          <span><i class="fas fa-dollar-sign"></i> ${zeroRevenueDays} zero-revenue days</span>
-        `;
-      }
 
       const boosterBtn = document.getElementById('karma-booster-btn');
       if (boosterBtn) {
@@ -4824,9 +4804,7 @@
         userActions = {
           replies: saved.userActions.replies || 0,
           likes: saved.userActions.likes || 0,
-          boosterKarma: saved.userActions.boosterKarma || 0,
-          zeroKarmaDays: saved.userActions.zeroKarmaDays || 0,
-          zeroRevenueDays: saved.userActions.zeroRevenueDays || 0
+          boosterKarma: saved.userActions.boosterKarma || 0
         };
       }
       if (saved.isMember) {
