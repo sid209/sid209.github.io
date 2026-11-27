@@ -146,6 +146,33 @@
 
     .brand-name { font-size: 16px; font-weight: 700; letter-spacing: -0.02em; }
 
+    .brand-menu-icon { display: none; font-size: 18px; color: var(--text-2); margin-left: 4px; }
+
+    .brand-menu {
+      position: absolute; top: calc(100% + 8px); left: 0; z-index: 100;
+      width: 240px; background: var(--surface); border: 1px solid var(--border);
+      border-radius: 12px; box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+      overflow: hidden; display: none; animation: menuIn 0.1s ease;
+    }
+    .brand-menu.open { display: block; }
+
+    .brand-menu-header {
+      padding: 12px 16px; background: var(--surface-2); border-bottom: 1px solid var(--border);
+    }
+    .brand-menu-title { font-weight: 600; color: var(--text); font-size: 14px; }
+
+    .brand-menu-divider { height: 1px; background: var(--border); margin: 6px 0; }
+
+    .brand-menu-item {
+      display: flex; align-items: center; gap: 10px;
+      width: 100%; padding: 12px 16px;
+      background: transparent; border: none; text-align: left;
+      font-size: 14px; color: var(--text); cursor: pointer;
+      transition: background 0.1s;
+    }
+    .brand-menu-item:hover { background: var(--surface-2); }
+    .brand-menu-item i { width: 20px; text-align: center; color: var(--accent); }
+
     .search-wrap { position: relative; flex: 1; max-width: 560px; display: flex; align-items: center; }
 
     .search-wrap > i {
@@ -1441,9 +1468,25 @@
 <body>
   <div class="forum-wrapper">
     <header class="topbar">
-      <div class="brand" onclick="resetFeedFilters(); showForum(); window.scrollTo({ top: 0, behavior: 'smooth' })">
+      <div class="brand" id="brand-logo" onclick="toggleBrandMenu()">
         <span class="brand-mark" aria-hidden="true"><span class="brand-dot d1"></span><span class="brand-dot d2"></span><span class="brand-dot d3"></span></span>
         <span class="brand-name">Dot Circles</span>
+        <i class="fas fa-bars brand-menu-icon"></i>
+      </div>
+      <div class="brand-menu" id="brand-menu">
+        <div class="brand-menu-header">
+          <span class="brand-menu-title">Dot Circles</span>
+        </div>
+        <div class="brand-menu-divider"></div>
+        <button class="brand-menu-item" onclick="openIdentityModal(); closeBrandMenu();">
+          <i class="fas fa-user-edit"></i> Pick a username
+        </button>
+        <button class="brand-menu-item" onclick="openPayoutInfoModal(); closeBrandMenu();">
+          <i class="fas fa-dollar-sign"></i> Payout Info
+        </button>
+        <button class="brand-menu-item" onclick="openContactModal(); closeBrandMenu();">
+          <i class="fas fa-envelope"></i> Contact Us
+        </button>
       </div>
       <div class="search-wrap">
         <i class="fas fa-magnifying-glass"></i>
@@ -1858,19 +1901,19 @@
       <div class="modal-body">
         <div class="payout-info-notice">
           <i class="fas fa-info-circle"></i>
-          <span>Payouts are processed manually. We'll reach out to you via email with next steps once you submit this form.</span>
+          <span>Payouts are processed automatically once you reach the <strong>$25 minimum</strong>. Make sure your details are correct below.</span>
         </div>
         <label class="field-label" for="payout-email">Email for payout notifications</label>
         <input type="email" class="field-input" id="payout-email" placeholder="you@example.com" autocomplete="email" required>
         <label class="field-label" for="payout-method">Preferred payout method</label>
         <select class="field-input field-select" id="payout-method">
           <option value="paypal">PayPal</option>
-          <option value="bank">Bank Transfer (USD)</option>
-          <option value="crypto">USDT (TRC20 / ERC20)</option>
+          <option value="bank">Bank Deposit</option>
+          <option value="upi">UPI</option>
           <option value="other">Other — specify in notes</option>
         </select>
         <label class="field-label" for="payout-details">Payout details</label>
-        <textarea class="field-input field-textarea" id="payout-details" placeholder="PayPal email, bank account info, or wallet address..." rows="4" required></textarea>
+        <textarea class="field-input field-textarea" id="payout-details" placeholder="PayPal email, bank account number & IFSC, or UPI ID..." rows="4" required></textarea>
         <label class="field-label" for="payout-notes">Notes (optional)</label>
         <textarea class="field-input field-textarea" id="payout-notes" placeholder="Any special instructions, tax info, etc." rows="3"></textarea>
         <button class="modal-submit" onclick="submitPayoutInfo()">
@@ -4026,6 +4069,33 @@
       const menu = document.getElementById('user-menu');
       if (badge && menu && !badge.contains(e.target) && !menu.contains(e.target)) {
         badge.classList.remove('open');
+        menu.classList.remove('open');
+      }
+    });
+
+    // ========== BRAND LOGO MENU (mobile) ==========
+    function toggleBrandMenu() {
+      const logo = document.getElementById('brand-logo');
+      const menu = document.getElementById('brand-menu');
+      if (logo && menu) {
+        const isOpen = logo.classList.toggle('open');
+        menu.classList.toggle('open', isOpen);
+      }
+    }
+
+    function closeBrandMenu() {
+      const logo = document.getElementById('brand-logo');
+      const menu = document.getElementById('brand-menu');
+      if (logo) logo.classList.remove('open');
+      if (menu) menu.classList.remove('open');
+    }
+
+    // Close brand menu when clicking outside
+    document.addEventListener('click', e => {
+      const logo = document.getElementById('brand-logo');
+      const menu = document.getElementById('brand-menu');
+      if (logo && menu && !logo.contains(e.target) && !menu.contains(e.target)) {
+        logo.classList.remove('open');
         menu.classList.remove('open');
       }
     });
