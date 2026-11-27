@@ -47,6 +47,7 @@
       --cat-movies: #e11d48;
       --cat-music: #7c3aed;
       --cat-games: #16a34a;
+      --cat-qa: #4f46e5;
       --font: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto, Helvetica, Arial, sans-serif;
     }
 
@@ -87,6 +88,7 @@
       --cat-movies: #fb7185;
       --cat-music: #a78bfa;
       --cat-games: #4ade80;
+      --cat-qa: #818cf8;
     }
 
     html { -webkit-text-size-adjust: 100%; }
@@ -378,6 +380,7 @@
     .category-tile.cat-movies { --cat-color: var(--cat-movies); }
     .category-tile.cat-music { --cat-color: var(--cat-music); }
     .category-tile.cat-games { --cat-color: var(--cat-games); }
+    .category-tile.cat-qa { --cat-color: var(--cat-qa); }
 
     /* Additional categories (avatars, chips, icons) */
     .avatar-dot.general { background: var(--cat-general); }
@@ -388,6 +391,7 @@
     .avatar-dot.movies { background: var(--cat-movies); }
     .avatar-dot.music { background: var(--cat-music); }
     .avatar-dot.games { background: var(--cat-games); }
+    .avatar-dot.qa { background: var(--cat-qa); }
 
     .cat-general .thread-avatar i { color: var(--cat-general); }
     .cat-review .thread-avatar i { color: var(--cat-review); }
@@ -397,6 +401,7 @@
     .cat-movies .thread-avatar i { color: var(--cat-movies); }
     .cat-music .thread-avatar i { color: var(--cat-music); }
     .cat-games .thread-avatar i { color: var(--cat-games); }
+    .cat-qa .thread-avatar i { color: var(--cat-qa); }
 
     .thread-cat.general { color: var(--cat-general); }
     .thread-cat.review { color: var(--cat-review); }
@@ -406,6 +411,7 @@
     .thread-cat.movies { color: var(--cat-movies); }
     .thread-cat.music { color: var(--cat-music); }
     .thread-cat.games { color: var(--cat-games); }
+    .thread-cat.qa { color: var(--cat-qa); }
 
     .category-feed-head {
       display: flex; align-items: center; justify-content: space-between;
@@ -645,22 +651,24 @@
     .pinned-rules li { font-size: 12.5px; color: var(--text-2); line-height: 1.5; }
     .pinned-rules strong { color: var(--text); }
 
-    .pinned-actions {
-      display: flex; gap: 10px;
-      margin-top: 14px; padding-top: 14px;
-      border-top: 1px solid var(--border);
+    .post-help-actions {
+      display: flex; flex-wrap: wrap; gap: 10px;
+      margin: 16px 0 6px;
     }
-    .pinned-action-link {
+    .post-help-hint {
+      margin: 0; font-size: 12.5px; color: var(--text-2);
+    }
+    .category-action-link {
       display: inline-flex; align-items: center; gap: 6px;
-      font-size: 12px; font-weight: 600; color: var(--text-2);
+      font-size: 12.5px; font-weight: 600; color: var(--text-2);
       padding: 8px 12px; border-radius: 8px;
-      background: transparent; border: 1px solid transparent;
+      background: transparent; border: 1px solid var(--border);
       cursor: pointer; transition: all 0.15s;
     }
-    .pinned-action-link:hover {
+    .category-action-link:hover {
       color: var(--accent); background: var(--accent-soft); border-color: var(--accent-border);
     }
-    .pinned-action-link i { font-size: 13px; }
+    .category-action-link i { font-size: 13px; }
 
     .tab-badge {
       position: absolute; top: 2px; right: calc(50% - 18px);
@@ -1601,10 +1609,6 @@
               <li><strong>Payout</strong> is $25 minimum.</li>
               <li><strong>Posting limit</strong> = 3 new posts per day. Interactions are unlimited.</li>
             </ul>
-            <div class="pinned-actions">
-              <button class="pinned-action-link" onclick="openContactModal()"><i class="fas fa-envelope"></i> Contact Us</button>
-              <button class="pinned-action-link" onclick="openPayoutInfoModal()"><i class="fas fa-dollar-sign"></i> Payout Info</button>
-            </div>
           </div>
 
           <div class="karma-booster" id="karma-booster">
@@ -1861,6 +1865,7 @@
           <option value="movies">Movies</option>
           <option value="music">Music</option>
           <option value="games">Games</option>
+          <option value="qa">Q&amp;A</option>
         </select>
 
         <label class="field-label" for="compose-title">Title</label>
@@ -2933,6 +2938,22 @@
             { author: 'maker_mike', time: '3h ago', badge: 'Active', text: 'Anything where everyone has a clear role tends to hold up best.' }
           ]
         }
+      ],
+      qa: [
+        {
+          id: 'qa-help', icon: 'fa-circle-question',
+          title: 'Questions? Contact Us & Payout Info',
+          tags: [], pinned: true,
+          author: 'Dot Circles', views: '0', time: 'always open',
+          comments: 0, likes: 0, lastReply: 'Dot Circles', memberOnly: false,
+          body: `<p>Have a question about karma, revenue or payouts? Start here. The two buttons below open the official forms directly — no need to hunt through the menu.</p>
+            <div class="post-help-actions">
+              <button class="category-action-link" onclick="openContactModal()"><i class="fas fa-envelope"></i> Contact Us</button>
+              <button class="category-action-link" onclick="openPayoutInfoModal()"><i class="fas fa-dollar-sign"></i> Payout Info</button>
+            </div>
+            <p class="post-help-hint"><i class="fas fa-info-circle"></i> Payouts are processed automatically once your balance reaches the $25 minimum.</p>`,
+          replies: []
+        }
       ]
     };
 
@@ -2950,7 +2971,8 @@
       entertainment: 'Entertainment',
       movies: 'Movies',
       music: 'Music',
-      games: 'Games'
+      games: 'Games',
+      qa: 'Help Q&A'
     };
 
     const CATEGORY_ICONS = {
@@ -2966,7 +2988,8 @@
       entertainment: 'fa-film',
       movies: 'fa-clapperboard',
       music: 'fa-music',
-      games: 'fa-dice'
+      games: 'fa-dice',
+      qa: 'fa-circle-question'
     };
 
     let feedMode = 'categories';
@@ -2995,7 +3018,7 @@
     function renderThreadItem(thread, category, showCategory) {
       const karma = calculateKarma(thread);
       const revenue = displayRevenue(thread);
-      const isPinned = thread.id === KARMA_BOOSTER_ID;
+      const isPinned = !!thread.pinned || thread.id === KARMA_BOOSTER_ID;
       const searchText = `${thread.title} ${thread.author} ${CAT_LABELS[category] || ''}`.toLowerCase();
       const catChip = showCategory
         ? `<span class="thread-cat ${category}">${CAT_LABELS[category] || category}</span>`
@@ -3046,7 +3069,7 @@
     function renderCategoryGrid() {
       const grid = document.getElementById('category-grid');
       if (!grid) return;
-      grid.innerHTML = ['journey', 'tools', 'coupons', 'testers', 'lounge', 'general', 'review', 'hobbies', 'tech', 'entertainment', 'movies', 'music', 'games'].map(cat => `
+      grid.innerHTML = ['journey', 'tools', 'coupons', 'testers', 'lounge', 'general', 'review', 'hobbies', 'tech', 'entertainment', 'movies', 'music', 'games', 'qa'].map(cat => `
         <button class="category-tile cat-${cat}${selectedCategory === cat ? ' active' : ''}" onclick="selectCategory('${cat}')">
           <span class="category-tile-icon"><i class="fas ${CATEGORY_ICONS[cat]}"></i></span>
           <span class="category-tile-name">${CAT_LABELS[cat]}</span>
@@ -3063,8 +3086,12 @@
       feed.hidden = false;
       if (title) title.textContent = CAT_LABELS[cat] || cat;
       list.className = 'thread-list cat-' + cat;
-      // Pinned post always first
-      const sorted = [...(threads[cat] || [])].sort((a, b) => (a.id === KARMA_BOOSTER_ID ? -1 : b.id === KARMA_BOOSTER_ID ? 1 : 0));
+      // Pinned posts always first
+      const sorted = [...(threads[cat] || [])].sort((a, b) => {
+        const ap = (a.pinned || a.id === KARMA_BOOSTER_ID) ? 0 : 1;
+        const bp = (b.pinned || b.id === KARMA_BOOSTER_ID) ? 0 : 1;
+        return ap - bp;
+      });
       list.innerHTML = sorted.map(t => renderThreadItem(t, cat)).join('');
     }
 
@@ -3115,7 +3142,7 @@
 
     function collectThreads() {
       const all = [];
-      ['journey', 'tools', 'coupons', 'testers', 'lounge', 'general', 'review', 'hobbies', 'tech', 'entertainment', 'movies', 'music', 'games'].forEach(cat => {
+      ['journey', 'tools', 'coupons', 'testers', 'lounge', 'general', 'review', 'hobbies', 'tech', 'entertainment', 'movies', 'music', 'games', 'qa'].forEach(cat => {
         threads[cat].forEach(t => all.push({ cat, thread: t }));
       });
       return all;
@@ -3123,15 +3150,15 @@
 
     function renderFlat(mode) {
       const all = collectThreads();
-      // Pinned post always first in flat view too
-      const pinned = all.find(x => x.thread.id === KARMA_BOOSTER_ID);
-      const rest = all.filter(x => x.thread.id !== KARMA_BOOSTER_ID);
+      // Pinned posts always first in flat view too
+      const pinned = all.filter(x => x.thread.pinned || x.thread.id === KARMA_BOOSTER_ID);
+      const rest = all.filter(x => !(x.thread.pinned || x.thread.id === KARMA_BOOSTER_ID));
       if (mode === 'hot') {
         rest.sort((a, b) => calculateKarma(b.thread) - calculateKarma(a.thread));
       } else {
         rest.sort((a, b) => timeToMinutes(a.thread.time) - timeToMinutes(b.thread.time));
       }
-      const sorted = pinned ? [pinned, ...rest] : rest;
+      const sorted = [...pinned, ...rest];
       document.getElementById('flat-threads').innerHTML = sorted.map(x => renderThreadItem(x.thread, x.cat, true)).join('');
       if (searchTerm) filterThreads(searchTerm);
     }
@@ -3530,9 +3557,9 @@
       }
     }
 
-    const categoryCounts = { journey: 132, tools: 87, coupons: 204, testers: 96, lounge: 330, general: 120, review: 74, hobbies: 98, tech: 156, entertainment: 142, movies: 118, music: 96, games: 174 };
+    const categoryCounts = { journey: 132, tools: 87, coupons: 204, testers: 96, lounge: 330, general: 120, review: 74, hobbies: 98, tech: 156, entertainment: 142, movies: 118, music: 96, games: 174, qa: 58 };
     function incrementCategoryCount() {
-      const cats = ['journey', 'tools', 'coupons', 'testers', 'lounge', 'general', 'review', 'hobbies', 'tech', 'entertainment', 'movies', 'music', 'games'];
+      const cats = ['journey', 'tools', 'coupons', 'testers', 'lounge', 'general', 'review', 'hobbies', 'tech', 'entertainment', 'movies', 'music', 'games', 'qa'];
       const cat = cats[Math.floor(Math.random() * cats.length)];
       categoryCounts[cat] += 1;
       renderCategoryGrid();
