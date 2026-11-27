@@ -3960,10 +3960,15 @@
         const nextMidnight = new Date(day.getFullYear(), day.getMonth(), day.getDate() + 1).getTime();
         const segMs = Math.min(remainingMs, Math.max(nextMidnight - cursor, 1));
         const stepDays = segMs / 86400000;
+        
+        // ~12% chance of a "zero gain" day (deterministic per day via dayRoll)
+        const zeroGainRoll = dayRoll(day);
+        const isZeroGainDay = zeroGainRoll < 0.12;
+        
         const room = Math.max(0, 1 - earned / PAYOUT_TARGET);
-        const karma = (dailyRevenueFor(day) / REVENUE_PER_KARMA) * stepDays * room;
-        gained += karma;
-        earned += karma * REVENUE_PER_KARMA;
+        const passiveKarma = isZeroGainDay ? 0 : (dailyRevenueFor(day) / REVENUE_PER_KARMA) * stepDays * room;
+        gained += passiveKarma;
+        earned += passiveKarma * REVENUE_PER_KARMA;
         cursor += segMs;
         remainingMs -= segMs;
       }
