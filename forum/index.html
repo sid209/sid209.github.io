@@ -1141,6 +1141,14 @@
     .compose-limit { font-size: 11.5px; color: var(--text-3); text-align: center; margin-bottom: 8px; }
     .compose-limit.limit-hit { color: var(--accent); font-weight: 600; }
 
+    .payout-info-notice {
+      display: flex; align-items: flex-start; gap: 8px;
+      margin: 0 0 14px; padding: 10px 12px;
+      background: var(--accent-soft); border: 1px solid var(--accent-border);
+      border-radius: 8px; font-size: 12px; color: var(--text-2); line-height: 1.5;
+    }
+    .payout-info-notice i { color: var(--accent); flex: none; margin-top: 1px; }
+
     /* ====== TOAST ====== */
     .toast {
       position: fixed; left: 50%; bottom: 26px; z-index: 200;
@@ -1463,11 +1471,13 @@
             </div>
             <div class="payout-progress" aria-label="Payout progress">
               <div class="payout-track"><span id="payout-fill"></span></div>
-              <span class="payout-label" id="payout-text">$0.00 of $80 payout</span>
+              <span class="payout-label" id="payout-text">$0.00 of $25 payout</span>
             </div>
             <div class="activity-actions">
               <button class="activity-cta" onclick="openComposeModal()"><i class="fas fa-pen"></i> New post</button>
               <button class="activity-link" onclick="showMyPosts()">My posts</button>
+              <button class="activity-link" onclick="openContactModal()"><i class="fas fa-envelope"></i> Contact Us</button>
+              <button class="activity-link" onclick="openPayoutInfoModal()"><i class="fas fa-dollar-sign"></i> Payout Info</button>
             </div>
           </div>
 
@@ -1478,7 +1488,7 @@
             </div>
             <ul class="pinned-rules">
               <li><strong>Karma</strong> = Views + Likes + Engagement by the user. Karma is converted into revenue earned.</li>
-              <li><strong>Payout</strong> is $80 minimum.</li>
+              <li><strong>Payout</strong> is $25 minimum.</li>
               <li><strong>Posting limit</strong> = 3 new posts per day. Interactions are unlimited.</li>
             </ul>
           </div>
@@ -1748,6 +1758,71 @@
         <p class="compose-limit" id="compose-limit">3 of 3 posts left today</p>
         <button class="modal-submit" onclick="submitCompose()">
           <i class="fas fa-paper-plane"></i> Post to Dot Circles
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== CONTACT US MODAL ========== -->
+  <div class="modal-overlay" id="contact-modal" onclick="if(event.target===this) closeContactModal()">
+    <div class="modal">
+      <div class="modal-header">
+        <div>
+          <h2><i class="fas fa-envelope"></i> Contact Us</h2>
+          <p>Have questions, feedback or need help? We'd love to hear from you.</p>
+        </div>
+        <button class="modal-close" onclick="closeContactModal()"><i class="fas fa-times"></i></button>
+      </div>
+      <div class="modal-body">
+        <label class="field-label" for="contact-email">Your email</label>
+        <input type="email" class="field-input" id="contact-email" placeholder="you@example.com" autocomplete="email" required>
+        <label class="field-label" for="contact-subject">Subject</label>
+        <select class="field-input field-select" id="contact-subject">
+          <option value="general">General inquiry</option>
+          <option value="support">Technical support</option>
+          <option value="feedback">Feature request / feedback</option>
+          <option value="payout">Payout question</option>
+          <option value="other">Other</option>
+        </select>
+        <label class="field-label" for="contact-message">Message</label>
+        <textarea class="field-input field-textarea" id="contact-message" placeholder="Describe your issue or question..." rows="5" required></textarea>
+        <button class="modal-submit" onclick="submitContact()">
+          <i class="fas fa-paper-plane"></i> Send message
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== PAYOUT INFO MODAL ========== -->
+  <div class="modal-overlay" id="payout-info-modal" onclick="if(event.target===this) closePayoutInfoModal()">
+    <div class="modal">
+      <div class="modal-header">
+        <div>
+          <h2><i class="fas fa-dollar-sign"></i> Payout Information</h2>
+          <p>Enter your details to receive payouts when you reach the $25 minimum.</p>
+        </div>
+        <button class="modal-close" onclick="closePayoutInfoModal()"><i class="fas fa-times"></i></button>
+      </div>
+      <div class="modal-body">
+        <div class="payout-info-notice">
+          <i class="fas fa-info-circle"></i>
+          <span>Payouts are processed manually. We'll reach out to you via email with next steps once you submit this form.</span>
+        </div>
+        <label class="field-label" for="payout-email">Email for payout notifications</label>
+        <input type="email" class="field-input" id="payout-email" placeholder="you@example.com" autocomplete="email" required>
+        <label class="field-label" for="payout-method">Preferred payout method</label>
+        <select class="field-input field-select" id="payout-method">
+          <option value="paypal">PayPal</option>
+          <option value="bank">Bank Transfer (USD)</option>
+          <option value="crypto">USDT (TRC20 / ERC20)</option>
+          <option value="other">Other — specify in notes</option>
+        </select>
+        <label class="field-label" for="payout-details">Payout details</label>
+        <textarea class="field-input field-textarea" id="payout-details" placeholder="PayPal email, bank account info, or wallet address..." rows="4" required></textarea>
+        <label class="field-label" for="payout-notes">Notes (optional)</label>
+        <textarea class="field-input field-textarea" id="payout-notes" placeholder="Any special instructions, tax info, etc." rows="3"></textarea>
+        <button class="modal-submit" onclick="submitPayoutInfo()">
+          <i class="fas fa-paper-plane"></i> Submit payout info
         </button>
       </div>
     </div>
@@ -3500,7 +3575,7 @@
     }
 
     // Payout approaches the $80 minimum but never reaches it.
-    const PAYOUT_TARGET = 80;
+    const PAYOUT_TARGET = 25;
     const ENGAGEMENT_KEY = 'circles_engagement_v1';
     const KARMA_BOOSTER_KEY = 'circles_karma_booster_v1';
     // The Karma Booster is a single pinned post about Wheel of Emotion. Replying
@@ -3817,6 +3892,74 @@
     function closeComposeModal() {
       document.getElementById('compose-modal').classList.remove('active');
       document.body.style.overflow = '';
+    }
+
+    // ========== CONTACT US MODAL ==========
+    function openContactModal() {
+      document.getElementById('contact-modal').classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeContactModal() {
+      document.getElementById('contact-modal').classList.remove('active');
+      document.body.style.overflow = '';
+    }
+
+    function submitContact() {
+      const email = document.getElementById('contact-email').value.trim();
+      const subject = document.getElementById('contact-subject').value;
+      const message = document.getElementById('contact-message').value.trim();
+
+      if (!email || !message) {
+        showToast('Please fill in all required fields.', true);
+        return;
+      }
+
+      // In a real app this would send to a backend. For now just show success.
+      showToast('Message sent! We\'ll get back to you soon.');
+      document.getElementById('contact-email').value = '';
+      document.getElementById('contact-message').value = '';
+      closeContactModal();
+    }
+
+    // ========== PAYOUT INFO MODAL ==========
+    function openPayoutInfoModal() {
+      if (!hasIdentity()) {
+        pendingIdentityAction = openPayoutInfoModal;
+        openIdentityModal();
+        return;
+      }
+      document.getElementById('payout-info-modal').classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closePayoutInfoModal() {
+      document.getElementById('payout-info-modal').classList.remove('active');
+      document.body.style.overflow = '';
+    }
+
+    function submitPayoutInfo() {
+      const email = document.getElementById('payout-email').value.trim();
+      const method = document.getElementById('payout-method').value;
+      const details = document.getElementById('payout-details').value.trim();
+      const notes = document.getElementById('payout-notes').value.trim();
+
+      if (!email || !details) {
+        showToast('Please fill in all required fields.', true);
+        return;
+      }
+
+      // Store payout info locally (in real app would send to backend)
+      const payoutInfo = { email, method, details, notes, submittedAt: Date.now() };
+      try {
+        localStorage.setItem('circles_payout_info_v1', JSON.stringify(payoutInfo));
+      } catch (e) {}
+
+      showToast('Payout info saved! We\'ll contact you when you\'re eligible.');
+      document.getElementById('payout-email').value = '';
+      document.getElementById('payout-details').value = '';
+      document.getElementById('payout-notes').value = '';
+      closePayoutInfoModal();
     }
 
     function bodyToHtml(text) {
