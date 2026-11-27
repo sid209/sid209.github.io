@@ -4965,6 +4965,27 @@
           boosterKarma: saved.userActions.boosterKarma || 0
         };
       }
+
+      // Migrate legacy booster karma (stored separately) into a post's
+      // bonusKarma so the activity total matches the user's own posts.
+      const legacyBooster = userActions.boosterKarma || 0;
+      if (legacyBooster > 0) {
+        const mine = [];
+        Object.keys(threads).forEach(cat => {
+          (threads[cat] || []).forEach(t => {
+            if ((t.author || '').toLowerCase() === username.toLowerCase()) mine.push(t);
+          });
+        });
+        let target = mine.length ? mine[mine.length - 1] : null;
+        if (!target) {
+          const cat = 'journey';
+          target = { id: 'u' + Date.now(), author: username, title: 'Karma Booster reward', body: 'Reward for keeping Wheel of Emotion installed.', time: 'just now', views: '0', likes: 0, comments: 0, bonusKarma: 0, createdAt: Date.now(), pinned: false };
+          if (!threads[cat]) threads[cat] = [];
+          threads[cat].unshift(target);
+        }
+        target.bonusKarma = (target.bonusKarma || 0) + legacyBooster;
+        userActions.boosterKarma = 0;
+      }
       if (saved.isMember) {
         isMember = true;
         memberName = saved.memberName || 'member';
