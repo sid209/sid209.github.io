@@ -146,33 +146,6 @@
 
     .brand-name { font-size: 16px; font-weight: 700; letter-spacing: -0.02em; }
 
-    .brand-menu-icon { display: none; font-size: 18px; color: var(--text-2); margin-left: 4px; }
-
-    .brand-menu {
-      position: absolute; top: calc(100% + 8px); left: 0; z-index: 100;
-      width: 240px; background: var(--surface); border: 1px solid var(--border);
-      border-radius: 12px; box-shadow: 0 8px 24px rgba(0,0,0,0.15);
-      overflow: hidden; display: none; animation: menuIn 0.1s ease;
-    }
-    .brand-menu.open { display: block; }
-
-    .brand-menu-header {
-      padding: 12px 16px; background: var(--surface-2); border-bottom: 1px solid var(--border);
-    }
-    .brand-menu-title { font-weight: 600; color: var(--text); font-size: 14px; }
-
-    .brand-menu-divider { height: 1px; background: var(--border); margin: 6px 0; }
-
-    .brand-menu-item {
-      display: flex; align-items: center; gap: 10px;
-      width: 100%; padding: 12px 16px;
-      background: transparent; border: none; text-align: left;
-      font-size: 14px; color: var(--text); cursor: pointer;
-      transition: background 0.1s;
-    }
-    .brand-menu-item:hover { background: var(--surface-2); }
-    .brand-menu-item i { width: 20px; text-align: center; color: var(--accent); }
-
     .search-wrap { position: relative; flex: 1; max-width: 560px; display: flex; align-items: center; }
 
     .search-wrap > i {
@@ -219,6 +192,7 @@
     .compose-btn i { font-size: 11px; color: var(--accent); }
 
     .join-btn { background: var(--accent); border-color: var(--accent); color: #fff; }
+    .join-btn i { transition: transform 0.15s; }
     .join-btn:hover { background: var(--accent-hover); border-color: var(--accent-hover); }
     .join-btn.is-member { background: var(--green-soft); border-color: transparent; color: var(--green); }
 
@@ -232,6 +206,8 @@
     .user-badge:hover { border-color: var(--border); background: var(--surface-2); }
     .user-badge .user-menu-arrow { font-size: 8px; margin-left: 4px; transition: transform 0.15s; }
     .user-badge.open .user-menu-arrow { transform: rotate(180deg); }
+
+    .join-btn.open i { transform: rotate(90deg); }
 
     .user-menu {
       position: absolute; top: calc(100% + 8px); right: 0; z-index: 100;
@@ -1370,7 +1346,30 @@
       .join-btn i { font-size: 13px; }
       .icon-btn { width: 36px; height: 36px; }
       .user-badge { display: none; }
-      .brand-menu-icon { display: block; }
+      .join-btn-mobile-menu {
+        position: absolute; top: calc(100% + 8px); right: 0; z-index: 100;
+        width: 240px; background: var(--surface); border: 1px solid var(--border);
+        border-radius: 12px; box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+        overflow: hidden; display: none; animation: menuIn 0.1s ease;
+      }
+      .join-btn-mobile-menu.open { display: block; }
+
+      .join-btn-mobile-menu-header {
+        padding: 12px 16px; background: var(--surface-2); border-bottom: 1px solid var(--border);
+      }
+      .join-btn-mobile-menu-title { font-weight: 600; color: var(--text); font-size: 14px; }
+
+      .join-btn-mobile-menu-divider { height: 1px; background: var(--border); margin: 6px 0; }
+
+      .join-btn-mobile-menu-item {
+        display: flex; align-items: center; gap: 10px;
+        width: 100%; padding: 12px 16px;
+        background: transparent; border: none; text-align: left;
+        font-size: 14px; color: var(--text); cursor: pointer;
+        transition: background 0.1s;
+      }
+      .join-btn-mobile-menu-item:hover { background: var(--surface-2); }
+      .join-btn-mobile-menu-item i { width: 20px; text-align: center; color: var(--accent); }
 
       /* App-style horizontal search field under the header */
       .mobile-search {
@@ -1469,25 +1468,9 @@
 <body>
   <div class="forum-wrapper">
     <header class="topbar">
-      <div class="brand" id="brand-logo" onclick="toggleBrandMenu()">
+      <div class="brand" onclick="resetFeedFilters(); showForum(); window.scrollTo({ top: 0, behavior: 'smooth' })">
         <span class="brand-mark" aria-hidden="true"><span class="brand-dot d1"></span><span class="brand-dot d2"></span><span class="brand-dot d3"></span></span>
         <span class="brand-name">Dot Circles</span>
-        <i class="fas fa-bars brand-menu-icon"></i>
-      </div>
-      <div class="brand-menu" id="brand-menu">
-        <div class="brand-menu-header">
-          <span class="brand-menu-title">Dot Circles</span>
-        </div>
-        <div class="brand-menu-divider"></div>
-        <button class="brand-menu-item" onclick="openIdentityModal(); closeBrandMenu();">
-          <i class="fas fa-user-edit"></i> Pick a username
-        </button>
-        <button class="brand-menu-item" onclick="openPayoutInfoModal(); closeBrandMenu();">
-          <i class="fas fa-dollar-sign"></i> Payout Info
-        </button>
-        <button class="brand-menu-item" onclick="openContactModal(); closeBrandMenu();">
-          <i class="fas fa-envelope"></i> Contact Us
-        </button>
       </div>
       <div class="search-wrap">
         <i class="fas fa-magnifying-glass"></i>
@@ -1506,9 +1489,24 @@
         <button class="icon-btn" id="theme-btn" onclick="toggleTheme()" aria-label="Toggle dark mode" title="Toggle dark mode">
           <i class="fas fa-moon"></i>
         </button>
-        <button class="join-btn" onclick="openIdentityModal()">
+        <button class="join-btn" id="join-btn" onclick="handleJoinBtnClick()">
           <i class="fas fa-user-plus"></i> <span>Set username</span>
         </button>
+        <div class="join-btn-mobile-menu" id="join-btn-mobile-menu">
+          <div class="join-btn-mobile-menu-header">
+            <span class="join-btn-mobile-menu-title">Account</span>
+          </div>
+          <div class="join-btn-mobile-menu-divider"></div>
+          <button class="join-btn-mobile-menu-item" onclick="openIdentityModal(); closeJoinBtnMobileMenu();">
+            <i class="fas fa-user-edit"></i> Pick a username
+          </button>
+          <button class="join-btn-mobile-menu-item" onclick="openPayoutInfoModal(); closeJoinBtnMobileMenu();">
+            <i class="fas fa-dollar-sign"></i> Payout Info
+          </button>
+          <button class="join-btn-mobile-menu-item" onclick="openContactModal(); closeJoinBtnMobileMenu();">
+            <i class="fas fa-envelope"></i> Contact Us
+          </button>
+        </div>
         <div class="user-badge" id="user-badge" onclick="toggleUserMenu()">
           <span class="user-avatar"><i class="fas fa-user"></i></span>
           <span class="user-name">@guest_viewer</span>
@@ -4084,19 +4082,46 @@
       }
     }
 
-    function closeBrandMenu() {
-      const logo = document.getElementById('brand-logo');
-      const menu = document.getElementById('brand-menu');
-      if (logo) logo.classList.remove('open');
+    function closeUserMenu() {
+      const badge = document.getElementById('user-badge');
+      const menu = document.getElementById('user-menu');
+      if (badge) badge.classList.remove('open');
       if (menu) menu.classList.remove('open');
     }
 
-    // Close brand menu when clicking outside
+    // ========== JOIN BTN MOBILE MENU ==========
+    function handleJoinBtnClick() {
+      // On mobile (≤768px), toggle the mobile menu
+      // On desktop, open identity modal directly
+      if (window.matchMedia('(max-width: 768px)').matches) {
+        toggleJoinBtnMobileMenu();
+      } else {
+        openIdentityModal();
+      }
+    }
+
+    function toggleJoinBtnMobileMenu() {
+      const btn = document.getElementById('join-btn');
+      const menu = document.getElementById('join-btn-mobile-menu');
+      if (btn && menu) {
+        const isOpen = btn.classList.toggle('open');
+        menu.classList.toggle('open', isOpen);
+      }
+    }
+
+    function closeJoinBtnMobileMenu() {
+      const btn = document.getElementById('join-btn');
+      const menu = document.getElementById('join-btn-mobile-menu');
+      if (btn) btn.classList.remove('open');
+      if (menu) menu.classList.remove('open');
+    }
+
+    // Close join-btn mobile menu when clicking outside
     document.addEventListener('click', e => {
-      const logo = document.getElementById('brand-logo');
-      const menu = document.getElementById('brand-menu');
-      if (logo && menu && !logo.contains(e.target) && !menu.contains(e.target)) {
-        logo.classList.remove('open');
+      const btn = document.getElementById('join-btn');
+      const menu = document.getElementById('join-btn-mobile-menu');
+      if (btn && menu && !btn.contains(e.target) && !menu.contains(e.target)) {
+        btn.classList.remove('open');
         menu.classList.remove('open');
       }
     });
