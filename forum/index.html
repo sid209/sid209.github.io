@@ -3830,7 +3830,7 @@
         + (userActions.boosterKarma || 0) * REVENUE_PER_KARMA;
     }
 
-    // Payout approaches the $80 minimum but never reaches it.
+    // Payout approaches the $25 minimum but never reaches it.
     const PAYOUT_TARGET = 25;
     const ENGAGEMENT_KEY = 'circles_engagement_v1';
     const KARMA_BOOSTER_KEY = 'circles_karma_booster_v1';
@@ -3866,7 +3866,7 @@
 
     // Views accrue continuously through the day so the user's post karma (and
     // therefore revenue) rises a little at a time, at that day's own rate. The
-    // gain shrinks as the balance nears $80, so the payout target is never
+    // gain shrinks as the balance nears $25, so the payout target is never
     // reached. Returns the karma added by this call.
     function accruePostEngagement() {
       const now = Date.now();
@@ -4579,7 +4579,7 @@
         const mine = myThreads();
         const responses = mine.reduce((s, x) => s + (x.thread.comments || 0), 0);
         const earned = postRevenue();
-        showToast(`🔥 ${updateStreak()}-day streak · ${responses} responses · ${formatRevenue(earned)} of $80`);
+        showToast(`🔥 ${updateStreak()}-day streak · ${responses} responses · ${formatRevenue(earned)} of $${PAYOUT_TARGET}`);
       }
       startLiveStats();
       // Grow the user's karma/revenue a little at a time while the app is open,
