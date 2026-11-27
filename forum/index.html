@@ -1290,6 +1290,7 @@
 
     .revenue-popup {
       position: fixed; left: 50%; bottom: 80px; z-index: 200;
+      /* JS may override left/top/bottom to float above the earned stat */
       display: flex; align-items: center; gap: 8px;
       max-width: calc(100vw - 24px);
       padding: 8px 14px;
@@ -4888,6 +4889,30 @@
       const popup = document.getElementById('revenue-popup');
       const text = document.getElementById('revenue-popup-text');
       text.textContent = '+' + formatRevenue(amount);
+
+      // Float the popup above the "earned" part of the activity card when it
+      // is on screen; otherwise fall back to the bottom-center position.
+      const revenueEl = document.getElementById('my-revenue');
+      const card = document.getElementById('activity-card');
+      if (revenueEl && card && card.offsetParent !== null) {
+        const rect = revenueEl.getBoundingClientRect();
+        const popupWidth = popup.offsetWidth || 120;
+        let left = rect.left + rect.width / 2;
+        left = Math.max(12 + popupWidth / 2, Math.min(window.innerWidth - 12 - popupWidth / 2, left));
+        const top = rect.top - 10; // 10px gap above the earned number
+        popup.style.left = left + 'px';
+        popup.style.top = top + 'px';
+        popup.style.bottom = 'auto';
+        popup.style.transform = 'translate(-50%, -100%)';
+        popup.style.transition = 'opacity 0.3s ease';
+      } else {
+        popup.style.left = '50%';
+        popup.style.top = '';
+        popup.style.bottom = '80px';
+        popup.style.transform = '';
+        popup.style.transition = '';
+      }
+
       popup.classList.add('show');
       clearTimeout(revenuePopupTimer);
       revenuePopupTimer = setTimeout(() => popup.classList.remove('show'), 2500);
