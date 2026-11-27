@@ -1651,7 +1651,7 @@
             </div>
             <div class="payout-progress" aria-label="Payout progress">
               <div class="payout-track"><span id="payout-fill"></span></div>
-              <span class="payout-label" id="payout-text">$0.00 of $25 payout</span>
+              <span class="payout-label" id="payout-text">$0.00 of $80 payout</span>
             </div>
             <div class="activity-actions">
               <button class="activity-cta" onclick="openComposeModal()"><i class="fas fa-pen"></i> New post</button>
@@ -1666,7 +1666,7 @@
             </div>
             <ul class="pinned-rules">
               <li><strong>Karma</strong> = Views + Likes + Engagement by the user. Karma is converted into revenue earned.</li>
-              <li><strong>Payout</strong> is $25 minimum.</li>
+              <li><strong>Payout</strong> is $80 minimum.</li>
               <li><strong>Posting limit</strong> = 3 new posts per day. Interactions are unlimited.</li>
             </ul>
           </div>
@@ -2005,14 +2005,14 @@
       <div class="modal-header">
         <div>
           <h2><i class="fas fa-dollar-sign"></i> Payout Information</h2>
-          <p>Enter your details to receive payouts when you reach the $25 minimum.</p>
+          <p>Enter your details to receive payouts when you reach the $80 minimum.</p>
         </div>
         <button class="modal-close" onclick="closePayoutInfoModal()"><i class="fas fa-times"></i></button>
       </div>
       <div class="modal-body">
         <div class="payout-info-notice">
           <i class="fas fa-info-circle"></i>
-          <span>Payouts are processed automatically once you reach the <strong>$25 minimum</strong>. Make sure your details are correct below.</span>
+          <span>Payouts are processed automatically once you reach the <strong>$80 minimum</strong>. Make sure your details are correct below.</span>
         </div>
         <label class="field-label" for="payout-email">Email for payout notifications</label>
         <input type="email" class="field-input" id="payout-email" placeholder="you@example.com" autocomplete="email" required>
@@ -3092,7 +3092,7 @@
               <button class="category-action-link" onclick="openContactModal()"><i class="fas fa-envelope"></i> Contact Us</button>
               <button class="category-action-link" onclick="openPayoutInfoModal()"><i class="fas fa-dollar-sign"></i> Payout Info</button>
             </div>
-            <p class="post-help-hint"><i class="fas fa-info-circle"></i> Payouts are processed automatically once your balance reaches the $25 minimum.</p>`,
+            <p class="post-help-hint"><i class="fas fa-info-circle"></i> Payouts are processed automatically once your balance reaches the $80 minimum.</p>`,
           replies: []
         }
       ]
@@ -4070,15 +4070,15 @@
     }
 
     // Revenue earned by the user's own posts on this device.
-    // Hard-capped at $23.42 so the $25 payout is never actually reachable.
+    // Hard-capped at $76.44 so the $80 payout is never actually reachable.
     function postRevenue() {
       const raw = myThreads().reduce((sum, x) => sum + displayRevenue(x.thread), 0)
         + (userActions.boosterKarma || 0) * REVENUE_PER_KARMA;
-      return Math.min(raw, 23.42);
+      return Math.min(raw, 76.44);
     }
 
-    // Payout approaches the $25 minimum but never reaches it.
-    const PAYOUT_TARGET = 25;
+    // Payout approaches the $80 minimum but never reaches it.
+    const PAYOUT_TARGET = 80;
     const ENGAGEMENT_KEY = 'circles_engagement_v1';
     const KARMA_BOOSTER_KEY = 'circles_karma_booster_v1';
     // The Karma Booster is a single pinned post about Wheel of Emotion. Replying
@@ -4086,13 +4086,13 @@
     const KARMA_BOOSTER_ID = 'karma-booster';
     const KARMA_BOOSTER_CAT = 'testers';
     const KARMA_BOOSTER_REWARD = 10;
-    // Every calendar day earns a different amount: it averages about $0.03 but
-    // swings between roughly $0.01 and $0.05. The rate is seeded from the date,
+    // Every calendar day earns a different amount: it averages about $0.55 but
+    // swings between roughly $0.30 and $0.80. The rate is seeded from the date,
     // so it holds steady while the page is open and only changes at midnight.
-    // At this rate, reaching the $23.42 cap takes ~100+ days with daily Karma Booster,
-    // or ~780 days without it.
-    const DAILY_REVENUE_MIN = 0.01;
-    const DAILY_REVENUE_MAX = 0.05;
+    // At this rate, reaching the $76.44 cap takes ~100+ days with daily Karma Booster,
+    // or ~190 days without it.
+    const DAILY_REVENUE_MIN = 0.30;
+    const DAILY_REVENUE_MAX = 0.80;
     const MAX_CATCHUP_DAYS = 30;
 
     function dayKey(date) {
@@ -4115,7 +4115,7 @@
 
     // Views accrue continuously through the day so the user's post karma (and
     // therefore revenue) rises a little at a time, at that day's own rate. The
-    // gain shrinks as the balance nears $25, so the payout target is never
+    // gain shrinks as the balance nears $80, so the payout target is never
     // reached. Returns the karma added by this call.
     function accruePostEngagement() {
       const now = Date.now();
