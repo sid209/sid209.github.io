@@ -3416,9 +3416,7 @@
     // Applies GitHub JSON to the local shell, then re-renders. No popup / no domain in APK.
     function applyPublishedData(data) {
       if (!data || !data.threads) return false;
-      Object.keys(threads).forEach(cat => {
-        if (Array.isArray(data.threads[cat])) threads[cat] = data.threads[cat];
-      });
+      mergePublishedThreads(data);
       if (Array.isArray(data.earningMembers)) publishedEarningMembers = data.earningMembers;
       renderForum();
       return true;
@@ -3923,6 +3921,13 @@
       threads[category] = threads[category].filter(t => t.id !== threadId);
       categoryCounts[category] = Math.max(0, categoryCounts[category] - 1);
       logActivity('post_deleted', { id: threadId, category: category });
+      // Queue the deletion for GitHub sync so the published forum reflects it too.
+      try {
+        if (window.AndroidPostQueue && typeof window.AndroidPostQueue.deletePost === 'function') {
+          const author = (typeof authorName === 'function') ? authorName() : '';
+          window.AndroidPostQueue.deletePost(category, threadId, author);
+        }
+      } catch (e) {}
       liveStats.posts = Math.max(0, liveStats.posts - 1);
       updateStatDisplay('posts', liveStats.posts);
 
@@ -5343,6 +5348,19 @@
     // becomes the base content for all visitors. It ships empty so the request
     // always succeeds; fill in a category to publish posts server-side.
     // Works over http/https; silently skipped on file://.
+    // Remote published posts win by id; local-only (queued) posts are preserved.
+    function mergePublishedThreads(data) {
+      if (!data || !data.threads) return;
+      Object.keys(data.threads).forEach(cat => {
+        if (!Array.isArray(data.threads[cat])) return;
+        const remote = data.threads[cat];
+        const local = Array.isArray(threads[cat]) ? threads[cat] : [];
+        const ids = {};
+        remote.forEach(t => { if (t && t.id != null) ids[t.id] = true; });
+        threads[cat] = remote.concat(local.filter(t => !t || t.id == null || !ids[t.id]));
+      });
+    }
+
     async function loadPublishedPosts() {
       if (!/^https?:$/.test(location.protocol)) return false;
       try {
@@ -5350,9 +5368,7 @@
         if (!res.ok) return false;
         const data = await res.json();
         if (!data || !data.threads) return false;
-        Object.keys(threads).forEach(cat => {
-          if (Array.isArray(data.threads[cat])) threads[cat] = data.threads[cat];
-        });
+        mergePublishedThreads(data);
         if (Array.isArray(data.earningMembers)) {
           publishedEarningMembers = data.earningMembers;
           renderEarningMembers();
@@ -5462,6 +5478,7 @@
 
     // ==================== INIT ====================
     (async function init() {
+      loadState();
       await loadPublishedPosts();
       // Hybrid: ask Android to fetch latest posts/earning-members from GitHub (async, silent).
       try {
@@ -5469,7 +5486,6 @@
           window.AndroidData.fetchPublishedPosts();
         }
       } catch (e) {}
-      loadState();
       loadToolsUsage();
       renderToolUsage();
       syncThemeIcon();
