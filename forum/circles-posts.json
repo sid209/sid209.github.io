@@ -75,6 +75,31 @@
           "flagged": "no"
         },
         "replies": []
+      },
+      {
+        "id": "u1",
+        "icon": "fa-comment",
+        "title": "GIT PUSH LIVE TEST 20261128-TEST",
+        "tags": [
+          {
+            "label": "NEW",
+            "cls": "new"
+          }
+        ],
+        "author": "dev_00c27608-451c-43ec-a96d-660b00887e94.circles",
+        "views": "0",
+        "time": "just now",
+        "comments": 0,
+        "likes": 0,
+        "lastReply": "dev_00c27608-451c-43ec-a96d-660b00887e94.circles",
+        "memberOnly": false,
+        "body": "Live Git-push + delete feature test body.",
+        "ai": {
+          "summary": "New journey post by dev_00c27608-451c-43ec-a96d-660b00887e94.circles.",
+          "reply": "",
+          "flagged": "no"
+        },
+        "replies": []
       }
     ]
   },
