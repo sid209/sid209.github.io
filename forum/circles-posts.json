@@ -50,6 +50,31 @@
           "flagged": "no"
         },
         "replies": []
+      },
+      {
+        "id": "u1",
+        "icon": "fa-comment",
+        "title": "Test",
+        "tags": [
+          {
+            "label": "NEW",
+            "cls": "new"
+          }
+        ],
+        "author": "dev_d8c5d30c-5e06-4a91-a0cd-4842c97c6f7c.circles",
+        "views": "0",
+        "time": "just now",
+        "comments": 0,
+        "likes": 0,
+        "lastReply": "dev_d8c5d30c-5e06-4a91-a0cd-4842c97c6f7c.circles",
+        "memberOnly": false,
+        "body": "Test",
+        "ai": {
+          "summary": "New journey post by dev_d8c5d30c-5e06-4a91-a0cd-4842c97c6f7c.circles.",
+          "reply": "",
+          "flagged": "no"
+        },
+        "replies": []
       }
     ]
   }
