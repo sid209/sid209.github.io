@@ -1573,7 +1573,7 @@
         <input type="search" id="search-input" placeholder="Search posts, people, communities" autocomplete="off" oninput="filterThreads(this.value)" aria-label="Search">
       </div>
       <div class="topbar-actions">
-        <button class="compose-btn tools-open-btn" onclick="openKarmaBooster()" title="Karma Booster">
+        <button class="compose-btn tools-open-btn" onclick="openKarmaBoosterPost()" title="Karma Booster">
           <i class="fas fa-wand-magic-sparkles"></i> <span>Tools</span>
         </button>
         <button class="icon-btn games-topbar-btn" onclick="showGamesView()" aria-label="Arcade" title="Arcade">
@@ -5331,7 +5331,7 @@
           showGamesView();
           break;
         case 'boosters':
-          openKarmaBooster();
+          openKarmaBoosterPost();
           break;
       }
     }
