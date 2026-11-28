@@ -25,31 +25,6 @@
           "flagged": "no"
         },
         "replies": []
-      },
-      {
-        "id": "u1",
-        "icon": "fa-comment",
-        "title": "AVD real-user test",
-        "tags": [
-          {
-            "label": "NEW",
-            "cls": "new"
-          }
-        ],
-        "author": "dev_38f2725e-e362-4690-bc30-ec736100064c.circles",
-        "views": "0",
-        "time": "just now",
-        "comments": 0,
-        "likes": 0,
-        "lastReply": "dev_38f2725e-e362-4690-bc30-ec736100064c.circles",
-        "memberOnly": false,
-        "body": "Posting like a real user via CDP. Verify SQLite.",
-        "ai": {
-          "summary": "New journey post by dev_38f2725e-e362-4690-bc30-ec736100064c.circles.",
-          "reply": "",
-          "flagged": "no"
-        },
-        "replies": []
       }
     ]
   }
