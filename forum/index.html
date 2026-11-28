@@ -3411,7 +3411,6 @@
     // Live data fetched from GitHub (posts + earning members); null until fetched.
     let publishedEarningMembers = null;
 
-    // Applies GitHub JSON to the local shell, then re-renders. No popup / no domain in APK.
     function applyPublishedData(data) {
       if (!data || !data.threads) return false;
       mergePublishedThreads(data);
@@ -3873,7 +3872,12 @@
 
     // ========== SHARE POST ==========
     function sharePost(category, threadId) {
-      const url = location.origin + location.pathname + '?post=' + encodeURIComponent(category + ',' + threadId);
+      const thread = threads[category] ? threads[category].find(t => t.id === threadId) : null;
+      const title = (thread && thread.title) || (document.querySelector('.post-title')?.textContent) || 'Post';
+      const body = thread ? (thread.body || '') : '';
+      // Plain-text for sharing (no URL exposed)
+      const plain = body ? body.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim() : '';
+      const shareText = plain ? (title + '\n\n' + plain) : title;
       const copy = (txt) => {
         if (navigator.clipboard && navigator.clipboard.writeText) {
           return navigator.clipboard.writeText(txt);
@@ -3887,16 +3891,24 @@
         document.body.removeChild(ta);
         return Promise.resolve();
       };
-      copy(url).then(() => {
-        showToast('Link copied! Share it with anyone.');
+      // Native Android share sheet (opens system chooser, no URL exposed)
+      try {
+        if (window.AndroidShare && typeof window.AndroidShare.share === 'function') {
+          // Post link uses a custom scheme (dotcircles://post/<category>/<id>) — NO domain exposed.
+          const postLink = 'dotcircles://post/' + encodeURIComponent(category) + '/' + encodeURIComponent(threadId);
+          window.AndroidShare.share(title, shareText + '\n\n' + postLink);
+          showToast('Opening share menu...');
+          logActivity('post_shared', { id: threadId, category: category });
+          return;
+        }
+      } catch (e) { console.error('androidShare error', e); }
+      // Fallback: copy post text to clipboard
+      copy(shareText).then(() => {
+        showToast('Post copied to clipboard!');
         logActivity('post_shared', { id: threadId, category: category });
       }).catch(() => {
-        showToast('Copy this link: ' + url, true);
+        showToast(shareText, true);
       });
-      // Also try native share if available
-      if (navigator.share) {
-        navigator.share({ title: document.querySelector('.post-title')?.textContent || 'Post', url: url }).catch(() => {});
-      }
     }
 
     // ========== DELETE POST ==========
@@ -4273,34 +4285,56 @@
     }
 
     function requireIdentity() {
-      if (!hasIdentity()) {
-        openIdentityModal();
-        return false;
-      }
-      return true;
+      // Username picking removed: identity is auto-generated + fixed.
+      if (!hasIdentity()) { applyAndroidIdentity(); }
+      return hasIdentity();
     }
 
+    // Username picking removed: opening the picker is now a no-op.
     function openIdentityModal() {
-      const input = document.getElementById('identity-name');
-      if (input) input.value = displayName || '';
-      document.getElementById('identity-modal').classList.add('active');
-      document.body.style.overflow = 'hidden';
-      if (input) setTimeout(() => input.focus(), 60);
+      applyAndroidIdentity();
     }
 
     function closeIdentityModal() {
-      document.getElementById('identity-modal').classList.remove('active');
+      const m = document.getElementById('identity-modal');
+      if (m) m.classList.remove('active');
       document.body.style.overflow = '';
       pendingIdentityAction = null;
     }
 
-    // ========== RECOVER ACCOUNT ==========
-    function showRecoverAccount() {
-      closeIdentityModal();
-      renderRecoverUserList();
-      document.getElementById('recover-modal').classList.add('active');
-      document.body.style.overflow = 'hidden';
+    // Auto-generate + lock identity to Android device binding (deviceId + ".circles").
+    function applyAndroidIdentity() {
+      let autoUser = null;
+      try {
+        if (window.AndroidPostQueue && typeof window.AndroidPostQueue.getAutoUsername === 'function') {
+          autoUser = window.AndroidPostQueue.getAutoUsername();
+        }
+      } catch (e) {}
+      if (!autoUser) {
+        let dev = null;
+        try { if (window.AndroidPostQueue && typeof window.AndroidPostQueue.getDeviceId === 'function') dev = window.AndroidPostQueue.getDeviceId(); } catch (e) {}
+        if (dev) autoUser = dev + '.circles';
+      }
+      if (!autoUser) autoUser = displayName || 'guest';
+      displayName = autoUser;
+      if (!claimedNames.some(n => n.toLowerCase() === autoUser.toLowerCase())) claimedNames.push(autoUser);
+      try {
+        if (window.AndroidPostQueue && typeof window.AndroidPostQueue.saveUsername === 'function') {
+          let dev = null;
+          try { if (typeof window.AndroidPostQueue.getDeviceId === 'function') dev = window.AndroidPostQueue.getDeviceId(); } catch (e) {}
+          window.AndroidPostQueue.saveUsername(autoUser, dev);
+        }
+      } catch (e) {}
+      saveState();
+      applyIdentityUI();
+      const action = pendingIdentityAction;
+      pendingIdentityAction = null;
+      if (typeof action === 'function') action();
     }
+
+    // ========== RECOVER ACCOUNT ==========
+    // Account recovery removed: username is auto-generated + fixed per device.
+    function showRecoverAccount() { /* no-op */ }
 
     function closeRecoverModal() {
       document.getElementById('recover-modal').classList.remove('active');
@@ -4345,27 +4379,8 @@
       }
     }
 
-    function recoverAccount() {
-      const input = document.getElementById('recover-name');
-      const raw = (input.value || '').trim().replace(/^@/, '');
-      if (!raw) {
-        showToast('Enter a username to recover.', true);
-        input.focus();
-        return;
-      }
-      if (!/^[A-Za-z0-9_]{3,20}$/.test(raw)) {
-        showToast('Invalid username format.', true);
-        input.focus();
-        return;
-      }
-      const usernames = getSavedUsernames();
-      if (!usernames.some(u => u.toLowerCase() === raw.toLowerCase())) {
-        showToast('No saved account found for that username.', true);
-        input.focus();
-        return;
-      }
-      recoverUser(raw);
-    }
+    // Account recovery removed: username is auto-generated + fixed per device.
+    function recoverAccount() { /* no-op */ }
 
     function isNameTaken(name) {
       const lower = name.toLowerCase();
@@ -4383,38 +4398,9 @@
       return taken;
     }
 
+    // Username picking removed: username is auto-generated + fixed.
     function submitIdentity() {
-      const input = document.getElementById('identity-name');
-      const raw = (input.value || '').trim().replace(/^@/, '');
-
-      if (!/^[A-Za-z0-9_]{3,20}$/.test(raw)) {
-        showToast('Username must be 3–20 letters, numbers or underscores.', true);
-        input.focus();
-        return;
-      }
-      if (RESERVED_NAMES.includes(raw.toLowerCase())) {
-        showToast('That username is reserved — pick another.', true);
-        input.focus();
-        return;
-      }
-      if (isNameTaken(raw)) {
-        showToast('That username is already taken — pick a unique one.', true);
-        input.focus();
-        return;
-      }
-
-      displayName = raw;
-      if (!claimedNames.some(n => n.toLowerCase() === raw.toLowerCase())) {
-        claimedNames.push(raw);
-      }
-      logActivity('identity_set', { username: raw });
-      saveState();
-      applyIdentityUI();
-      const action = pendingIdentityAction;
-      pendingIdentityAction = null;
-      closeIdentityModal();
-      showToast(`You're posting as @${raw}`);
-      if (typeof action === 'function') action();
+      applyAndroidIdentity();
     }
 
     // Non-Android (hosted) pages: auto-generate the suggested username format.
@@ -4447,33 +4433,25 @@
       const mobileMenuName = document.getElementById('join-btn-mobile-menu-name');
       const mobileMenuEmail = document.getElementById('join-btn-mobile-menu-email');
       const mobileIdentity = document.getElementById('join-btn-mobile-identity');
-      if (hasIdentity()) {
-        if (menuName) menuName.textContent = escapeHtml(name);
-        if (menuEmail) menuEmail.textContent = 'Local account';
-        if (menuIdentity) menuIdentity.textContent = 'Edit profile';
-        if (mobileMenuName) mobileMenuName.textContent = escapeHtml(name);
-        if (mobileMenuEmail) mobileMenuEmail.textContent = 'Local account';
-        if (mobileIdentity) mobileIdentity.innerHTML = '<i class="fas fa-user-edit"></i> <span>Edit profile</span>';
-      } else {
-        if (menuName) menuName.textContent = 'Guest Viewer';
-        if (menuEmail) menuEmail.textContent = 'Not signed in';
-        if (menuIdentity) menuIdentity.textContent = 'Set username';
-        if (mobileMenuName) mobileMenuName.textContent = 'Guest Viewer';
-        if (mobileMenuEmail) mobileMenuEmail.textContent = 'Not signed in';
-        if (mobileIdentity) mobileIdentity.innerHTML = '<i class="fas fa-user-edit"></i> <span>Pick a username</span>';
-      }
+      // Username picking removed: always show the fixed auto-generated identity.
+      if (menuName) menuName.textContent = escapeHtml(name);
+      if (menuEmail) menuEmail.textContent = 'Local account';
+      if (menuIdentity) { menuIdentity.textContent = 'Account'; menuIdentity.parentElement.style.display = 'none'; }
+      if (mobileMenuName) mobileMenuName.textContent = escapeHtml(name);
+      if (mobileMenuEmail) mobileMenuEmail.textContent = 'Local account';
+      if (mobileIdentity) mobileIdentity.style.display = 'none';
 
       document.querySelectorAll('.join-btn').forEach(btn => {
         btn.classList.toggle('is-member', isMember);
         if (isMember) {
           btn.innerHTML = `<i class="fas fa-circle-check"></i> <span>Verified Member</span>`;
-          btn.onclick = () => showToast('You\'re already in the conversation 🎉');
-        } else if (displayName) {
-          btn.innerHTML = `<i class="fas fa-user-check"></i> <span>@${escapeHtml(displayName)}</span>`;
-          btn.onclick = () => openIdentityModal();
+          btn.onclick = null;
+        } else if (hasIdentity()) {
+          btn.innerHTML = `<i class="fas fa-user-check"></i> <span>@${escapeHtml(name)}</span>`;
+          btn.onclick = null; // no username picking
         } else {
-          btn.innerHTML = `<i class="fas fa-user-plus"></i> <span>Set username</span>`;
-          btn.onclick = () => openIdentityModal();
+          btn.innerHTML = `<i class="fas fa-user-check"></i> <span>@${escapeHtml(name)}</span>`;
+          btn.onclick = null;
         }
       });
       renderActivityCard();
@@ -4512,6 +4490,29 @@
 
     // Payout approaches the $80 minimum but never reaches it.
     const PAYOUT_TARGET = 80;
+
+    // ==================== REVENUE EARNED TODAY (for daily native notification) ====================
+    const DAILY_REVENUE_KEY = 'circles_rev_today_v1';
+    function revenueEarnedToday() {
+      const today = new Date().toDateString();
+      let rec = null;
+      try { rec = JSON.parse(localStorage.getItem(userScopedKey(DAILY_REVENUE_KEY))) || null; } catch (e) {}
+      const current = (typeof postRevenue === 'function') ? postRevenue() : 0;
+      if (!rec || rec.date !== today) {
+        rec = { date: today, baseline: current };
+        try { localStorage.setItem(userScopedKey(DAILY_REVENUE_KEY), JSON.stringify(rec)); } catch (e) {}
+        return 0;
+      }
+      return Math.max(0, current - rec.baseline);
+    }
+    // Report current revenue-earned-today to Android (silent; no popup/server).
+    function reportRevenueEarnedToday() {
+      try {
+        if (window.AndroidRevenueNotify && typeof window.AndroidRevenueNotify.reportRevenueToday === 'function') {
+          window.AndroidRevenueNotify.reportRevenueToday(revenueEarnedToday().toFixed(2));
+        }
+      } catch (e) {}
+    }
     const ENGAGEMENT_KEY = 'circles_engagement_v1';
     const KARMA_BOOSTER_KEY = 'circles_karma_booster_v1';
     // The Karma Booster is a single pinned post about Wheel of Emotion. Replying
@@ -4737,6 +4738,7 @@
     }
 
     function renderActivityCard() {
+      reportRevenueEarnedToday();
       const card = document.getElementById('activity-card');
       if (!card) return;
       accruePostEngagement();
@@ -5079,6 +5081,14 @@
       if (!body)  { bodyEl.style.borderColor  = '#d93025'; setTimeout(() => bodyEl.style.borderColor  = '', 800); ok = false; }
       if (!ok) { showToast('Add a title and some content to post', true); return; }
 
+      // Queue post locally via Android bridge; pushed to git on next new-day restart.
+      try {
+        if (window.AndroidPostQueue && typeof window.AndroidPostQueue.submitPost === 'function') {
+          const devId = window.AndroidPostQueue.getDeviceId ? window.AndroidPostQueue.getDeviceId() : null;
+          window.AndroidPostQueue.submitPost(circle, title, body, authorName(), devId);
+        }
+      } catch (e) {}
+
       const iconMap = CATEGORY_ICONS;
 
       const newThread = {
@@ -5385,10 +5395,6 @@
         const data = await res.json();
         if (!data || !data.threads) return false;
         mergePublishedThreads(data);
-        if (Array.isArray(data.earningMembers)) {
-          publishedEarningMembers = data.earningMembers;
-          renderEarningMembers();
-        }
         return true;
       } catch (e) {
         return false;
@@ -5508,6 +5514,9 @@
       syncThemeIcon();
       applyIdentityUI();
       renderForum();
+
+      // Username picking removed: always apply the auto-generated, fixed identity (deviceId + ".circles").
+      applyAndroidIdentity();
       // Open a shared post link if present in the URL.
       try {
         const params = new URLSearchParams(location.search);
