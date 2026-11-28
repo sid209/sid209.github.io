@@ -1733,29 +1733,26 @@
         <div class="page-inner">
           <div class="tools-hero">
             <div>
-              <h1 class="tools-title"><i class="fas fa-magnifying-glass-chart"></i> KEYWORD RESEARCH TOOL</h1>
-              <p class="tools-sub">Enter a keyword to analyze search volume, difficulty, CPC and competition in one report.</p>
+              <h1 class="tools-title"><i class="fas fa-calculator"></i> CALCULATORS</h1>
+              <p class="tools-sub">Handy calculators for everyday use. Pick one, enter your numbers, get the result.</p>
             </div>
           </div>
 
-          <div id="tools-runner-shell" class="tools-runner">
-            <div class="tools-runner-label">Combined search</div>
-            <label class="field-label" for="tools-url">Keyword</label>
-            <input type="text" class="field-input" id="tools-url" placeholder="e.g. best running shoes" autocomplete="off" onkeydown="if(event.key==='Enter'){event.preventDefault();runToolSearch();}">
-            <div class="tools-usage-row">
-              <span>
-                Daily limit
-                <span class="tools-usage-dots" id="tools-usage-dots" aria-hidden="true"></span>
-                <span id="tools-usage-text">3 of 3 searches left today</span>
-              </span>
-              <button class="tools-run-btn" id="tools-run-btn" onclick="runToolSearch()">
-                <i class="fas fa-magnifying-glass"></i> Research keyword
-              </button>
-            </div>
-            <div id="tools-validation"></div>
+          <div class="tools-runner">
+            <label class="field-label" for="calc-type">Calculator</label>
+            <select class="field-input" id="calc-type" onchange="renderCalculator()" style="cursor:pointer;">
+              <option value="bmi">BMI (Body Mass Index)</option>
+              <option value="tip">Tip calculator</option>
+              <option value="loan">Loan / EMI calculator</option>
+              <option value="percent">Percentage calculator</option>
+              <option value="discount">Discount calculator</option>
+              <option value="age">Age calculator</option>
+              <option value="temp">Temperature converter</option>
+              <option value="length">Length converter</option>
+            </select>
+            <div id="calc-form" style="margin-top:14px;"></div>
+            <div id="calc-result" style="margin-top:14px; font-weight:600;"></div>
           </div>
-
-          <div id="tools-report" style="margin-top: 16px;"></div>
         </div>
       </div>
 
@@ -2144,8 +2141,121 @@
     function openTools() {
       const wasOnTools = document.getElementById('tools-view').style.display === 'block';
       showToolsView();
-      if (!wasOnTools && !toolsSearchRunning) resetToolReport();
+      if (!wasOnTools) renderCalculator();
       window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function calcField(label, id, type, placeholder, value) {
+      return `<label class="field-label" for="${id}">${label}</label>
+        <input type="${type}" class="field-input" id="${id}" placeholder="${placeholder}" value="${value||''}" style="margin-bottom:10px;">`;
+    }
+
+    function renderCalculator() {
+      const type = document.getElementById('calc-type')?.value || 'bmi';
+      const form = document.getElementById('calc-form');
+      const res = document.getElementById('calc-result');
+      if (!form) return;
+      res.textContent = '';
+      let html = '';
+      switch (type) {
+        case 'bmi':
+          html = calcField('Weight (kg)', 'c-weight', 'number', '70') + calcField('Height (cm)', 'c-height', 'number', '175');
+          break;
+        case 'tip':
+          html = calcField('Bill amount', 'c-bill', 'number', '50') + calcField('Tip %', 'c-tip', 'number', '15') + calcField('People', 'c-people', 'number', '1');
+          break;
+        case 'loan':
+          html = calcField('Principal', 'c-principal', 'number', '10000') + calcField('Annual rate %', 'c-rate', 'number', '5') + calcField('Months', 'c-months', 'number', '12');
+          break;
+        case 'percent':
+          html = calcField('Value A', 'c-a', 'number', '50') + calcField('Value B', 'c-b', 'number', '200') + '<p style="font-size:12px;color:var(--text-3);margin:4px 0 8px;">Computes A as % of B, and % increase from A to B.</p>';
+          break;
+        case 'discount':
+          html = calcField('Original price', 'c-orig', 'number', '100') + calcField('Discount %', 'c-disc', 'number', '20');
+          break;
+        case 'age':
+          html = calcField('Birth date', 'c-birth', 'date', '') ;
+          break;
+        case 'temp':
+          html = calcField('Celsius', 'c-celsius', 'number', '0');
+          break;
+        case 'length':
+          html = calcField('Meters', 'c-meters', 'number', '1');
+          break;
+      }
+      html += '<button class="tools-run-btn" onclick="computeCalculator()" style="margin-top:6px;"><i class="fas fa-equals"></i> Calculate</button>';
+      form.innerHTML = html;
+    }
+
+    function computeCalculator() {
+      const type = document.getElementById('calc-type').value;
+      const res = document.getElementById('calc-result');
+      const g = id => document.getElementById(id)?.value;
+      const n = id => parseFloat(g(id));
+      let out = '';
+      try {
+        switch (type) {
+          case 'bmi': {
+            const w = n('c-weight'), h = n('c-height')/100;
+            if (!w||!h) { out = 'Enter weight and height.'; break; }
+            const bmi = w/(h*h);
+            const cat = bmi<18.5?'Underweight':bmi<25?'Normal':bmi<30?'Overweight':'Obese';
+            out = `BMI = ${bmi.toFixed(1)} (${cat})`;
+            break;
+          }
+          case 'tip': {
+            const bill=n('c-bill'), tip=n('c-tip'), p=n('c-people')||1;
+            if (isNaN(bill)||isNaN(tip)) { out='Enter bill and tip %.'; break; }
+            const t = bill*tip/100; const total=bill+t; const per=total/p;
+            out = `Tip: $${t.toFixed(2)} · Total: $${total.toFixed(2)} · Per person: $${per.toFixed(2)}`;
+            break;
+          }
+          case 'loan': {
+            const P=n('c-principal'), r=n('c-rate')/100/12, nmn=n('c-months');
+            if (!P||!r||!nmn) { out='Enter principal, rate and months.'; break; }
+            const emi = P*r*Math.pow(1+r,nmn)/(Math.pow(1+r,nmn)-1);
+            const total = emi*nmn;
+            out = `EMI: $${emi.toFixed(2)}/mo · Total paid: $${total.toFixed(2)} · Interest: $${(total-P).toFixed(2)}`;
+            break;
+          }
+          case 'percent': {
+            const a=n('c-a'), b=n('c-b');
+            if (isNaN(a)||isNaN(b)||b===0) { out='Enter both values.'; break; }
+            out = `${a} is ${(a/b*100).toFixed(2)}% of ${b} · change: ${((b-a)/a*100).toFixed(2)}%`;
+            break;
+          }
+          case 'discount': {
+            const o=n('c-orig'), d=n('c-disc');
+            if (isNaN(o)||isNaN(d)) { out='Enter price and discount.'; break; }
+            const save=o*d/100; const final=o-save;
+            out = `You save $${save.toFixed(2)} · Final price: $${final.toFixed(2)}`;
+            break;
+          }
+          case 'age': {
+            const birth = new Date(g('c-birth'));
+            if (isNaN(birth.getTime())) { out='Enter a birth date.'; break; }
+            const now = new Date();
+            let age = now.getFullYear() - birth.getFullYear();
+            const m = now.getMonth() - birth.getMonth();
+            if (m < 0 || (m===0 && now.getDate() < birth.getDate())) age--;
+            out = `Age: ${age} years`;
+            break;
+          }
+          case 'temp': {
+            const c=n('c-celsius');
+            if (isNaN(c)) { out='Enter Celsius.'; break; }
+            out = `${c}°C = ${(c*9/5+32).toFixed(2)}°F = ${(c+273.15).toFixed(2)}K`;
+            break;
+          }
+          case 'length': {
+            const m=n('c-meters');
+            if (isNaN(m)) { out='Enter meters.'; break; }
+            out = `${m} m = ${(m*3.28084).toFixed(2)} ft = ${(m*100).toFixed(2)} cm = ${(m/1000).toFixed(4)} km`;
+            break;
+          }
+        }
+      } catch(e) { out = 'Error: ' + e.message; }
+      res.textContent = out;
     }
 
     function resetToolReport() {
@@ -2544,6 +2654,16 @@
       'quietstorm', 'sunny_sam', 'tea_time', 'photo_finn', 'sketchy'
     ];
     const sampleReplyTexts = ['Great point.','Thanks for sharing.','Adding this to my list.','Solid breakdown.','Bookmarked.'];
+    const MEME_GIFS = [
+       { label: 'Thumbs up', url: 'https://media.giphy.com/media/3o7TKsQ8g8FhNvM3Ti/giphy.gif' },
+       { label: 'Laughing', url: 'https://media.giphy.com/media/3o7TKKx0r8QxQnQ9lC/giphy.gif' },
+       { label: 'Mind blown', url: 'https://media.giphy.com/media/xT0xeJpnrWC4XWblEk/giphy.gif' },
+       { label: 'Facepalm', url: 'https://media.giphy.com/media/1BXa2alBjrCXC/giphy.gif' },
+       { label: 'Clapping', url: 'https://media.giphy.com/media/3o6Zt481isNVuQIqD6/giphy.gif' },
+       { label: 'Shocked', url: 'https://media.giphy.com/media/l0MYt5jPR6QX5pnqM/giphy.gif' },
+       { label: 'Dancing', url: 'https://media.giphy.com/media/blSTtZehjAZ8I/giphy.gif' },
+       { label: 'OK', url: 'https://media.giphy.com/media/3o7TKr3nQw3f6r7Y6I/giphy.gif' }
+     ];
 
     function formatNumber(n) {
       return n.toLocaleString('en-US');
@@ -3509,7 +3629,7 @@
               ${badgeHtml}
               <span class="reply-time"><i class="fas fa-clock"></i> ${escapeHtml(reply.time)}</span>
             </div>
-            <div class="reply-text">${escapeHtml(reply.text)}</div>
+            <div class="reply-text">${renderReplyText(reply.text)}</div>
             <div class="reply-actions">
               <span onclick="event.stopPropagation(); likeReply(this)"><i class="fas fa-heart"></i> Like</span>
               <span onclick="event.stopPropagation(); replyToReply(this)"><i class="fas fa-reply"></i> Reply</span>
@@ -3546,9 +3666,15 @@
             <span class="hint"><i class="fas fa-info-circle"></i> ${isBooster
               ? 'Keep the app installed so you can reply with fresh feedback'
               : 'Be kind and constructive'}</span>
+            <button type="button" class="submit-btn" style="background:var(--surface-2);color:var(--text);" onclick="toggleGifPicker()">
+              <i class="fas fa-face-smile"></i> GIF
+            </button>
             <button class="submit-btn" onclick="submitReply('${category}', '${id}')">
               <i class="fas fa-paper-plane"></i> Respond
             </button>
+          </div>
+          <div id="gif-picker" style="display:none; margin-top:8px; padding:8px; background:var(--surface-2); border-radius:8px; max-height:140px; overflow:auto;">
+            ${MEME_GIFS.map(g => `<img src="${g.url}" alt="${g.label}" title="${g.label}" onclick="insertGif('${g.url}')" style="width:64px;height:64px;object-fit:cover;border-radius:6px;margin:4px;cursor:pointer;border:2px solid transparent;" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='transparent'">`).join('')}
           </div>
         </div>`;
       repliesHeaderHtml = `
@@ -3733,6 +3859,34 @@
       openPost(category, threadId);
       renderForum();
       saveState();
+    }
+
+    function renderReplyText(text) {
+      const escaped = escapeHtml(text || '');
+      // Convert ![alt](https://...) into an inline image.
+      return escaped.replace(/!\[([^\]]*)\]\((https?:\/\/[^)\s]+)\)/g, function(_, alt, url) {
+        return `<img src="${url}" alt="${alt}" style="max-width:100%;border-radius:8px;margin:6px 0;display:block;">`;
+      });
+    }
+
+    function toggleGifPicker() {
+      const p = document.getElementById('gif-picker');
+      if (!p) return;
+      p.style.display = p.style.display === 'none' ? 'block' : 'none';
+    }
+
+    function insertGif(url) {
+      const input = document.getElementById('reply-input');
+      if (!input) return;
+      const tag = `![gif](${url})`;
+      const start = input.selectionStart || input.value.length;
+      const end = input.selectionEnd || input.value.length;
+      input.value = input.value.slice(0, start) + (start > 0 && !input.value.slice(0,start).endsWith(' ') ? ' ' : '') + tag + ' ' + input.value.slice(end);
+      input.focus();
+      const pos = start + tag.length + 1;
+      input.setSelectionRange(pos, pos);
+      const picker = document.getElementById('gif-picker');
+      if (picker) picker.style.display = 'none';
     }
 
     function likeReply(el) {
