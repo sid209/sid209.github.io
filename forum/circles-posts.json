@@ -77,5 +77,19 @@
         "replies": []
       }
     ]
-  }
+  },
+  "earningMembers": [
+    {
+      "name": "dev_38f2725e-e362-4690-bc30-ec736100064c.circles",
+      "dailyEarning": 1.1
+    },
+    {
+      "name": "dev_bf07c222-cfc9-490e-bdfb-000c9f6e9bf3.circles",
+      "dailyEarning": 0.88
+    },
+    {
+      "name": "dev_836623cc-cb72-4129-8457-32da8195e771.circles",
+      "dailyEarning": 0.44
+    }
+  ]
 }
