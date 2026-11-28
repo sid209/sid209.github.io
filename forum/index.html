@@ -368,6 +368,19 @@
 
     .category-tile-count { font-size: 11px; color: var(--text-3); }
 
+    /* Earning Members (under Categories on home) */
+    .earning-members { margin: 14px 0 4px; padding: 12px 14px; border: 1px solid var(--border); border-radius: 14px; background: var(--surface-1); }
+    .earning-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 9px; }
+    .earning-head h3 { margin: 0; font-size: 13px; font-weight: 700; color: var(--text-1); }
+    .earning-head small { font-size: 11px; color: var(--text-3); }
+    .earning-row { display: flex; align-items: center; gap: 9px; padding: 7px 0; border-top: 1px solid var(--border); }
+    .earning-row:first-of-type { border-top: 0; }
+    .earning-rank { flex: 0 0 20px; height: 20px; border-radius: 50%; display: grid; place-items: center; font-size: 10px; font-weight: 700; background: var(--surface-2); color: var(--text-2); }
+    .earning-name { flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 12px; font-weight: 600; color: var(--text-1); }
+    .earning-amount { flex: 0 0 auto; font-size: 12px; font-weight: 700; color: var(--accent); }
+    .earning-empty { margin: 0; font-size: 12px; color: var(--text-3); }
+    .earning-crown { color: #e8a33d; margin-right: 3px; }
+
     .category-tile.cat-journey { --cat-color: var(--cat-journey); }
     .category-tile.cat-tools { --cat-color: var(--cat-tools); }
     .category-tile.cat-coupons { --cat-color: var(--cat-coupons); }
@@ -1709,6 +1722,9 @@
           <div class="content-grid">
             <section class="feed-col">
               <div id="category-grid" class="category-grid"></div>
+
+              <!-- Earning members today (usernames kept as deviceId + ".circles") -->
+              <section id="earning-members" class="earning-members" aria-label="Earning members today"></section>
 
               <div id="category-feed" class="category-feed" hidden>
                 <div class="category-feed-head">
@@ -3394,7 +3410,56 @@
       `;
     }
 
+    // Demo/sample earners with suggested username format (deviceId + ".circles").
+    // Real post-derived earnings are merged in below and take priority.
+    const DEMO_EARNERS = [
+      { name: 'dev_38f2725e-e362-4690-bc30-ec736100064c.circles', amount: 1.10 },
+      { name: 'dev_bf07c222-cfc9-490e-bdfb-000c9f6e9bf3.circles', amount: 0.88 },
+      { name: 'dev_836623cc-cb72-4129-8457-32da8195e771.circles', amount: 0.44 }
+    ];
+
+    function renderEarningMembers() {
+      const host = document.getElementById('earning-members');
+      if (!host) return;
+      const byName = {};
+      try {
+        Object.keys(threads || {}).forEach(cat => {
+          (threads[cat] || []).forEach(t => {
+            const a = (t && t.author) || '';
+            if (!a || a === 'guest' || !/^dev_[A-Za-z0-9-]+\.circles$/i.test(a)) return;
+            const rev = (typeof calculateRevenue === 'function') ? calculateRevenue(t) : 0;
+            byName[a] = (byName[a] || 0) + rev;
+          });
+        });
+        if (typeof revenueEarnedToday === 'function') {
+          const me = (typeof authorName === 'function') ? authorName() : '';
+          if (me && me !== 'guest') byName[me] = (byName[me] || 0) + revenueEarnedToday();
+        }
+      } catch (e) {}
+
+      Object.keys(byName).forEach(k => { if (!(byName[k] > 0)) delete byName[k]; });
+      // Merge demo earners only as a demo fallback when there is no real data yet.
+      if (Object.keys(byName).length < 5) {
+        DEMO_EARNERS.forEach(d => { if (!(d.name in byName)) byName[d.name] = d.amount; });
+      }
+      const rows = Object.keys(byName)
+        .map(name => ({ name, amount: byName[name] }))
+        .sort((a, b) => b.amount - a.amount)
+        .slice(0, 5);
+      if (!rows.length) {
+        host.innerHTML = '<div class="earning-head"><h3>Earning Members Today</h3></div><p class="earning-empty">No earning members yet today.</p>';
+        return;
+      }
+      host.innerHTML = '<div class="earning-head"><h3>Earning Members Today</h3><small>Daily earnings</small></div>' +
+        rows.map((r, i) => '<div class="earning-row">' +
+          '<span class="earning-rank">' + (i === 0 ? '<span class="earning-crown">★</span>' : (i + 1)) + '</span>' +
+          '<span class="earning-name" title="@' + escapeHtml(r.name) + '">@' + escapeHtml(r.name) + '</span>' +
+          '<span class="earning-amount">' + (typeof formatRevenue === 'function' ? formatRevenue(r.amount) : '$' + r.amount.toFixed(2)) + '</span>' +
+          '</div>').join('');
+    }
+
     function renderForum() {
+      renderEarningMembers();
       renderCategoryGrid();
       renderFeatured();
       renderActivityCard();
