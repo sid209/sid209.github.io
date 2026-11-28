@@ -25,6 +25,31 @@
           "flagged": "no"
         },
         "replies": []
+      },
+      {
+        "id": "u1",
+        "icon": "fa-comment",
+        "title": "Test",
+        "tags": [
+          {
+            "label": "NEW",
+            "cls": "new"
+          }
+        ],
+        "author": "dev_85a1fc71-7613-40bf-a451-e0847e3aaa4b.circles",
+        "views": "0",
+        "time": "just now",
+        "comments": 0,
+        "likes": 0,
+        "lastReply": "dev_85a1fc71-7613-40bf-a451-e0847e3aaa4b.circles",
+        "memberOnly": false,
+        "body": "Test",
+        "ai": {
+          "summary": "New journey post by dev_85a1fc71-7613-40bf-a451-e0847e3aaa4b.circles.",
+          "reply": "",
+          "flagged": "no"
+        },
+        "replies": []
       }
     ]
   }
