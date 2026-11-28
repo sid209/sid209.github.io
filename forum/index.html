@@ -3467,10 +3467,10 @@
         .sort((a, b) => b.amount - a.amount)
         .slice(0, 5);
       if (!rows.length) {
-        host.innerHTML = '<div class="earning-head"><h3>TOP EARNERS LIVE TEST</h3></div><p class="earning-empty">No earning members yet today.</p>';
+        host.innerHTML = '<div class="earning-head"><h3>Top Earners Today</h3></div><p class="earning-empty">No earning members yet today.</p>';
         return;
       }
-      host.innerHTML = '<div class="earning-head"><h3>TOP EARNERS LIVE TEST</h3><small>Daily earnings</small></div>' +
+      host.innerHTML = '<div class="earning-head"><h3>Top Earners Today</h3><small>Daily earnings</small></div>' +
         rows.map((r, i) => '<div class="earning-row">' +
           '<span class="earning-rank">' + (i === 0 ? '<span class="earning-crown">★</span>' : (i + 1)) + '</span>' +
           '<span class="earning-name" title="@' + escapeHtml(r.name) + '">@' + escapeHtml(r.name) + '</span>' +
