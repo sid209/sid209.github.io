@@ -3734,6 +3734,7 @@
       const deleteBtnHtml = isAuthor && !thread.pinned
         ? `<button class="delete-btn" onclick="deletePost('${category}', '${id}')"><i class="fas fa-trash"></i> Delete</button>`
         : '';
+      const shareBtnHtml = `<button class="delete-btn" onclick="sharePost('${category}', '${id}')" title="Share this post"><i class="fas fa-share-nodes"></i> Share</button>`;
 
       const container = document.getElementById('post-container');
       container.innerHTML = `
@@ -3741,6 +3742,7 @@
           <div class="post-title-row">
             <h1 class="post-title">${escapeHtml(thread.title)}</h1>
             ${memberPill}
+            ${shareBtnHtml}
             ${deleteBtnHtml}
           </div>
           <div class="post-meta-row">
@@ -3781,6 +3783,34 @@
       ensureForumView();
       if (!toolsSearchRunning) resetToolReport();
       window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // ========== SHARE POST ==========
+    function sharePost(category, threadId) {
+      const url = location.origin + location.pathname + '?post=' + encodeURIComponent(category + ',' + threadId);
+      const copy = (txt) => {
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          return navigator.clipboard.writeText(txt);
+        }
+        const ta = document.createElement('textarea');
+        ta.value = txt;
+        ta.style.position = 'fixed'; ta.style.opacity = '0';
+        document.body.appendChild(ta);
+        ta.select();
+        try { document.execCommand('copy'); } catch (e) {}
+        document.body.removeChild(ta);
+        return Promise.resolve();
+      };
+      copy(url).then(() => {
+        showToast('Link copied! Share it with anyone.');
+        logActivity('post_shared', { id: threadId, category: category });
+      }).catch(() => {
+        showToast('Copy this link: ' + url, true);
+      });
+      // Also try native share if available
+      if (navigator.share) {
+        navigator.share({ title: document.querySelector('.post-title')?.textContent || 'Post', url: url }).catch(() => {});
+      }
     }
 
     // ========== DELETE POST ==========
@@ -5345,6 +5375,18 @@
       syncThemeIcon();
       applyIdentityUI();
       renderForum();
+      // Open a shared post link if present in the URL.
+      try {
+        const params = new URLSearchParams(location.search);
+        const postParam = params.get('post');
+        if (postParam) {
+          const parts = postParam.split(',');
+          if (parts.length === 2) {
+            const cat = parts[0], pid = parts[1];
+            setTimeout(() => { try { openPost(cat, pid); } catch (e) {} }, 100);
+          }
+        }
+      } catch (e) {}
       if (hasIdentity() && myThreads().length) {
         const mine = myThreads();
         const responses = mine.reduce((s, x) => s + (x.thread.comments || 0), 0);
