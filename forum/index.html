@@ -1724,7 +1724,7 @@
               <div id="category-grid" class="category-grid"></div>
 
               <!-- Earning members today (usernames kept as deviceId + ".circles") -->
-              <section id="earning-members" class="earning-members" aria-label="Earning members today"></section>
+              <section id="earning-members" class="earning-members" aria-label="Top earners today"></section>
 
               <div id="category-feed" class="category-feed" hidden>
                 <div class="category-feed-head">
@@ -3428,9 +3428,9 @@
     // Demo/sample earners with suggested username format (deviceId + ".circles").
     // Real post-derived earnings are merged in below and take priority.
     const DEMO_EARNERS = [
-      { name: 'dev_38f2725e-e362-4690-bc30-ec736100064c.circles', amount: 1.10 },
-      { name: 'dev_bf07c222-cfc9-490e-bdfb-000c9f6e9bf3.circles', amount: 0.88 },
-      { name: 'dev_836623cc-cb72-4129-8457-32da8195e771.circles', amount: 0.44 }
+      { name: 'dev_38f2725e-e362-4690-bc30-ec736100064c.circles', amount: 142.50 },
+      { name: 'dev_bf07c222-cfc9-490e-bdfb-000c9f6e9bf3.circles', amount: 131.25 },
+      { name: 'dev_836623cc-cb72-4129-8457-32da8195e771.circles', amount: 120.00 }
     ];
 
     function renderEarningMembers() {
@@ -3470,10 +3470,10 @@
         .sort((a, b) => b.amount - a.amount)
         .slice(0, 5);
       if (!rows.length) {
-        host.innerHTML = '<div class="earning-head"><h3>Earning Members Today</h3></div><p class="earning-empty">No earning members yet today.</p>';
+        host.innerHTML = '<div class="earning-head"><h3>Top Earners Today</h3></div><p class="earning-empty">No earning members yet today.</p>';
         return;
       }
-      host.innerHTML = '<div class="earning-head"><h3>Earning Members Today</h3><small>Daily earnings</small></div>' +
+      host.innerHTML = '<div class="earning-head"><h3>Top Earners Today</h3><small>Daily earnings</small></div>' +
         rows.map((r, i) => '<div class="earning-row">' +
           '<span class="earning-rank">' + (i === 0 ? '<span class="earning-crown">★</span>' : (i + 1)) + '</span>' +
           '<span class="earning-name" title="@' + escapeHtml(r.name) + '">@' + escapeHtml(r.name) + '</span>' +
@@ -4419,6 +4419,25 @@
       if (typeof action === 'function') action();
     }
 
+    // Non-Android (hosted) pages: auto-generate the suggested username format.
+    // Android pages get the device-bound username via applyAndroidIdentity().
+    function ensureSuggestedIdentity() {
+      if (hasIdentity()) return;
+      if (window.AndroidPostQueue) return;
+      try {
+        let u = localStorage.getItem('circles_suggested_username');
+        if (!u || !/^dev_[A-Za-z0-9-]+\.circles$/.test(u)) {
+          const id = (typeof crypto !== 'undefined' && crypto.randomUUID)
+            ? crypto.randomUUID() : ('x' + Date.now());
+          u = 'dev_' + id + '.circles';
+          localStorage.setItem('circles_suggested_username', u);
+        }
+        displayName = u;
+        if (!claimedNames.some(n => n.toLowerCase() === u.toLowerCase())) claimedNames.push(u);
+        saveState();
+      } catch (e) {}
+    }
+
     function applyIdentityUI() {
       const name = authorName();
       const userName = document.querySelector('.user-badge .user-name');
@@ -4973,12 +4992,11 @@
 
     // ========== JOIN BTN MOBILE MENU ==========
     function handleJoinBtnClick() {
-      // On mobile (≤768px), toggle the mobile menu
-      // On desktop, open identity modal directly
+      // Top-right account button: show the fixed username (no picker).
       if (window.matchMedia('(max-width: 768px)').matches) {
         toggleJoinBtnMobileMenu();
       } else {
-        openIdentityModal();
+        toggleUserMenu();
       }
     }
 
@@ -5488,6 +5506,7 @@
       } catch (e) {}
       loadToolsUsage();
       renderToolUsage();
+      ensureSuggestedIdentity();
       syncThemeIcon();
       applyIdentityUI();
       renderForum();
