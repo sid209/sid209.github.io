@@ -1601,6 +1601,9 @@
           <button class="join-btn-mobile-menu-item" id="join-btn-mobile-identity" onclick="openIdentityModal(); closeJoinBtnMobileMenu();">
             <i class="fas fa-user-edit"></i> <span>Pick a username</span>
           </button>
+          <button class="join-btn-mobile-menu-item" onclick="exportUserData(); closeJoinBtnMobileMenu();">
+            <i class="fas fa-download"></i> <span>Export my data</span>
+          </button>
         </div>
         </div>
         <div class="user-badge" id="user-badge" onclick="toggleUserMenu()">
@@ -1660,6 +1663,7 @@
             <div class="activity-actions">
               <button class="activity-cta" onclick="openComposeModal()"><i class="fas fa-pen"></i> New post</button>
               <button class="activity-link" onclick="showMyPosts()">My posts</button>
+              <button class="activity-link" onclick="exportUserData()"><i class="fas fa-download"></i> Export data</button>
             </div>
           </div>
 
@@ -2049,6 +2053,7 @@
     let claimedNames = [];
     let pendingIdentityAction = null;
     let userActions = { replies: 0, likes: 0, boosterKarma: 0 };
+    let userActivityLog = [];
 
     // ==================== TOOLS ====================
     const TOOLS_SEARCH_LIMIT = 3;
@@ -3698,6 +3703,7 @@
       // Remove the thread
       threads[category] = threads[category].filter(t => t.id !== threadId);
       categoryCounts[category] = Math.max(0, categoryCounts[category] - 1);
+      logActivity('post_deleted', { id: threadId, category: category });
       liveStats.posts = Math.max(0, liveStats.posts - 1);
       updateStatDisplay('posts', liveStats.posts);
 
@@ -3733,6 +3739,7 @@
  
       thread.replies.push({ author: authorName(), time: 'just now', badge: 'You', text: text });
       thread.comments += 1;
+      logActivity('reply_posted', { postId: threadId, category: category, self: false });
       // A Karma Booster reply pays its own 50 karma instead of the usual
       // interaction karma, so the jump in the activity card is exactly 50.
       const awarded = isBooster ? claimKarmaBooster() : 0;
@@ -3760,6 +3767,7 @@
       el.classList.add('liked');
       el.style.color = 'var(--accent)';
       userActions.likes += 1;
+      logActivity('like', {});
       saveState();
       renderActivityCard();
     }
@@ -3782,6 +3790,7 @@
       if (el.dataset.reported) return;
       el.dataset.reported = '1';
       el.innerHTML = '<i class="fas fa-check"></i> Reported';
+      logActivity('report', {});
       showToast('Thanks — this reply has been reported for review.');
     }
 
@@ -4075,6 +4084,7 @@
           if (found) openPost(found.cat, found.id);
           else showForum();
         }
+        logActivity('account_recovered', { username: username });
         showToast(`Recovered account: @${username}`);
         if (typeof pendingIdentityAction === 'function') {
           pendingIdentityAction();
@@ -4147,6 +4157,7 @@
       if (!claimedNames.some(n => n.toLowerCase() === raw.toLowerCase())) {
         claimedNames.push(raw);
       }
+      logActivity('identity_set', { username: raw });
       saveState();
       applyIdentityUI();
       const action = pendingIdentityAction;
@@ -4593,6 +4604,7 @@
       }
       target.bonusKarma = (target.bonusKarma || 0) + KARMA_BOOSTER_REWARD;
       target.time = 'just now';
+      logActivity('booster_claimed', { reward: KARMA_BOOSTER_REWARD });
       saveState();
       return KARMA_BOOSTER_REWARD;
     }
@@ -4643,6 +4655,7 @@
         return;
       }
 
+      logActivity('contact_submitted', { email: email });
       // In a real app this would send to a backend. For now just show success.
       showToast('Message sent! We\'ll get back to you soon.');
       document.getElementById('contact-email').value = '';
@@ -4758,6 +4771,7 @@
         return;
       }
 
+      logActivity('payout_submitted', { email: email, method: method });
       // Store payout info locally (in real app would send to backend)
       const payoutInfo = { email, method, details, notes, submittedAt: Date.now() };
       try {
@@ -4818,6 +4832,7 @@
 
       threads[circle].unshift(newThread);
       recordPostToday();
+      logActivity('post_created', { id: newThread.id, title: title, category: circle });
       categoryCounts[circle] += 1;
 
       liveStats.posts += 1;
@@ -4873,6 +4888,66 @@
       return base + '_' + name;
     }
 
+    function exportUserData() {
+      if (!hasIdentity()) { openIdentityModal(); return; }
+      const mine = myThreads();
+      const data = {
+        exportedAt: new Date().toISOString(),
+        profile: {
+          username: displayName,
+          isMember: isMember,
+          memberName: memberName,
+          claimedNames: claimedNames
+        },
+        stats: {
+          posts: mine.length,
+          responses: mine.reduce((s, x) => s + (x.thread.comments || 0), 0),
+          karma: userKarma(),
+          revenue: postRevenue(),
+          payoutTarget: PAYOUT_TARGET,
+          postsLeftToday: postsLeftToday()
+        },
+        userActions: userActions,
+        posts: mine.map(x => ({
+          id: x.thread.id,
+          category: x.cat,
+          title: x.thread.title,
+          body: x.thread.body,
+          author: x.thread.author,
+          views: x.thread.views,
+          likes: x.thread.likes,
+          comments: x.thread.comments,
+          bonusKarma: x.thread.bonusKarma || 0,
+          karma: calculateKarma(x.thread),
+          revenue: calculateRevenue(x.thread),
+          createdAt: x.thread.createdAt,
+          time: x.thread.time
+        })),
+        activityLog: userActivityLog,
+        limits: {
+          postLimit: (function(){ try { return JSON.parse(localStorage.getItem(userScopedKey(POST_LIMIT_KEY))); } catch(e){ return null; } })()
+        }
+      };
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'dotcircles-' + displayName + '-' + new Date().toISOString().slice(0,10) + '.json';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      showToast('Your data has been downloaded.');
+      logActivity('data_exported', {});
+    }
+
+    function logActivity(type, detail) {
+      try {
+        userActivityLog.push({ ts: new Date().toISOString(), type: type, detail: detail || {} });
+        if (userActivityLog.length > 5000) userActivityLog.splice(0, userActivityLog.length - 5000);
+      } catch (e) {}
+    }
+
     function saveState() {
       // Shared global feed (posts are not per-user).
       try {
@@ -4888,6 +4963,7 @@
           displayName,
           claimedNames,
           userActions,
+          userActivityLog,
           savedAt: Date.now()
         };
         localStorage.setItem(getUserStorageKey(displayName), JSON.stringify(snapshot));
@@ -4967,6 +5043,7 @@
       memberName = 'guest_viewer';
       claimedNames = [];
       userActions = { replies: 0, likes: 0, boosterKarma: 0 };
+      userActivityLog = [];
 
       if (Array.isArray(saved.claimedNames)) claimedNames = saved.claimedNames;
       if (saved.userActions) {
@@ -4975,6 +5052,11 @@
           likes: saved.userActions.likes || 0,
           boosterKarma: saved.userActions.boosterKarma || 0
         };
+      }
+      if (Array.isArray(saved.userActivityLog)) {
+        userActivityLog = saved.userActivityLog.slice();
+      } else {
+        userActivityLog = [];
       }
 
       // Migrate legacy booster karma (stored separately) into a post's
