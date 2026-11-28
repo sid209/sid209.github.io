@@ -1573,7 +1573,7 @@
         <input type="search" id="search-input" placeholder="Search posts, people, communities" autocomplete="off" oninput="filterThreads(this.value)" aria-label="Search">
       </div>
       <div class="topbar-actions">
-        <button class="compose-btn tools-open-btn" onclick="openTools()" title="Open spy tools">
+        <button class="compose-btn tools-open-btn" onclick="openKarmaBooster()" title="Karma Booster">
           <i class="fas fa-wand-magic-sparkles"></i> <span>Tools</span>
         </button>
         <button class="icon-btn games-topbar-btn" onclick="showGamesView()" aria-label="Arcade" title="Arcade">
@@ -1858,8 +1858,8 @@
     <button class="tab-item" data-tab="games" onclick="appTab('games')">
       <i class="fas fa-gamepad"></i><span>Games</span>
     </button>
-    <button class="tab-item" data-tab="tools" onclick="appTab('tools')">
-      <i class="fas fa-wand-magic-sparkles"></i><span>Tools</span>
+    <button class="tab-item" data-tab="boosters" onclick="appTab('boosters')">
+      <i class="fas fa-bolt"></i><span>Boosters</span>
     </button>
   </nav>
 
@@ -3512,7 +3512,7 @@
       document.body.classList.remove('games-open');
       currentPost = null;
       const tab = document.querySelector('.app-tabbar .tab-item.active');
-      if (tab && ['tools', 'games'].includes(tab.dataset.tab)) {
+      if (tab && ['boosters', 'games'].includes(tab.dataset.tab)) {
         setActiveTab('home');
       } else if (!tab) {
         setActiveTab(feedMode === 'hot' ? 'hot' : 'home');
@@ -5330,8 +5330,8 @@
         case 'games':
           showGamesView();
           break;
-        case 'tools':
-          openTools();
+        case 'boosters':
+          openKarmaBooster();
           break;
       }
     }
