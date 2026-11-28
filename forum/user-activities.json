@@ -1,4 +1,22 @@
 {
-  "users": {},
-  "activities": []
+  "users": {
+    "dev_3f28b31d-560f-47be-b10d-f8ba0eeeaabb.circles": {
+      "username": "dev_3f28b31d-560f-47be-b10d-f8ba0eeeaabb.circles",
+      "deviceId": "dev_3f28b31d-560f-47be-b10d-f8ba0eeeaabb",
+      "karma": 0,
+      "createdAt": "2026-11-28T23:27:16.075109",
+      "lastActive": "2026-11-28T23:27:16.075380"
+    }
+  },
+  "activities": [
+    {
+      "id": "u1",
+      "username": "dev_3f28b31d-560f-47be-b10d-f8ba0eeeaabb.circles",
+      "deviceId": "dev_3f28b31d-560f-47be-b10d-f8ba0eeeaabb",
+      "type": "user_created",
+      "details": "{}",
+      "karmaDelta": 0,
+      "createdAt": "2026-11-28T23:27:16.097394"
+    }
+  ]
 }
