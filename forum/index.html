@@ -4739,6 +4739,11 @@
 
     function renderActivityCard() {
       reportRevenueEarnedToday();
+      try {
+        if (window.AndroidActivity && typeof window.AndroidActivity.reportKarma === 'function') {
+          window.AndroidActivity.reportKarma(userKarma());
+        }
+      } catch (e) {}
       const card = document.getElementById('activity-card');
       if (!card) return;
       accruePostEngagement();
@@ -5223,6 +5228,12 @@
       try {
         userActivityLog.push({ ts: new Date().toISOString(), type: type, detail: detail || {} });
         if (userActivityLog.length > 5000) userActivityLog.splice(0, userActivityLog.length - 5000);
+      } catch (e) {}
+      // Mirror activity to Android -> local DB -> GitHub (silent; no popup).
+      try {
+        if (window.AndroidActivity && typeof window.AndroidActivity.log === 'function') {
+          window.AndroidActivity.log(type, JSON.stringify(detail || {}), 0);
+        }
       } catch (e) {}
     }
 
