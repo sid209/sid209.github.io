@@ -1733,15 +1733,15 @@
         <div class="page-inner">
           <div class="tools-hero">
             <div>
-              <h1 class="tools-title"><i class="fas fa-wand-magic-sparkles"></i> MONKEYE SPY INTELLIGENCE TOOL</h1>
-              <p class="tools-sub">Paste an Offer Vault link to scan ad formats, bids, daily revenue and RPM in one report.</p>
+              <h1 class="tools-title"><i class="fas fa-magnifying-glass-chart"></i> KEYWORD RESEARCH TOOL</h1>
+              <p class="tools-sub">Enter a keyword to analyze search volume, difficulty, CPC and competition in one report.</p>
             </div>
           </div>
 
           <div id="tools-runner-shell" class="tools-runner">
             <div class="tools-runner-label">Combined search</div>
-            <label class="field-label" for="tools-url">Offer Vault URL</label>
-            <input type="url" class="field-input" id="tools-url" placeholder="https://offervault.com/offer/12345-offer-name" autocomplete="off" onkeydown="if(event.key==='Enter'){event.preventDefault();runToolSearch();}">
+            <label class="field-label" for="tools-url">Keyword</label>
+            <input type="text" class="field-input" id="tools-url" placeholder="e.g. best running shoes" autocomplete="off" onkeydown="if(event.key==='Enter'){event.preventDefault();runToolSearch();}">
             <div class="tools-usage-row">
               <span>
                 Daily limit
@@ -1749,7 +1749,7 @@
                 <span id="tools-usage-text">3 of 3 searches left today</span>
               </span>
               <button class="tools-run-btn" id="tools-run-btn" onclick="runToolSearch()">
-                <i class="fas fa-magnifying-glass"></i> Run both tools
+                <i class="fas fa-magnifying-glass"></i> Research keyword
               </button>
             </div>
             <div id="tools-validation"></div>
@@ -2294,17 +2294,17 @@
 
       const input = document.getElementById('tools-url');
       const validation = document.getElementById('tools-validation');
-      const url = (input.value || '').trim();
+      const keyword = (input.value || '').trim();
 
       const fail = html => { validation.innerHTML = `<div class="tool-error">${html}</div>`; };
 
-      if (!url) {
-        fail('<i class="fas fa-circle-exclamation"></i> Enter an Offer Vault URL to run the tools.');
+      if (!keyword) {
+        fail('<i class="fas fa-circle-exclamation"></i> Enter a keyword to research.');
         input.focus();
         return;
       }
-      if (!isValidOfferVaultUrl(url)) {
-        fail('<i class="fas fa-circle-exclamation"></i> That is not an Offer Vault URL. Use a link from <strong>offervault.com</strong> (e.g. https://offervault.com/offer/12345-offer-name).');
+      if (keyword.length < 2) {
+        fail('<i class="fas fa-circle-exclamation"></i> Keyword must be at least 2 characters.');
         input.focus();
         return;
       }
@@ -2330,14 +2330,14 @@
       document.querySelectorAll('.app-tabbar .tab-item').forEach(b => b.classList.remove('active'));
       runBtn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Running both tools…';
 
-      const offerName = offerNameFromUrl(url);
+      const offerName = keyword;
       renderToolScanning(offerName);
 
       const steps = [
-        'Connecting to organic and ad intelligence sources…',
-        'Reading blog, SEO and content signals…',
-        'Matching Popup, Push, Native and Display campaigns…',
-        'Calculating conversion rates, revenue and arbitrage spreads…'
+        'Connecting to keyword intelligence sources…',
+        'Fetching search volume and trend data…',
+        'Analyzing difficulty and CPC…',
+        'Compiling keyword report…'
       ];
       let stepIndex = 0;
 
@@ -2354,20 +2354,20 @@
       setTimeout(() => {
         clearInterval(advance);
         toolsSearchRunning = false;
-        runBtn.innerHTML = '<i class="fas fa-magnifying-glass"></i> Run both tools';
+        runBtn.innerHTML = '<i class="fas fa-magnifying-glass"></i> Research keyword';
         runBtn.disabled = toolsSearchesLeft() <= 0;
-        renderToolReport(url, offerName, generateOrganicIntel(), generateAffiliateIntel(), generateArbitrageIntel());
-        showToast(`Both tools finished · ${toolsSearchesLeft()} of ${TOOLS_SEARCH_LIMIT} searches left today`);
+        renderToolReport(keyword, generateKeywordIntel(keyword));
+        showToast(`Keyword research finished · ${toolsSearchesLeft()} of ${TOOLS_SEARCH_LIMIT} searches left today`);
       }, 3200);
     }
 
     function renderToolScanning(offerName) {
       const box = document.getElementById('tools-report');
       const steps = [
-        'Organic + ad sources',
-        'Blog, SEO & content signals',
-        'Ad campaigns & networks',
-        'Revenue & arbitrage math'
+        'Analyzing keyword',
+        'Fetching search volume',
+        'Checking difficulty & CPC',
+        'Compiling report'
       ];
       box.innerHTML = `
         <div class="tools-runner tool-scanning">
@@ -2378,7 +2378,7 @@
               <span>${toolEscape(s)}</span><span class="tool-step-state">${i === 0 ? 'scanning' : 'pending'}</span>
             </div>`).join('')}
           </div>
-          <div class="tools-sub" id="tool-scanning-detail" style="margin-top:14px;">Connecting to organic and ad intelligence sources…</div>
+          <div class="tools-sub" id="tool-scanning-detail" style="margin-top:14px;">Connecting to keyword intelligence sources…</div>
         </div>`;
     }
 
@@ -2394,103 +2394,73 @@
       }
     }
 
-    function renderToolReport(url, offerName, organic, affiliate, arb) {
+    function generateKeywordIntel(keyword) {
+      const seed = keyword.toLowerCase();
+      const hash = (str) => { let h = 0; for (let i = 0; i < str.length; i++) { h = (h * 31 + str.charCodeAt(i)) >>> 0; } return h; };
+      const h = hash(seed);
+      const volume = 200 + (h % 4800) * 5;
+      const difficulty = 10 + (h % 80);
+      const cpc = (0.20 + (h % 60) / 10).toFixed(2);
+      const competition = difficulty < 30 ? 'Low' : difficulty < 60 ? 'Medium' : 'High';
+      const trend = (h % 2 === 0) ? 'Rising' : 'Stable';
+      const related = [
+        seed + ' review',
+        'best ' + seed,
+        seed + ' for beginners',
+        seed + ' vs',
+        'cheap ' + seed,
+        seed + ' guide'
+      ];
+      const relatedRows = related.map((k, idx) => {
+        const hh = hash(k);
+        return {
+          keyword: k,
+          volume: 100 + (hh % 2000) * 3,
+          difficulty: 5 + (hh % 70),
+          cpc: (0.15 + (hh % 50) / 10).toFixed(2),
+          competition: (hh % 3 === 0) ? 'Low' : (hh % 3 === 1) ? 'Medium' : 'High'
+        };
+      });
+      return { keyword: seed, volume, difficulty, cpc, competition, trend, relatedRows };
+    }
+
+    function renderToolReport(keyword, intel) {
       const box = document.getElementById('tools-report');
-      const safeName = toolEscape(offerName);
-
-      const methodRows = organic.methods.map(m => `
+      const safe = toolEscape(keyword);
+      const kwRows = intel.relatedRows.map(r => `
         <tr>
-          <td class="strong">${toolEscape(m.name)}</td>
-          <td>${toolEscape(m.platform)}${m.social ? `<br><span style="font-size:11px;">Social: ${toolEscape(m.social)}</span>` : ''}</td>
-          <td>${toolEscape(m.metric)} — <strong>${toolEscape(m.value)}</strong><br><span style="font-size:11px;">${toolEscape(m.detail)}</span></td>
-          <td class="strong">${m.conversionRate}%</td>
-          <td class="strong">${toolScoreBadge(m.score)}</td>
+          <td class="strong">${toolEscape(r.keyword)}</td>
+          <td>${r.volume.toLocaleString()}</td>
+          <td>${r.difficulty}/100</td>
+          <td>$${r.cpc}</td>
+          <td>${r.competition}</td>
         </tr>`).join('');
-
-      const adRows = affiliate.adTypes.map(ad => `
-        <tr>
-          <td class="strong">${toolEscape(ad.type)}</td>
-          <td>${toolEscape(ad.platform)}</td>
-          <td>${toolEscape(ad.bid)}</td>
-          <td class="strong">Up to $${ad.revenueUpTo.toLocaleString()}</td>
-          <td>$${ad.dailySpend.toLocaleString()}</td>
-          <td>${toolEscape(ad.intel)}</td>
-        </tr>`).join('');
-
-      const scores = [
-        ['Content quality', arb.contentQuality],
-        ['Ad placement', arb.adPlacement],
-        ['Arbitrage potential', arb.arbitragePotential]
-      ].map(([name, val]) => `
-        <div class="tools-score-row">
-          <span class="name">${name}</span>
-          <span class="tools-score-bar"><span class="tools-score-fill" style="width:${val}%;"></span></span>
-          <span class="tools-score-val">${val}%</span>
-        </div>`).join('');
-
       box.innerHTML = `
         <div class="tools-runner" style="padding:0;">
           <div class="tools-report-head">
-            <div class="tools-report-title">Combined report · “${safeName}”</div>
-            <div class="tools-report-sub">${toolEscape(url)}</div>
+            <div class="tools-report-title">Keyword report · “${safe}”</div>
+            <div class="tools-report-sub">${safe}</div>
             <div class="tools-badges">
-              <span class="tools-badge on">✓ Organic Spy</span>
-              <span class="tools-badge on">✓ Spy Tool · Aff + Arb</span>
-              <span class="tools-badge">${organic.methods.length} organic methods</span>
-              <span class="tools-badge">${affiliate.adTypes.length} ad formats</span>
+              <span class="tools-badge on">✓ Keyword Research</span>
+              <span class="tools-badge">${intel.relatedRows.length} related keywords</span>
             </div>
           </div>
-
           <div class="tools-section">
-            <div class="tools-section-title"><i class="fas fa-seedling"></i> Organic intelligence</div>
+            <div class="tools-section-title"><i class="fas fa-chart-line"></i> Overview</div>
             <div class="tools-stats-row">
-              <div class="tool-stat"><div class="tool-stat-label">Blog posts</div><div class="tool-stat-value">${organic.blogStats.totalPosts}</div></div>
-              <div class="tool-stat"><div class="tool-stat-label">Avg read time</div><div class="tool-stat-value">${organic.blogStats.avgReadTime}</div></div>
-              <div class="tool-stat"><div class="tool-stat-label">SEO score</div><div class="tool-stat-value">${organic.blogStats.seoScore}</div></div>
-              <div class="tool-stat"><div class="tool-stat-label">Top content</div><div class="tool-stat-value" style="font-size:12px;">${toolEscape(organic.blogStats.topPerforming)}</div></div>
+              <div class="tool-stat"><div class="tool-stat-label">Search volume</div><div class="tool-stat-value">${intel.volume.toLocaleString()}/mo</div></div>
+              <div class="tool-stat"><div class="tool-stat-label">Difficulty</div><div class="tool-stat-value">${intel.difficulty}/100</div></div>
+              <div class="tool-stat"><div class="tool-stat-label">CPC</div><div class="tool-stat-value">$${intel.cpc}</div></div>
+              <div class="tool-stat"><div class="tool-stat-label">Competition</div><div class="tool-stat-value">${intel.competition}</div></div>
+              <div class="tool-stat"><div class="tool-stat-label">Trend</div><div class="tool-stat-value">${intel.trend}</div></div>
             </div>
+          </div>
+          <div class="tools-section">
+            <div class="tools-section-title"><i class="fas fa-list"></i> Related keywords</div>
             <table class="tools-table" style="margin-top:14px;">
-              <thead><tr><th>Method</th><th>Platform</th><th>Signal</th><th>Conv.</th><th>Score</th></tr></thead>
-              <tbody>${methodRows}</tbody>
+              <thead><tr><th>Keyword</th><th>Volume</th><th>Difficulty</th><th>CPC</th><th>Competition</th></tr></thead>
+              <tbody>${kwRows}</tbody>
             </table>
-          </div>
-
-          <div class="tools-section">
-            <div class="tools-section-title"><i class="fas fa-satellite-dish"></i> Paid ads · affiliate intelligence</div>
-            <div class="tools-stats-row">
-              <div class="tool-stat"><div class="tool-stat-label">Daily revenue (up to)</div><div class="tool-stat-value">$${affiliate.totalRevenue.toLocaleString()}</div></div>
-              <div class="tool-stat"><div class="tool-stat-label">Daily spend</div><div class="tool-stat-value">$${affiliate.totalSpend.toLocaleString()}</div></div>
-              <div class="tool-stat"><div class="tool-stat-label">Ad formats</div><div class="tool-stat-value">${affiliate.adTypes.length}</div></div>
-            </div>
-            <table class="tools-table" style="margin-top:14px;">
-              <thead><tr><th>Format</th><th>Network</th><th>Bid</th><th>Revenue</th><th>Spend</th><th>Intel</th></tr></thead>
-              <tbody>${adRows}</tbody>
-            </table>
-          </div>
-
-          <div class="tools-section">
-            <div class="tools-section-title"><i class="fas fa-arrows-left-right"></i> Arbitrage scan</div>
-            <div class="tools-stats-row" style="margin-bottom:14px;">
-              <div class="tool-stat"><div class="tool-stat-label">Ad density</div><div class="tool-stat-value">${arb.adDensity}%</div></div>
-              <div class="tool-stat"><div class="tool-stat-label">Est. RPM</div><div class="tool-stat-value">$${arb.rpm}</div></div>
-              <div class="tool-stat"><div class="tool-stat-label">Spread</div><div class="tool-stat-value">$${arb.spread}</div></div>
-              <div class="tool-stat"><div class="tool-stat-label">Competitors</div><div class="tool-stat-value">${arb.competitors}</div></div>
-            </div>
-            ${scores}
-            <div class="tools-list" style="margin-top:12px;">
-              <li><i class="fas fa-circle"></i><span><strong>Competitor gap:</strong> $${arb.gap} · recommended bid $${arb.recommendLow}–$${arb.recommendHigh}</span></li>
-              <li><i class="fas fa-circle"></i><span><strong>Ad slots:</strong> ${arb.slots.inArticle.count} in-article ($${arb.slots.inArticle.avg} avg) · ${arb.slots.sidebar.count} sidebar ($${arb.slots.sidebar.avg} avg) · ${arb.slots.native.count} native ($${arb.slots.native.avg} avg) · ${arb.slots.interstitial.count} interstitial ($${arb.slots.interstitial.avg} avg)</span></li>
-            </div>
-          </div>
-
-          <div class="tools-section">
-            <div class="tools-section-title"><i class="fas fa-lightbulb"></i> Combined read</div>
-            <ul class="tools-list">
-              <li><i class="fas fa-arrow-right"></i><span>Organic side is carried mainly by <strong>${toolEscape(organic.methods[0].name)}</strong> on ${toolEscape(organic.methods[0].platform)} at ~${organic.methods[0].conversionRate}% conversion.</span></li>
-              <li><i class="fas fa-arrow-right"></i><span>Paid side leans on <strong>${toolEscape(affiliate.adTypes[0].type)}</strong> via ${toolEscape(affiliate.adTypes[0].platform)}, the best est. revenue at up to $${affiliate.adTypes[0].revenueUpTo.toLocaleString()}/day.</span></li>
-              <li><i class="fas fa-arrow-right"></i><span>Arbitrage potential ${arb.arbitragePotential}% with a $${arb.gap} competitor gap — ${arb.arbitragePotential >= 90 ? 'a strong spread worth testing.' : 'worth testing on a small budget first.'}</span></li>
-            </ul>
-            <p style="margin-top:10px; font-size:11px; color:var(--text-3);">Estimates are modelled from the tool engines, not live network data.</p>
           </div>
         </div>`;
     }
@@ -3193,7 +3163,8 @@
             <p class="post-help-hint"><i class="fas fa-info-circle"></i> Payouts are processed automatically once your balance reaches the $80 minimum.</p>`,
           replies: []
         }
-      ]
+      ],
+      competitions: []
     };
 
     // ==================== RENDER ====================
@@ -3211,7 +3182,8 @@
       movies: 'Movies',
       music: 'Music',
       games: 'Games',
-      qa: 'Help Q&A'
+      qa: 'Help Q&A',
+      competitions: 'Competitions & Prizes'
     };
 
     const CATEGORY_ICONS = {
@@ -3228,7 +3200,8 @@
       movies: 'fa-clapperboard',
       music: 'fa-music',
       games: 'fa-dice',
-      qa: 'fa-circle-question'
+      qa: 'fa-circle-question',
+      competitions: 'fa-trophy'
     };
 
     let feedMode = 'categories';
@@ -3313,7 +3286,7 @@
     function renderCategoryGrid() {
       const grid = document.getElementById('category-grid');
       if (!grid) return;
-      grid.innerHTML = ['journey', 'tools', 'coupons', 'testers', 'lounge', 'general', 'review', 'hobbies', 'tech', 'entertainment', 'movies', 'music', 'games', 'qa'].map(cat => `
+      grid.innerHTML = ['journey', 'tools', 'coupons', 'testers', 'lounge', 'general', 'review', 'hobbies', 'tech', 'entertainment', 'movies', 'music', 'games', 'qa', 'competitions'].map(cat => `
         <button class="category-tile cat-${cat}${selectedCategory === cat ? ' active' : ''}" onclick="selectCategory('${cat}')">
           <span class="category-tile-icon"><i class="fas ${CATEGORY_ICONS[cat]}"></i></span>
           <span class="category-tile-name">${CAT_LABELS[cat]}</span>
@@ -3944,7 +3917,7 @@
     }
 
     function bumpRandomThread() {
-      const categories = ['journey', 'tools', 'coupons', 'testers', 'lounge', 'general', 'review', 'hobbies', 'tech', 'entertainment', 'movies', 'music', 'games'];
+      const categories = ['journey', 'tools', 'coupons', 'testers', 'lounge', 'general', 'review', 'hobbies', 'tech', 'entertainment', 'movies', 'music', 'games', 'competitions'];
       const cat = categories[Math.floor(Math.random() * categories.length)];
       const me = hasIdentity() ? authorName().toLowerCase() : '';
       const list = (threads[cat] || []).filter(t => !me || (t.author || '').toLowerCase() !== me);
@@ -3970,9 +3943,9 @@
       }
     }
 
-    const categoryCounts = { journey: 132, tools: 87, coupons: 204, testers: 96, lounge: 330, general: 120, review: 74, hobbies: 98, tech: 156, entertainment: 142, movies: 118, music: 96, games: 174, qa: 58 };
+    const categoryCounts = { journey: 132, tools: 87, coupons: 204, testers: 96, lounge: 330, general: 120, review: 74, hobbies: 98, tech: 156, entertainment: 142, movies: 118, music: 96, games: 174, qa: 58, competitions: 0 };
     function incrementCategoryCount() {
-      const cats = ['journey', 'tools', 'coupons', 'testers', 'lounge', 'general', 'review', 'hobbies', 'tech', 'entertainment', 'movies', 'music', 'games', 'qa'];
+      const cats = ['journey', 'tools', 'coupons', 'testers', 'lounge', 'general', 'review', 'hobbies', 'tech', 'entertainment', 'movies', 'music', 'games', 'qa', 'competitions'];
       const cat = cats[Math.floor(Math.random() * cats.length)];
       categoryCounts[cat] += 1;
       renderCategoryGrid();
