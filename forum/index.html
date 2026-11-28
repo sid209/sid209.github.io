@@ -3410,6 +3410,23 @@
       `;
     }
 
+    // Live data fetched from GitHub (posts + earning members); null until fetched.
+    let publishedEarningMembers = null;
+
+    // Applies GitHub JSON to the local shell, then re-renders. No popup / no domain in APK.
+    function applyPublishedData(data) {
+      if (!data || !data.threads) return false;
+      Object.keys(threads).forEach(cat => {
+        if (Array.isArray(data.threads[cat])) threads[cat] = data.threads[cat];
+      });
+      if (Array.isArray(data.earningMembers)) publishedEarningMembers = data.earningMembers;
+      renderForum();
+      return true;
+    }
+    window.onPublishedPostsFetched = function (jsonString) {
+      try { applyPublishedData(JSON.parse(jsonString)); } catch (e) {}
+    };
+
     // Demo/sample earners with suggested username format (deviceId + ".circles").
     // Real post-derived earnings are merged in below and take priority.
     const DEMO_EARNERS = [
@@ -3422,6 +3439,14 @@
       const host = document.getElementById('earning-members');
       if (!host) return;
       const byName = {};
+      if (Array.isArray(publishedEarningMembers) && publishedEarningMembers.length) {
+        publishedEarningMembers.forEach(e => {
+          const n = (e && (e.name || e.username || e.author)) || '';
+          const raw = e ? (e.dailyEarning !== undefined ? e.dailyEarning : (e.amount !== undefined ? e.amount : e.daily)) : 0;
+          const v = Number(raw) || 0;
+          if (n && v > 0) byName[n] = (byName[n] || 0) + v;
+        });
+      }
       try {
         Object.keys(threads || {}).forEach(cat => {
           (threads[cat] || []).forEach(t => {
@@ -5328,6 +5353,10 @@
         Object.keys(threads).forEach(cat => {
           if (Array.isArray(data.threads[cat])) threads[cat] = data.threads[cat];
         });
+        if (Array.isArray(data.earningMembers)) {
+          publishedEarningMembers = data.earningMembers;
+          renderEarningMembers();
+        }
         return true;
       } catch (e) {
         return false;
@@ -5434,6 +5463,12 @@
     // ==================== INIT ====================
     (async function init() {
       await loadPublishedPosts();
+      // Hybrid: ask Android to fetch latest posts/earning-members from GitHub (async, silent).
+      try {
+        if (window.AndroidData && typeof window.AndroidData.fetchPublishedPosts === 'function') {
+          window.AndroidData.fetchPublishedPosts();
+        }
+      } catch (e) {}
       loadState();
       loadToolsUsage();
       renderToolUsage();
